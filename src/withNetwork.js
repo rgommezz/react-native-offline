@@ -1,38 +1,43 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component, PropTypes } from 'react';
 import { NetInfo } from 'react-native';
 import { CONNECTION_CHANGE } from './reducer';
 import { setInternetConnectivity } from './isNetworkConnected';
 
-const withNetwork = ({ withRedux = true } = {}) =>
-  (WrappedComponent) => {
-    class EnhancedComponent extends Component {
-      static displayName = `networkHOC(${WrappedComponent.displayName})`;
+const withNetwork = (WrappedComponent) => {
+  class EnhancedComponent extends Component {
+    static displayName = `withNetwork(${WrappedComponent.displayName})`;
 
-      componentDidMount() {
-        NetInfo.isConnected.addEventListener('change', this.handleConnectivityChange);
-      }
+    static contextTypes = {
+      store: PropTypes.shape({
+        dispatch: PropTypes.func,
+      }),
+    };
 
-      componentWillUnmount() {
-        NetInfo.isConnected.removeEventListener('change', this.handleConnectivityChange);
-      }
-
-      handleConnectivityChange = (isConnected) => {
-        // This is triggered on startup as well, so we can detect the connection on initialization in both Android and iOS
-        setInternetConnectivity(isConnected);
-        if (withRedux) {
-          this.props.dispatch({
-            type: CONNECTION_CHANGE,
-            payload: isConnected,
-          });
-        }
-      };
-
-      render() {
-        return <WrappedComponent {...this.props} />;
-      }
+    componentDidMount() {
+      NetInfo.isConnected.addEventListener('change', this.handleConnectivityChange);
     }
-    return withRedux ? connect()(EnhancedComponent) : EnhancedComponent;
-  };
+
+    componentWillUnmount() {
+      NetInfo.isConnected.removeEventListener('change', this.handleConnectivityChange);
+    }
+
+    handleConnectivityChange = (isConnected) => {
+      const { store } = this.context;
+      // This is triggered on startup as well, so we can detect the connection on initialization in both Android and iOS
+      setInternetConnectivity(isConnected);
+      if (typeof store === 'object' && typeof store.dispatch === 'function') {
+        store.dispatch({
+          type: CONNECTION_CHANGE,
+          payload: isConnected,
+        });
+      }
+    };
+
+    render() {
+      return <WrappedComponent {...this.props} />;
+    }
+  }
+  return EnhancedComponent;
+};
 
 export default withNetwork;
