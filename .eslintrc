@@ -20,6 +20,7 @@
     "strict": 0,
     "max-len": 0,
     "import/no-unresolved": 0,
+    "import/no-extraneous-dependencies": 0,
     "newline-per-chained-call": ["error", {"ignoreChainWithDepth": 5}],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/forbid-prop-types": 0,
@@ -35,7 +36,8 @@
     "import/extensions": 0,
     "no-use-before-define": 0,
     "global-require": 0,
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "react/require-default-props": 0
   },
   "globals": {
     "jest": true
