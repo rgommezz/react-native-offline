@@ -1,2 +1,3 @@
-export reducer from 'reducer';
-export withNetwork from 'withNetwork';
+export reducer from './reducer';
+export withNetwork from './withNetwork';
+export ConnectivityRenderer from './ConnectivityRenderer';
