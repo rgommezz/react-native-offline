@@ -6,6 +6,7 @@
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
   "license": "MIT",
   "scripts": {
+    "lint": "eslint ./src/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/rauliyohmc/react-native-network-connectivity#readme",
   "devDependencies": {
+    "babel-eslint": "^7.2.1",
     "eslint": "^3.18.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
