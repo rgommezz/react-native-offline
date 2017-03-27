@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import { NetInfo } from 'react-native';
-import { CONNECTION_CHANGE } from './reducer';
+import { CONNECTION_CHANGE } from './actionTypes';
 import { setInternetConnectivity } from './isNetworkConnected';
 
-const withNetwork = (WrappedComponent) => {
+const withNetworkConnectivity = (WrappedComponent) => {
   class EnhancedComponent extends Component {
-    static displayName = `withNetwork(${WrappedComponent.displayName})`;
+    static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
 
     static contextTypes = {
       store: PropTypes.shape({
@@ -40,4 +40,4 @@ const withNetwork = (WrappedComponent) => {
   return EnhancedComponent;
 };
 
-export default withNetwork;
+export default withNetworkConnectivity;

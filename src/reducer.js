@@ -1,5 +1,4 @@
-export const CONNECTION_CHANGE = 'nc-CONNECTION_CHANGE';
-export const FETCH_OFFLINE_MODE = 'nc-FETCH_OFFLINE_MODE';
+import { CONNECTION_CHANGE } from './actionTypes';
 
 const initialState = {
   isConnected: true,

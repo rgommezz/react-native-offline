@@ -1,4 +1,4 @@
-import { FETCH_OFFLINE_MODE } from './reducer';
+import { FETCH_OFFLINE_MODE } from './actionTypes';
 
 function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, regexActionName = /fetch/, actionTypes = [] }) {
   return ({ getState }) => next => (action) => {
