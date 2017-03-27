@@ -1,0 +1,13 @@
+# node.js
+node_modules/
+npm-debug.log
+
+#jest
+coverage/
+
+# OSX
+#
+.DS_Store
+
+#IntelliJ
+.idea

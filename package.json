@@ -1,0 +1,33 @@
+{
+  "name": "react-native-network-connectivity",
+  "version": "1.0.0",
+  "description": "Utility functions for dealing with offline mode in React Native",
+  "main": "index.js",
+  "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rauliyohmc/react-native-network-connectivity.git"
+  },
+  "keywords": [
+    "react-native",
+    "offline",
+    "redux"
+  ],
+  "bugs": {
+    "url": "https://github.com/rauliyohmc/react-native-network-connectivity/issues"
+  },
+  "homepage": "https://github.com/rauliyohmc/react-native-network-connectivity#readme",
+  "devDependencies": {
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "react": "*",
+    "react-native": "*"
+  }
+}
