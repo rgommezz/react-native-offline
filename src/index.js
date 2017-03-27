@@ -1,1 +1,1 @@
-
+export reducer from 'reducer';
