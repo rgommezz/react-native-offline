@@ -1,22 +1,17 @@
-import { FETCH_OFFLINE_MODE } from './actionTypes';
+import indexOf from 'lodash/indexOf';
+import { fetchOfflineMode, removeActionFromQueue } from './actionCreators';
 
-function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, regexActionName = /fetch/, actionTypes = [] }) {
-  return ({ getState }) => next => (action) => {
+function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, actionTypes = [] }) {
+  return ({ getState, dispatch }) => next => (action) => {
     const connectionState = getState().network.isConnected;
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name
-    // Variables and methods can infer the name of an anonymous function from its syntactic position (new in ECMAScript 2015)
-    const isFunctionAndMatchCondition = typeof action === 'function' && regexActionName.test(action.name) && !connectionState;
+    const actionQueue = getState().network.actionQueue;
 
-    const isObjectAndMatchCondition = typeof action === 'object' && (regexActionType.test(action.type) || actionTypes.includes(action.type)) && !connectionState;
-
-    if (isFunctionAndMatchCondition || isObjectAndMatchCondition) {
-      return next({
-        type: FETCH_OFFLINE_MODE,
-        payload: {
-          prevActionType: action.type,
-          prevActionPayload: action.payload,
-        },
-      });
+    if (typeof action === 'object' && (regexActionType.test(action.type) || actionTypes.includes(action.type)) && connectionState === false) {
+      return next(fetchOfflineMode(action));
+    } else if (typeof action === 'object' && connectionState === true && indexOf(actionQueue, action) !== -1) {
+      // We are back online. The action that was queued is about to be dispatched.
+      next(action); // Let it flow through the chain of middlewares and get to the reducer.
+      dispatch(removeActionFromQueue(action)); // Lastly, removing the action from the queue
     }
     return next(action);
   };

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { NetInfo } from 'react-native';
-import { CONNECTION_CHANGE } from './actionTypes';
+import { connectionChange } from './actionCreators';
 import { setInternetConnectivity } from './isNetworkConnected';
 
 const withNetworkConnectivity = (WrappedComponent) => {
@@ -26,10 +26,15 @@ const withNetworkConnectivity = (WrappedComponent) => {
       // This is triggered on startup as well, so we can detect the connection on initialization in both Android and iOS
       setInternetConnectivity(isConnected);
       if (typeof store === 'object' && typeof store.dispatch === 'function') {
-        store.dispatch({
-          type: CONNECTION_CHANGE,
-          payload: isConnected,
-        });
+        const actionQueue = store.getState().network.actionQueue;
+        store.dispatch(connectionChange(isConnected));
+        // dispatching queued actions in order of arrival (if we have any)
+        if (isConnected && actionQueue.length > 0) {
+          actionQueue
+            .forEach((action) => {
+              store.dispatch(action);
+            });
+        }
       }
     };
 
