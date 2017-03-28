@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import { CONNECTION_CHANGE, FETCH_OFFLINE_MODE, REMOVE_FROM_ACTION_QUEUE } from './actionTypes';
 
 export const connectionChange = isConnected => ({
@@ -6,12 +5,13 @@ export const connectionChange = isConnected => ({
   payload: isConnected,
 });
 
-export const fetchOfflineMode = prevAction => ({
+export const fetchOfflineMode = action => ({
   type: FETCH_OFFLINE_MODE,
   payload: {
-    prevActionType: prevAction.type,
-    prevActionPayload: prevAction.payload,
-    retry: get(prevAction, 'payload.meta.retry'),
+    prevAction: {
+      type: action.type,
+      payload: action.payload,
+    },
   },
 });
 

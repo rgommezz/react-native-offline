@@ -24,15 +24,22 @@
   "homepage": "https://github.com/rauliyohmc/react-native-network-connectivity#readme",
   "devDependencies": {
     "babel-eslint": "^7.2.1",
+    "babel-jest": "^19.0.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-0": "^6.22.0",
     "eslint": "^3.18.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
+    "jest": "^19.0.2",
     "react": "*",
     "react-native": "*"
   },
   "dependencies": {
     "lodash": "^4.17.4"
+  },
+  "jest": {
+    "collectCoverage": true
   }
 }
