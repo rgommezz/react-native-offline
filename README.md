@@ -86,9 +86,11 @@ const YourComponent = () => (
 
 ```
 
+Note: since this component will re-render its children every time its parent's props or state changes, it's recommended to use it on leaf components in your tree.
+
 ## Integration with Redux
 
-The are 3 features that this library provides in order to leverage offline capabilities in your redux store. You can use all of them or just the ones that suits your needs.
+There are 3 features that this library provides in order to leverage offline capabilities in your redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
 
 ### Network reducer
 A network reducer to be provided to the store
@@ -133,7 +135,7 @@ let App = () => (
   </Navigator>
 );
 
-App = withNetworkConnectivity(false)(YourComponent); // Passing false won't inject isConnected as a prop in this case
+App = withNetworkConnectivity(false)(App); // Passing false won't inject isConnected as a prop in this case
 
 const Root = () => (
   <Provider store={store}>
@@ -162,7 +164,7 @@ createNetworkMiddleware(
 
 #### Params
 
-`regexActionType`: regular expression for indicating the action types to be intercepted when we are offline.
+`regexActionType`: regular expression for indicating the action types to be intercepted in offline mode.
 By default it's configured to intercept actions for fetching data following the Redux [convention](http://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
 `regexFunctionName`: only for redux-thunk, regular expression for specifying the thunk names you are interested to catch in offline mode. Since in ECMAScript 2015, variables and methods can infer the name of an anonymous function from its syntactic position, it's safe to use any sort of function style. It defaults to function names that contains the string "fetch", as `fetchUserId`.
@@ -187,7 +189,7 @@ const store = createStore(
 );
 ```
 
-When you attempt to fetch data on the internet by means of dispatching a plain action or a thunk in offline mode, the middleware blocks the action and dispatches an action of type `@@network-connectivity/FETCH_OFFLINE_MODE` instead, containing useful information about "what you attempted to do". It provides the next action payload for plain objects:
+When you attempt to fetch data on the internet by means of dispatching a plain action or a thunk in offline mode, the middleware blocks the action and dispatches an action of type `@@network-connectivity/FETCH_OFFLINE_MODE` instead, containing useful information about "what you attempted to do". It provides the below action payload for plain objects:
 
 ```js
 {
@@ -198,7 +200,7 @@ When you attempt to fetch data on the internet by means of dispatching a plain a
 }
 ```
 
-And for thunks:
+And for thunks, the thunk itself:
 
 ```js
 {
@@ -206,7 +208,7 @@ And for thunks:
 }
 ```
 
-That allows you to react conveniently, in order to update your UI in the way you desire, based on your previous intent.
+That allows you to react conveniently and update your screen in the way you desire, based on your previous intent. SnackBars, Dialog, Popups, or simple text are good means of conveying to the user that the operation failed.
 
 ### Offline Queue
 A queue system to store actions that failed due to lack of connectivity, that will be re-dispatched as soon as the internet connection is back online again. It works for both plain actions and thunks
