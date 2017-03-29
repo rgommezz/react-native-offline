@@ -15,6 +15,7 @@ This library aims to group together a variety of modules, whose end goal is to m
 - Managing connectivity through HOC or Render Callback components
 - Reducer to keep your connectivity state in the Redux store
 - Middleware to automatically handle fetch-request actions in offline mode
+- Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
 - Offline queue support to automatically dispatch actions when connection is back online
 
 ## API
@@ -154,6 +155,7 @@ Middleware that listens to specific actions targetting API calls in online/offli
 ```js
 createNetworkMiddleware(
   regexActionType = /FETCH.*REQUEST/?: RegExp,
+  regexFunctionName = /fetch/?: RegExp,
   actionTypes = []?: Array<string>
 ): reduxMiddleware
 ```
@@ -163,4 +165,80 @@ createNetworkMiddleware(
 `regexActionType`: regular expression for indicating the action types to be intercepted when we are offline.
 By default it's configured to intercept actions for fetching data following the Redux [convention](http://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
-`actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance useful for actions that carry along refreshing data, such as `REFRESH_LIST`
+`regexFunctionName`: only for redux-thunk, regular expression for specifying the thunk names you are interested to catch in offline mode. Since in ECMAScript 2015, variables and methods can infer the name of an anonymous function from its syntactic position, it's safe to use any sort of function style. It defaults to function names that contains the string "fetch", as `fetchUserId`.
+
+`actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
+
+#### Usage
+
+You should apply the middleware to the store using `applyMiddleware`. **The network middleware should be the first on the chain**, before any other middleware used for handling async actions, such as [redux-thunk](https://github.com/gaearon/redux-thunk), [redux-saga](https://github.com/redux-saga/redux-saga) or [redux-observable](https://github.com/redux-observable/redux-observable).
+
+```js
+import { createStore, applyMiddleware } from 'redux';
+import { createNetworkMiddleware } from 'react-native-network-connectivity';
+import createSagaMiddleware from 'redux-saga';
+
+const sagaMiddleware = createSagaMiddleware();
+const networkMiddleware = createNetworkMiddleware();
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware([networkMiddleware, sagaMiddleware])
+);
+```
+
+When you attempt to fetch data on the internet by means of dispatching a plain action or a thunk in offline mode, the middleware blocks the action and dispatches an action of type `@@network-connectivity/FETCH_OFFLINE_MODE` instead, containing useful information about "what you attempted to do". It provides the next action payload for plain objects:
+
+```js
+{
+  prevAction: {
+    type: string, // Your previous action type
+    payload: *, // Your previous payload
+  },
+}
+```
+
+And for thunks:
+
+```js
+{
+  prevThunk: ThunkAction,
+}
+```
+
+That allows you to react conveniently, in order to update your UI in the way you desire, based on your previous intent.
+
+### Offline Queue
+A queue system to store actions that failed due to lack of connectivity, that will be re-dispatched as soon as the internet connection is back online again. It works for both plain actions and thunks
+
+In order to enable retry functionality on an action you need to:
+
+- For plain actions, pass as a `meta` object in the payload, with `retry = true`.
+
+```js
+{
+  type: FETCH_USER_ID_REQUEST
+  payload: {
+    id: '3',
+    meta: {
+      retry: true,
+    },
+  },
+}
+```
+
+- For thunks, append a property `retry` to the thunk
+
+```js
+function fetchUserId(dispatch, getState) {
+  dispatch({ type: FETCH_USER_ID_REQUEST, payload: { id: '3' } });
+  ...
+}
+
+fetchUserId.retry = true;
+```
+
+## License
+
+MIT
+
