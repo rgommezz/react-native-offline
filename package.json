@@ -1,6 +1,6 @@
 {
   "name": "react-native-network-connectivity",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Utility functions for dealing with offline mode in React Native",
   "main": "./src/index.js",
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
