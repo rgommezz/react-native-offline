@@ -24,21 +24,27 @@ describe('reducer', () => {
     type: 'FETCH_DATA_REQUEST',
     payload: {
       id: '1',
-      retry: true,
+      meta: {
+        retry: true,
+      },
     },
   };
   const prevActionToRetry2 = {
     type: 'FETCH_OTHER_REQUEST',
     payload: {
       isFetching: true,
-      retry: true,
+      meta: {
+        retry: true,
+      },
     },
   };
   const prevActionToRetry1WithDifferentPayload = {
     type: 'FETCH_DATA_REQUEST',
     payload: {
       id: '2',
-      retry: true,
+      meta: {
+        retry: true,
+      },
     },
   };
   /** */
@@ -55,7 +61,9 @@ describe('reducer', () => {
         type: 'FETCH_DATA_REQUEST',
         payload: {
           id: '1',
-          retry: {},
+          meta: {
+            retry: {},
+          },
         },
       };
 

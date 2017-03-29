@@ -10,7 +10,7 @@ export const initialState = {
 };
 
 function handleOfflineAction(state, { payload: { prevAction, prevThunk } }) {
-  const isActionWithRetry = typeof prevAction === 'object' && get(prevAction, 'payload.retry') === true;
+  const isActionWithRetry = typeof prevAction === 'object' && get(prevAction, 'payload.meta.retry') === true;
   const isThunkWithRetry = typeof prevThunk === 'function' && prevThunk.retry === true;
   if (isActionWithRetry || isThunkWithRetry) {
     // If a similar action already existed on the queue, we remove it and append it again to the end of the queue
