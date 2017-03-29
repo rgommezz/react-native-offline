@@ -111,7 +111,7 @@ describe('reducer', () => {
 
   describe('REMOVE_ACTION_FROM_QUEUE action type', () => {
     it('removing prevActionToRetry2', () => {
-      const action = actionCreators.removeActionFromQueue(prevActionToRetry2);
+      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry2 }); // Different references, deep equal
       stateAcc = reducer(stateAcc, action);
       expect(stateAcc).toEqual({
         isConnected: stateAcc.isConnected,
@@ -120,7 +120,7 @@ describe('reducer', () => {
     });
 
     it('removing prevActionToRetry1', () => {
-      const action = actionCreators.removeActionFromQueue(prevActionToRetry1);
+      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry1 });
       stateAcc = reducer(stateAcc, action);
       expect(stateAcc).toEqual({
         isConnected: stateAcc.isConnected,
@@ -129,12 +129,40 @@ describe('reducer', () => {
     });
 
     it('removing prevActionToRetry1WithDifferentPayload', () => {
-      const action = actionCreators.removeActionFromQueue(prevActionToRetry1WithDifferentPayload);
+      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry1WithDifferentPayload });
       stateAcc = reducer(stateAcc, action);
       expect(stateAcc).toEqual({
         isConnected: stateAcc.isConnected,
         actionQueue: [],
       });
+    });
+  });
+
+  /** stateAcc = { isConnected: true, actionQueue: [] */
+
+  describe('dealing with thunks', () => {
+    function fetchThunk(dispatch) {
+      dispatch({ type: 'FETCH_DATA_REQUEST' });
+    }
+
+    it('OFFLINE_ACTION action type, thunk with NO meta.retry === true', () => {
+      const action = actionCreators.fetchOfflineMode(fetchThunk);
+      expect(reducer(stateAcc, action)).toEqual(initialState);
+    });
+
+    it('OFFLINE_ACTION action type, thunk with meta.retry === true', () => {
+      fetchThunk.retry = true;
+      const action = actionCreators.fetchOfflineMode(fetchThunk);
+      expect(reducer(stateAcc, action)).toEqual({
+        isConnected: stateAcc.isConnected,
+        actionQueue: [fetchThunk],
+      });
+    });
+
+    it('REMOVE_ACTION_FROM_QUEUE removing fetchThunk', () => {
+      const action = actionCreators.removeActionFromQueue({ ...fetchThunk });
+      stateAcc = reducer(stateAcc, action);
+      expect(stateAcc).toEqual(initialState);
     });
   });
 });

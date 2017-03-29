@@ -5,15 +5,26 @@ export const connectionChange = isConnected => ({
   payload: isConnected,
 });
 
-export const fetchOfflineMode = action => ({
-  type: FETCH_OFFLINE_MODE,
-  payload: {
-    prevAction: {
-      type: action.type,
-      payload: action.payload,
+export const fetchOfflineMode = (action) => {
+  if (typeof action === 'object') {
+    return {
+      type: FETCH_OFFLINE_MODE,
+      payload: {
+        prevAction: {
+          type: action.type,
+          payload: action.payload,
+        },
+      },
+    };
+  }
+  // Thunk
+  return {
+    type: FETCH_OFFLINE_MODE,
+    payload: {
+      prevThunk: action,
     },
-  },
-});
+  };
+};
 
 export const removeActionFromQueue = action => ({
   type: REMOVE_FROM_ACTION_QUEUE,
