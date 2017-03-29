@@ -3,7 +3,9 @@ import { NetInfo } from 'react-native';
 import { connectionChange } from './actionCreators';
 import { setInternetConnectivity } from './isNetworkConnected';
 
-const withNetworkConnectivity = (WrappedComponent) => {
+const withNetworkConnectivity = (withConnectivityProp = true) => (WrappedComponent) => {
+  if (typeof withConnectivityProp !== 'boolean') throw new Error('you should pass a boolean as withConnectivityProp');
+
   class EnhancedComponent extends Component {
     static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
 
@@ -11,6 +13,10 @@ const withNetworkConnectivity = (WrappedComponent) => {
       store: PropTypes.shape({
         dispatch: PropTypes.func,
       }),
+    };
+
+    state = {
+      isConnected: true,
     };
 
     componentDidMount() {
@@ -25,7 +31,8 @@ const withNetworkConnectivity = (WrappedComponent) => {
       const { store } = this.context;
       // This is triggered on startup as well, so we can detect the connection on initialization in both Android and iOS
       setInternetConnectivity(isConnected);
-      if (typeof store === 'object' && typeof store.dispatch === 'function') {
+      // Top most component, syncing with store
+      if (typeof store === 'object' && typeof store.dispatch === 'function' && withConnectivityProp === false) {
         const actionQueue = store.getState().network.actionQueue;
         store.dispatch(connectionChange(isConnected));
         // dispatching queued actions in order of arrival (if we have any)
@@ -35,11 +42,21 @@ const withNetworkConnectivity = (WrappedComponent) => {
               store.dispatch(action);
             });
         }
+      } else {
+        // Standard HOC, passing connectivity as props
+        this.setState({
+          isConnected,
+        });
       }
     };
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      return (
+        <WrappedComponent
+          {...this.props}
+          isConnected={withConnectivityProp ? this.state.isConnected : undefined}
+        />
+      );
     }
   }
   return EnhancedComponent;
