@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint ./src/*.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,10 @@
     "eslint-plugin-react": "^6.9.0",
     "jest": "^19.0.2",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "redux": "^3.6.0",
+    "redux-mock-store": "^1.2.2",
+    "redux-thunk": "^2.2.0"
   },
   "dependencies": {
     "lodash": "^4.17.4"

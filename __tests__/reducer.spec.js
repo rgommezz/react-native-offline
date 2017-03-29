@@ -2,6 +2,10 @@ import reducer, { initialState } from '../src/reducer';
 import * as actionCreators from '../src/actionCreators';
 
 describe('reducer', () => {
+  it('returns prevState on initialization', () => {
+    expect(reducer(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(initialState);
+  });
+
   it('returns prevState if the action is not handled', () => {
     expect(reducer(initialState, { type: 'ANOTHER_ACTION_I_DONT_CARE' })).toEqual(initialState);
   });
