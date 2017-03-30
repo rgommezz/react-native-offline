@@ -1,6 +1,6 @@
-# react-native-network-connectivity
+# react-native-offline-utils
 
-[![CircleCI](https://circleci.com/gh/rauliyohmc/react-native-network-connectivity.svg?style=shield)](https://circleci.com/gh/rauliyohmc/react-native-network-connectivity) [![npm version](https://badge.fury.io/js/react-native-network-connectivity.svg)](https://badge.fury.io/js/react-native-network-connectivity)
+[![CircleCI](https://circleci.com/gh/rauliyohmc/react-native-offline-utils.svg?style=shield)](https://circleci.com/gh/rauliyohmc/react-native-offline-utils) [![npm version](https://badge.fury.io/js/react-native-offline-utils.svg)](https://badge.fury.io/js/react-native-offline-utils)
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native.
 
@@ -21,7 +21,7 @@ This library aims to group together a variety of modules, whose end goal is to m
 ## Installation
 
 ```
-$ yarn add react-native-network-connectivity
+$ yarn add react-native-offline-utils
 ```
 
 ## API
@@ -40,7 +40,7 @@ withNetworkConnectivity(
 ```js
 import React from 'react';
 import { Text } from 'react-native';
-import { withNetworkConnectivity } from 'react-native-network-connectivity';
+import { withNetworkConnectivity } from 'react-native-offline-utils';
 
 const YourComponent = ({ isConnected }) => (
   <Text>{isConnected ? 'Look ma, I am connected to the internet!' : 'Offline :('}</Text>
@@ -61,7 +61,7 @@ A function that receives `isConnected` as argument.
 
 ```js
 ...
-import { ConnectivityRenderer } from 'react-native-network-connectivity';
+import { ConnectivityRenderer } from 'react-native-offline-utils';
 
 const YourComponent = () => (
   <View>
@@ -112,7 +112,7 @@ A network reducer to be provided to the store
 ```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
-import { reducer as network } from 'react-native-network-connectivity';
+import { reducer as network } from 'react-native-offline-utils';
 
 const rootReducer = combineReducers({
   // ... your other reducers here ...
@@ -132,7 +132,7 @@ Make sure your component is a descendant of the react-redux `<Provider>` compone
 import store from './configureStore';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { withNetworkConnectivity } from 'react-native-network-connectivity';
+import { withNetworkConnectivity } from 'react-native-offline-utils';
 
 let App = () => (
   <Navigator>
@@ -154,7 +154,7 @@ Now your network state can be accessed by any Redux container inside `mapStateTo
 
 **Note**: If you wanna listen to the action dispatched internally in your reducers, you can import the action type as:
 ```js
-import { CONNECTION_CHANGE } from 'react-native-network-connectivity';
+import { CONNECTION_CHANGE } from 'react-native-offline-utils';
 ```
 
 ### `createNetworkMiddleware()`
@@ -183,7 +183,7 @@ You should apply the middleware to the store using `applyMiddleware`. **The netw
 
 ```js
 import { createStore, applyMiddleware } from 'redux';
-import { createNetworkMiddleware } from 'react-native-network-connectivity';
+import { createNetworkMiddleware } from 'react-native-offline-utils';
 import createSagaMiddleware from 'redux-saga';
 
 const sagaMiddleware = createSagaMiddleware();

@@ -1,5 +1,5 @@
 {
-  "name": "react-native-network-connectivity",
+  "name": "react-native-offline-utils",
   "version": "1.0.0",
   "description": "Utility functions for dealing with offline mode in React Native",
   "main": "./src/index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rauliyohmc/react-native-network-connectivity.git"
+    "url": "git+https://github.com/rauliyohmc/react-native-offline-utils.git"
   },
   "keywords": [
     "react-native",
@@ -22,9 +22,9 @@
     "src"
   ],
   "bugs": {
-    "url": "https://github.com/rauliyohmc/react-native-network-connectivity/issues"
+    "url": "https://github.com/rauliyohmc/react-native-offline-utils/issues"
   },
-  "homepage": "https://github.com/rauliyohmc/react-native-network-connectivity#readme",
+  "homepage": "https://github.com/rauliyohmc/react-native-offline-utils#readme",
   "devDependencies": {
     "babel-eslint": "^7.2.1",
     "babel-jest": "^19.0.0",
