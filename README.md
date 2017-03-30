@@ -18,6 +18,12 @@ This library aims to group together a variety of modules, whose end goal is to m
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
 - Offline queue support to automatically dispatch actions when connection is back online
 
+## Installation
+
+```
+$ yarn add react-native-network-connectivity
+```
+
 ## API
 
 ### `withNetworkConnectivity()`
