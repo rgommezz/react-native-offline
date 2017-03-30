@@ -28,12 +28,12 @@ $ yarn add react-native-network-connectivity
 
 ### `withNetworkConnectivity()`
 
-Function that returns a higher order function which will accept some component and returns a higher order component (HOC) wrapping the original. By default, the HOC injects connectivity status as a prop into the wrapped component. See Redux integration for a different config.
+Higher order function that returns a higher order component (HOC). By default, the HOC injects connectivity status as a prop into the wrapped component. See Redux integration for a different config.
 
 ```js
 withNetworkConnectivity(
   withConnectivityProp = true?: boolean
-): (WrappedComponent) => HigherOrderComponent
+): (YourComponent) => EnhancedComponent
 ```
 #### Usage
 
