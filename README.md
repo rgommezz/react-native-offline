@@ -29,6 +29,7 @@ Having an offline first class citizen app is very important for a successful use
 - Offline queue support to automatically re-dispatch actions when connection is back online
 
 ## Installation
+This package exports modules using ES2015 syntax, so in order for this package to work properly you need to either add to your `.babelrc` config a preset that supports it, like [babel-preset-react-native-stage-0](https://github.com/skevy/babel-preset-react-native-stage-0) or alternatively the [babel-plugin-syntax-export-extensions](https://github.com/babel/babel/tree/master/packages/babel-plugin-syntax-export-extensions) plugin
 
 ```
 $ yarn add react-native-offline-utils
