@@ -161,16 +161,16 @@ describe('reducer', () => {
     it('OFFLINE_ACTION action type, thunk with meta.retry === true', () => {
       fetchThunk.retry = true;
       const action = actionCreators.fetchOfflineMode(fetchThunk);
-      expect(reducer(stateAcc, action)).toEqual({
+      stateAcc = reducer(stateAcc, action);
+      expect(stateAcc).toEqual({
         isConnected: stateAcc.isConnected,
         actionQueue: [fetchThunk],
       });
     });
 
     it('REMOVE_ACTION_FROM_QUEUE removing fetchThunk', () => {
-      const action = actionCreators.removeActionFromQueue({ ...fetchThunk });
-      stateAcc = reducer(stateAcc, action);
-      expect(stateAcc).toEqual(initialState);
+      const action = actionCreators.removeActionFromQueue(fetchThunk);
+      expect(reducer(stateAcc, action)).toEqual(initialState);
     });
   });
 });

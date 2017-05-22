@@ -186,7 +186,7 @@ describe('createNetworkMiddleware with thunks', () => {
     expect(actions).toEqual([{ type: 'TOGGLE_DROPDOWN' }]);
   });
 
-  it('thunk MATCHES criteria', () => {
+  it('thunk MATCHES criteria and we are OFFLINE', () => {
     const networkMiddleware = createNetworkMiddleware();
     const middlewares = [networkMiddleware, thunk];
     const mockStore = configureStore(middlewares);
@@ -202,6 +202,28 @@ describe('createNetworkMiddleware with thunks', () => {
 
     const actions = store.getActions();
     expect(actions).toEqual([actionCreators.fetchOfflineMode(fetchThunk)]);
+  });
+
+  it('thunk MATCHES criteria and we are back ONLINE', () => {
+    const networkMiddleware = createNetworkMiddleware();
+    const middlewares = [networkMiddleware, thunk];
+    const mockStore = configureStore(middlewares);
+    fetchThunk.retry = true;
+    const initialState = {
+      network: {
+        isConnected: true,
+        actionQueue: [fetchThunk],
+      },
+    };
+    const store = mockStore(initialState);
+
+    store.dispatch(fetchThunk);
+
+    const actions = store.getActions();
+    expect(actions).toEqual([
+      { type: 'FETCH_DATA_REQUEST' },
+      actionCreators.removeActionFromQueue(fetchThunk),
+    ]);
   });
 });
 

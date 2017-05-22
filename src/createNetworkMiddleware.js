@@ -10,17 +10,16 @@ function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, actionTyp
 
     if ({}.toString.call(regexFunctionName) !== '[object RegExp]') throw new Error('You should pass a regex as regexFunctionName param');
 
+    const { isConnected, actionQueue } = getState().network;
+
     const isObjectAndMatchCondition = typeof action === 'object' && (regexActionType.test(action.type) || actionTypes.includes(action.type));
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name
     // in ECMAScript 2015, variables and methods can infer the name of an anonymous function from its syntactic position
-    const isFunctionAndMatchCondition = typeof action === 'function' && regexFunctionName.test(action.name) && !connectionState;
-
-    const connectionState = getState().network.isConnected;
-    const actionQueue = getState().network.actionQueue;
+    const isFunctionAndMatchCondition = typeof action === 'function' && regexFunctionName.test(action.name);
 
     if (isObjectAndMatchCondition || isFunctionAndMatchCondition) {
-      if (connectionState === false) {
+      if (isConnected === false) {
         return next(fetchOfflineMode(action));
       }
       const actionQueued = actionQueue.length > 0 ? find(actionQueue, a => isEqual(a, action)) : null;
