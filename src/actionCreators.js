@@ -15,6 +15,7 @@ export const fetchOfflineMode = (action) => {
           payload: action.payload,
         },
       },
+      meta: action.meta,
     };
   }
   // Thunk
@@ -23,6 +24,7 @@ export const fetchOfflineMode = (action) => {
     payload: {
       prevThunk: action,
     },
+    meta: action.meta,
   };
 };
 

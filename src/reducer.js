@@ -9,22 +9,23 @@ export const initialState = {
   actionQueue: [],
 };
 
-function handleOfflineAction(state, { payload: { prevAction, prevThunk } }) {
-  const isActionWithRetry = typeof prevAction === 'object' && get(prevAction, 'payload.meta.retry') === true;
+function handleOfflineAction(state, { payload: { prevAction, prevThunk }, meta = {} }) {
+  const isActionWithRetry = typeof prevAction === 'object' && get(meta, 'retry') === true;
   const isThunkWithRetry = typeof prevThunk === 'function' && prevThunk.retry === true;
   if (isActionWithRetry || isThunkWithRetry) {
     // If a similar action already existed on the queue, we remove it and append it again to the end of the queue
     const actionToLookUp = prevAction || prevThunk;
-    const similarActionQueued = find(state.actionQueue, action => isEqual(action, actionToLookUp));
+    const actionWithMeta = typeof actionToLookUp === 'object' ? { ...actionToLookUp, meta } : actionToLookUp;
+    const similarActionQueued = find(state.actionQueue, action => isEqual(action, actionWithMeta));
     if (similarActionQueued) {
       return {
         ...state,
-        actionQueue: [...without(state.actionQueue, similarActionQueued), actionToLookUp],
+        actionQueue: [...without(state.actionQueue, similarActionQueued), actionWithMeta],
       };
     }
     return {
       ...state,
-      actionQueue: [...state.actionQueue, actionToLookUp],
+      actionQueue: [...state.actionQueue, actionWithMeta],
     };
   }
   return state;
