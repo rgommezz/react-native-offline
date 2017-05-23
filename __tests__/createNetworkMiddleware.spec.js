@@ -77,7 +77,7 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     expect(actions).toEqual([actionCreators.fetchOfflineMode(action)]);
   });
 
-  it('action ENQUEUED, status back ONLINE', () => {
+  it('action ENQUEUED, status back ONLINE -> action gets redispatched by HoC', () => {
     const prevActionQueue = { ...getFetchAction('FETCH_SOME_DATA_REQUEST') };
     const initialState = {
       network: {
@@ -91,27 +91,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
 
     const actions = store.getActions();
     expect(actions).toEqual([
-      getFetchAction('FETCH_SOME_DATA_REQUEST'),
       actionCreators.removeActionFromQueue(action),
-    ]);
-  });
-
-  it('action ENQUEUED, status back ONLINE', () => {
-    const prevActionQueue = { ...getFetchAction('FETCH_SOME_DATA_REQUEST') };
-    const initialState = {
-      network: {
-        isConnected: true,
-        actionQueue: [prevActionQueue], // different object references
-      },
-    };
-    const store = mockStore(initialState);
-    const action = getFetchAction('FETCH_SOME_DATA_REQUEST');
-    store.dispatch(action);
-
-    const actions = store.getActions();
-    expect(actions).toEqual([
       getFetchAction('FETCH_SOME_DATA_REQUEST'),
-      actionCreators.removeActionFromQueue(action),
     ]);
   });
 });
@@ -158,14 +139,38 @@ describe('createNetworkMiddleware with different REGEX config', () => {
     const actions = store.getActions();
     expect(actions).toEqual([actionCreators.fetchOfflineMode(action)]);
   });
+
+  it('FETCH_ACTION type no longer matches default REGEX', () => {
+    const initialState = {
+      network: {
+        isConnected: false,
+        actionQueue: [],
+      },
+    };
+    const store = mockStore(initialState);
+    const action = getFetchAction('FETCH_DATA');
+    store.dispatch(action);
+
+    const actions = store.getActions();
+    expect(actions).toEqual([getFetchAction('FETCH_DATA')]);
+  });
 });
 
 describe('createNetworkMiddleware with thunks', () => {
+  // Helper to simulate a network request
+  const fetchMockData = dispatch => new Promise((resolve) => {
+    setTimeout(() => {
+      dispatch({ type: 'FETCH_DATA_SUCCESS' });
+      resolve();
+    }, 1000);
+  });
+
   function fetchThunk(dispatch) {
     dispatch({ type: 'FETCH_DATA_REQUEST' });
+    return fetchMockData(dispatch);
   }
   function anotherThunk(dispatch) {
-    dispatch({ type: 'TOGGLE_DROPDOWN' });
+    return dispatch({ type: 'TOGGLE_DROPDOWN' });
   }
 
   it('thunk does NOT match criteria', () => {
@@ -204,7 +209,7 @@ describe('createNetworkMiddleware with thunks', () => {
     expect(actions).toEqual([actionCreators.fetchOfflineMode(fetchThunk)]);
   });
 
-  it('thunk MATCHES criteria and we are back ONLINE', () => {
+  it('thunk enqueued, regex MATCHES criteria, back ONLINE -> thunk gets redispatched', () => {
     const networkMiddleware = createNetworkMiddleware();
     const middlewares = [networkMiddleware, thunk];
     const mockStore = configureStore(middlewares);
@@ -217,13 +222,15 @@ describe('createNetworkMiddleware with thunks', () => {
     };
     const store = mockStore(initialState);
 
-    store.dispatch(fetchThunk);
-
-    const actions = store.getActions();
-    expect(actions).toEqual([
-      { type: 'FETCH_DATA_REQUEST' },
-      actionCreators.removeActionFromQueue(fetchThunk),
-    ]);
+    store.dispatch(fetchThunk)
+      .then(() => {
+        const actions = store.getActions();
+        expect(actions).toEqual([
+          actionCreators.removeActionFromQueue(fetchThunk),
+          { type: 'FETCH_DATA_REQUEST' },
+          { type: 'FETCH_DATA_SUCCESS' },
+        ]);
+      });
   });
 });
 

@@ -20,13 +20,15 @@ function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, actionTyp
 
     if (isObjectAndMatchCondition || isFunctionAndMatchCondition) {
       if (isConnected === false) {
-        return next(fetchOfflineMode(action));
+        return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
       }
       const actionQueued = actionQueue.length > 0 ? find(actionQueue, a => isEqual(a, action)) : null;
       if (actionQueued) {
         // Back online and the action that was queued is about to be dispatched.
-        next(action); // Let it flow through the chain of middlewares and get to the reducer, so that it can start the re-fetching process.
-        return next(removeActionFromQueue(action)); // Removing action from queue
+        // Removing action from queue, prior to handing over to next middleware or final dispatch
+        next(removeActionFromQueue(action));
+
+        return next(action);
       }
     }
 
