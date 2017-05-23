@@ -2,6 +2,11 @@ import reducer, { initialState } from '../src/reducer';
 import * as actionCreators from '../src/actionCreators';
 
 describe('reducer', () => {
+  const getState = (isConnected = false, ...actionQueue) => ({
+    isConnected,
+    actionQueue,
+  });
+
   it('returns prevState on initialization', () => {
     expect(reducer(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(initialState);
   });
@@ -18,8 +23,7 @@ describe('reducer', () => {
     });
   });
 
-  /** stateAcc and actions used from now on to test different scenarios */
-  let stateAcc = initialState;
+  /** Actions used from now on to test different scenarios */
   const prevActionToRetry1 = {
     type: 'FETCH_DATA_REQUEST',
     payload: {
@@ -63,90 +67,74 @@ describe('reducer', () => {
           id: '1',
         },
         meta: {
-          retry: {},
+          retry: false,
         },
       };
 
       const action = actionCreators.fetchOfflineMode(prevAction);
       const anotherAction = actionCreators.fetchOfflineMode(anotherPrevAction);
 
-      expect(reducer(stateAcc, action)).toEqual(initialState);
-      expect(reducer(stateAcc, anotherAction)).toEqual(initialState);
+      expect(reducer(initialState, action)).toEqual(initialState);
+      expect(reducer(initialState, anotherAction)).toEqual(initialState);
     });
 
     it('1st action with meta.retry === true', () => {
-      const action = actionCreators.fetchOfflineMode(prevActionToRetry1);
-      stateAcc = reducer(stateAcc, action);
+      const action1 = actionCreators.connectionChange(false);
+      const action2 = actionCreators.fetchOfflineMode(prevActionToRetry1);
+      const prevState = reducer(initialState, action1);
 
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
+      expect(reducer(prevState, action2)).toEqual({
+        isConnected: false,
         actionQueue: [prevActionToRetry1],
       });
     });
 
     it('a 2nd action to retry', () => {
+      const prevState = getState(false, prevActionToRetry1);
       const action = actionCreators.fetchOfflineMode(prevActionToRetry2);
-      stateAcc = reducer(stateAcc, action);
 
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [prevActionToRetry1, prevActionToRetry2],
-      });
+      expect(reducer(prevState, action)).toEqual(
+        getState(false, prevActionToRetry1, prevActionToRetry2)
+      );
     });
 
     it('1st action to retry arrives again', () => {
+      const prevState = getState(false, prevActionToRetry1, prevActionToRetry2);
       const action = actionCreators.fetchOfflineMode(prevActionToRetry1);
-      stateAcc = reducer(stateAcc, action);
 
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [prevActionToRetry2, prevActionToRetry1],
-      });
+      expect(reducer(prevState, action)).toEqual(
+        getState(false, prevActionToRetry2, prevActionToRetry1)
+      );
     });
 
     it('1st action arrives with different payload', () => {
+      const prevState = getState(false, prevActionToRetry2, prevActionToRetry1);
       const action = actionCreators.fetchOfflineMode(prevActionToRetry1WithDifferentPayload);
-      stateAcc = reducer(stateAcc, action);
 
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [prevActionToRetry2, prevActionToRetry1, prevActionToRetry1WithDifferentPayload],
-      });
+      expect(reducer(prevState, action)).toEqual(
+        getState(false, prevActionToRetry2, prevActionToRetry1, prevActionToRetry1WithDifferentPayload)
+      );
     });
   });
-
-  /** stateAcc = { isConnected: true, actionQueue: [prevActionToRetry2, prevActionToRetry1, prevActionToRetry1WithDifferentPayload] */
 
   describe('REMOVE_ACTION_FROM_QUEUE action type', () => {
-    it('removing prevActionToRetry2', () => {
-      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry2 }); // Different references, deep equal
-      stateAcc = reducer(stateAcc, action);
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [prevActionToRetry1, prevActionToRetry1WithDifferentPayload],
-      });
+    it('removing prevActionToRetry2, action queue reduces length by 1', () => {
+      const prevState = getState(false, prevActionToRetry2, prevActionToRetry1, prevActionToRetry1WithDifferentPayload);
+      // Different object references but same shape, checking that deep equal works correctly
+      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry2 });
+
+      expect(reducer(prevState, action)).toEqual(
+        getState(false, prevActionToRetry1, prevActionToRetry1WithDifferentPayload)
+      );
     });
 
-    it('removing prevActionToRetry1', () => {
-      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry1 });
-      stateAcc = reducer(stateAcc, action);
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [prevActionToRetry1WithDifferentPayload],
-      });
-    });
+    it('removing prevActionToRetry1, action queue empty', () => {
+      const prevState = getState(false, prevActionToRetry1);
+      const action = actionCreators.removeActionFromQueue(prevActionToRetry1);
 
-    it('removing prevActionToRetry1WithDifferentPayload', () => {
-      const action = actionCreators.removeActionFromQueue({ ...prevActionToRetry1WithDifferentPayload });
-      stateAcc = reducer(stateAcc, action);
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [],
-      });
+      expect(reducer(prevState, action)).toEqual(getState(false));
     });
   });
-
-  /** stateAcc = { isConnected: true, actionQueue: [] */
 
   describe('dealing with thunks', () => {
     function fetchThunk(dispatch) {
@@ -155,22 +143,22 @@ describe('reducer', () => {
 
     it('OFFLINE_ACTION action type, thunk with NO meta.retry === true', () => {
       const action = actionCreators.fetchOfflineMode(fetchThunk);
-      expect(reducer(stateAcc, action)).toEqual(initialState);
+      expect(reducer(initialState, action)).toEqual(initialState);
     });
 
     it('OFFLINE_ACTION action type, thunk with meta.retry === true', () => {
+      const prevState = getState(false);
       fetchThunk.retry = true;
       const action = actionCreators.fetchOfflineMode(fetchThunk);
-      stateAcc = reducer(stateAcc, action);
-      expect(stateAcc).toEqual({
-        isConnected: stateAcc.isConnected,
-        actionQueue: [fetchThunk],
-      });
+
+      expect(reducer(prevState, action)).toEqual(getState(false, fetchThunk));
     });
 
     it('REMOVE_ACTION_FROM_QUEUE removing fetchThunk', () => {
+      const prevState = getState(false, fetchThunk);
       const action = actionCreators.removeActionFromQueue(fetchThunk);
-      expect(reducer(stateAcc, action)).toEqual(initialState);
+
+      expect(reducer(prevState, action)).toEqual(getState(false));
     });
   });
 });
