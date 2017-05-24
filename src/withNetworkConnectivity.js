@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { NetInfo } from 'react-native';
+import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import { setInternetConnectivity } from './isNetworkConnected';
 
@@ -59,7 +60,7 @@ const withNetworkConnectivity = (withConnectivityProp = true) => (WrappedCompone
       );
     }
   }
-  return EnhancedComponent;
+  return hoistStatics(EnhancedComponent, WrappedComponent);
 };
 
 export default withNetworkConnectivity;
