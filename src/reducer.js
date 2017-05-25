@@ -2,7 +2,12 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
 import without from 'lodash/without';
-import { CONNECTION_CHANGE, FETCH_OFFLINE_MODE, REMOVE_FROM_ACTION_QUEUE } from './actionTypes';
+import {
+  CONNECTION_CHANGE,
+  FETCH_OFFLINE_MODE,
+  REMOVE_FROM_ACTION_QUEUE,
+  DISMISS_ACTIONS_FROM_QUEUE,
+} from './actionTypes';
 
 export const initialState = {
   isConnected: true,
@@ -39,6 +44,18 @@ function handleRemoveActionFromQueue(state, action) {
   };
 }
 
+function dismissActionsFromQueue(state, triggerActionToDismiss) {
+  const newActionQueue = state.actionQueue
+    .filter((action) => {
+      const dismissArray = get(action, 'meta.dismiss', []);
+      return !dismissArray.includes(triggerActionToDismiss);
+    });
+  return {
+    ...state,
+    actionQueue: newActionQueue,
+  };
+}
+
 export default function (state = initialState, action) {
   switch (action.type) {
     case CONNECTION_CHANGE:
@@ -50,6 +67,8 @@ export default function (state = initialState, action) {
       return handleOfflineAction(state, action);
     case REMOVE_FROM_ACTION_QUEUE:
       return handleRemoveActionFromQueue(state, action.payload);
+    case DISMISS_ACTIONS_FROM_QUEUE:
+      return dismissActionsFromQueue(state, action.payload);
     default:
       return state;
   }

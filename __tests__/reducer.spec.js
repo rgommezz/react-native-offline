@@ -161,4 +161,59 @@ describe('reducer', () => {
       expect(reducer(prevState, action)).toEqual(getState(false));
     });
   });
+
+  describe('dismiss feature', () => {
+    const actionEnqueued1 = {
+      type: 'FETCH_PAGE_REQUEST',
+      payload: {
+        id: '2',
+      },
+      meta: {
+        retry: true,
+        dismiss: ['NAVIGATE_BACK', 'NAVIGATE_TO_LOGIN'],
+      },
+    };
+    const actionEnqueued2 = {
+      type: 'FETCH_USER_REQUEST',
+      payload: {
+        id: '4',
+      },
+      meta: {
+        retry: true,
+        dismiss: ['NAVIGATE_TO_LOGIN'],
+      },
+    };
+    const actionEnqueued3 = {
+      type: 'FETCH_USER_REQUEST',
+      payload: {
+        id: '4',
+      },
+      meta: {
+        retry: true,
+      },
+    };
+
+    it('NAVIGATE_BACK dispatched, dismissing 1 action', () => {
+      const prevState = getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3);
+      const action = actionCreators.dismissActionsFromQueue('NAVIGATE_BACK');
+
+      expect(reducer(prevState, action)).toEqual(getState(false, actionEnqueued2, actionEnqueued3));
+    });
+
+    it('NAVIGATE_TO_LOGIN dispatched, dismissing 2 actions', () => {
+      const prevState = getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3);
+      const action = actionCreators.dismissActionsFromQueue('NAVIGATE_TO_LOGIN');
+
+      expect(reducer(prevState, action)).toEqual(getState(false, actionEnqueued3));
+    });
+
+    it('Any other action dispatched, no changes (although the middleware won\'t allow that)', () => {
+      const prevState = getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3);
+      const action = actionCreators.dismissActionsFromQueue('NAVIGATE_AWAY');
+
+      expect(reducer(prevState, action)).toEqual(
+        getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3)
+      );
+    });
+  });
 });
