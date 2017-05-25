@@ -1,4 +1,9 @@
-import { CONNECTION_CHANGE, FETCH_OFFLINE_MODE, REMOVE_FROM_ACTION_QUEUE } from './actionTypes';
+import {
+  CONNECTION_CHANGE,
+  FETCH_OFFLINE_MODE,
+  REMOVE_FROM_ACTION_QUEUE,
+  DISMISS_ACTIONS_FROM_QUEUE,
+} from './actionTypes';
 
 export const connectionChange = isConnected => ({
   type: CONNECTION_CHANGE,
@@ -31,4 +36,9 @@ export const fetchOfflineMode = (action) => {
 export const removeActionFromQueue = action => ({
   type: REMOVE_FROM_ACTION_QUEUE,
   payload: action,
+});
+
+export const dismissActionsFromQueue = actionTrigger => ({
+  type: DISMISS_ACTIONS_FROM_QUEUE,
+  payload: actionTrigger,
 });

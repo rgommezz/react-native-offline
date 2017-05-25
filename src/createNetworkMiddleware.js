@@ -1,6 +1,7 @@
 import find from 'lodash/find';
+import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { fetchOfflineMode, removeActionFromQueue } from './actionCreators';
+import { fetchOfflineMode, removeActionFromQueue, dismissActionsFromQueue } from './actionCreators';
 
 function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, actionTypes = [], regexFunctionName = /fetch/ } = {}) {
   return ({ getState }) => next => (action) => {
@@ -30,6 +31,16 @@ function createNetworkMiddleware({ regexActionType = /FETCH.*REQUEST/, actionTyp
 
         return next(action);
       }
+    }
+
+    // We don't want to dispatch actions all the time, but rather when there is a dismissal case
+    const isAnyActionToBeDismissed = find(actionQueue, (a) => {
+      const actionsToDismiss = get(a, 'meta.dismiss', []);
+      return actionsToDismiss.includes(action.type);
+    });
+    if (isAnyActionToBeDismissed && !isConnected) {
+      next(dismissActionsFromQueue(action.type));
+      return next(action);
     }
 
     return next(action);

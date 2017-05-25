@@ -234,6 +234,86 @@ describe('createNetworkMiddleware with thunks', () => {
   });
 });
 
+describe('createNetworkMiddleware with dismissing actions functionality', () => {
+  const getFetchActionWithDismiss = (type, ...actionsToDismiss) => ({
+    type,
+    payload: {
+      isFetching: true,
+    },
+    meta: {
+      retry: true,
+      dismiss: actionsToDismiss,
+    },
+  });
+
+  it('NO actions enqueued with dismiss options', () => {
+    const networkMiddleware = createNetworkMiddleware();
+    const middlewares = [networkMiddleware];
+    const mockStore = configureStore(middlewares);
+    const initialFetchAction = getFetchActionWithDismiss('FETCH_DATA');
+    const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
+    const navigationAction = { type: 'NAVIGATE_BACK' };
+    const initialState = {
+      network: {
+        isConnected: false,
+        actionQueue: [actionEnqueed],
+      },
+    };
+    const store = mockStore(initialState);
+    store.dispatch(navigationAction);
+
+    const actionsDispatched = store.getActions();
+    expect(actionsDispatched).toEqual([
+      { type: 'NAVIGATE_BACK' },
+    ]);
+  });
+
+  it('SOME actions enqueued with dismiss options', () => {
+    const networkMiddleware = createNetworkMiddleware();
+    const middlewares = [networkMiddleware];
+    const mockStore = configureStore(middlewares);
+    const initialFetchAction = getFetchActionWithDismiss('FETCH_DATA', 'NAVIGATE_BACK');
+    const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
+    const navigationAction = { type: 'NAVIGATE_BACK' };
+    const initialState = {
+      network: {
+        isConnected: false,
+        actionQueue: [actionEnqueed],
+      },
+    };
+    const store = mockStore(initialState);
+    store.dispatch(navigationAction);
+
+    const actionsDispatched = store.getActions();
+    expect(actionsDispatched).toEqual([
+      actionCreators.dismissActionsFromQueue('NAVIGATE_BACK'),
+      { type: 'NAVIGATE_BACK' },
+    ]);
+  });
+
+  it('SOME actions enqueued with dismiss options, but no match', () => {
+    const networkMiddleware = createNetworkMiddleware();
+    const middlewares = [networkMiddleware];
+    const mockStore = configureStore(middlewares);
+    const initialFetchAction = getFetchActionWithDismiss('FETCH_DATA', 'NAVIGATE_BACK');
+    const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
+    const navigationAction = { type: 'NAVIGATE_TO_LOGIN' };
+    const initialState = {
+      network: {
+        isConnected: false,
+        actionQueue: [actionEnqueed],
+      },
+    };
+    const store = mockStore(initialState);
+    store.dispatch(navigationAction);
+
+    const actionsDispatched = store.getActions();
+    expect(actionsDispatched).toEqual([
+      { type: 'NAVIGATE_TO_LOGIN' },
+    ]);
+  });
+});
+
 describe('createNetworkMiddleware with wrong type params', () => {
   it('invalid regex', () => {
     const initialState = {
