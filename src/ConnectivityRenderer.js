@@ -4,11 +4,11 @@ import isNetworkConnected from './isNetworkConnected';
 
 class ConnectivityRenderer extends Component {
   static propTypes = {
-    children: PropTypes.func.isRequired,
+    children: PropTypes.func.isRequired
   };
 
   state = {
-    isConnected: true,
+    isConnected: true
   };
 
   componentDidMount() {
@@ -20,8 +20,9 @@ class ConnectivityRenderer extends Component {
     // as soon as the component mounts, setting the right connectivity, hence re-rendering child components
     const isConnected = isNetworkConnected();
     if (isConnected !== this.state.isConnected) {
-      this.setState({  // eslint-disable-line react/no-did-mount-set-state
-        isConnected,
+      // eslint-disable-next-line react/no-did-mount-set-state
+      this.setState({
+        isConnected
       });
     }
   }
@@ -33,10 +34,10 @@ class ConnectivityRenderer extends Component {
     );
   }
 
-  handleConnectivityChange = (isConnected) => {
+  handleConnectivityChange = isConnected => {
     if (isConnected !== this.state.isConnected) {
       this.setState({
-        isConnected,
+        isConnected
       });
     }
   };

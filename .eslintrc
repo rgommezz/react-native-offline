@@ -1,8 +1,18 @@
 {
   "extends": [
-    "airbnb"
+    "airbnb",
+    "plugin:flowtype/recommended",
+    "plugin:react/recommended",
+    "prettier",
+    "prettier/flowtype",
+    "prettier/react"
   ],
   "parser": "babel-eslint",
+  "plugins": [
+    "flowtype",
+    "react",
+    "prettier"
+  ],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
@@ -17,27 +27,16 @@
     "jest": true
   },
   "rules": {
-    "strict": 0,
-    "max-len": 0,
-    "import/no-unresolved": 0,
-    "import/no-extraneous-dependencies": 0,
-    "newline-per-chained-call": ["error", {"ignoreChainWithDepth": 5}],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "react/forbid-prop-types": 0,
-    "react/no-unused-prop-types": 0,
-    "react/sort-comp": 0,
-    "comma-dangle": ["error", {
-      "arrays": "always-multiline",
-      "objects": "always-multiline",
-      "imports": "always-multiline",
-      "exports": "always-multiline",
-      "functions": "never"
-    }],
     "import/extensions": 0,
     "no-use-before-define": 0,
+    "import/no-extraneous-dependencies": 0,
     "global-require": 0,
     "react/prop-types": 0,
-    "react/require-default-props": 0
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/require-default-props": 0,
+    "prettier/prettier": [2, {
+      "singleQuote": true
+    }]
   },
   "globals": {
     "jest": true

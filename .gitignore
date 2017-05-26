@@ -11,3 +11,6 @@ coverage/
 
 #IntelliJ
 .idea
+
+#Flow
+flow-typed

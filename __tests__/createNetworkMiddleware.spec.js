@@ -6,13 +6,13 @@ import * as actionCreators from '../src/actionCreators';
 const getFetchAction = type => ({
   type,
   payload: {
-    isFetching: true,
-  },
+    isFetching: true
+  }
 });
 
 describe('createNetworkMiddleware with actionTypes in config', () => {
   const networkMiddleware = createNetworkMiddleware({
-    actionTypes: ['REFRESH_DATA'],
+    actionTypes: ['REFRESH_DATA']
   });
   const middlewares = [networkMiddleware, thunk];
   const mockStore = configureStore(middlewares);
@@ -21,8 +21,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
 
@@ -36,8 +36,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     const initialState = {
       network: {
         isConnected: true,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('FETCH_SOME_DATA_REQUEST');
@@ -51,8 +51,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('FETCH_SOME_DATA_REQUEST');
@@ -66,8 +66,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('REFRESH_DATA');
@@ -82,8 +82,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     const initialState = {
       network: {
         isConnected: true,
-        actionQueue: [prevActionQueue], // different object references
-      },
+        actionQueue: [prevActionQueue] // different object references
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('FETCH_SOME_DATA_REQUEST');
@@ -92,7 +92,7 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     const actions = store.getActions();
     expect(actions).toEqual([
       actionCreators.removeActionFromQueue(action),
-      getFetchAction('FETCH_SOME_DATA_REQUEST'),
+      getFetchAction('FETCH_SOME_DATA_REQUEST')
     ]);
   });
 });
@@ -106,8 +106,8 @@ describe('createNetworkMiddleware with NO CONFIG', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('REFRESH_DATA');
@@ -120,7 +120,7 @@ describe('createNetworkMiddleware with NO CONFIG', () => {
 
 describe('createNetworkMiddleware with different REGEX config', () => {
   const networkMiddleware = createNetworkMiddleware({
-    regexActionType: /REFRESH/,
+    regexActionType: /REFRESH/
   });
   const middlewares = [networkMiddleware];
   const mockStore = configureStore(middlewares);
@@ -129,8 +129,8 @@ describe('createNetworkMiddleware with different REGEX config', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('REFRESH_DATA');
@@ -144,8 +144,8 @@ describe('createNetworkMiddleware with different REGEX config', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
     const action = getFetchAction('FETCH_DATA');
@@ -158,12 +158,13 @@ describe('createNetworkMiddleware with different REGEX config', () => {
 
 describe('createNetworkMiddleware with thunks', () => {
   // Helper to simulate a network request
-  const fetchMockData = dispatch => new Promise((resolve) => {
-    setTimeout(() => {
-      dispatch({ type: 'FETCH_DATA_SUCCESS' });
-      resolve();
-    }, 1000);
-  });
+  const fetchMockData = dispatch =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        dispatch({ type: 'FETCH_DATA_SUCCESS' });
+        resolve();
+      }, 1000);
+    });
 
   function fetchThunk(dispatch) {
     dispatch({ type: 'FETCH_DATA_REQUEST' });
@@ -180,8 +181,8 @@ describe('createNetworkMiddleware with thunks', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
 
@@ -198,8 +199,8 @@ describe('createNetworkMiddleware with thunks', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const store = mockStore(initialState);
 
@@ -217,20 +218,19 @@ describe('createNetworkMiddleware with thunks', () => {
     const initialState = {
       network: {
         isConnected: true,
-        actionQueue: [fetchThunk],
-      },
+        actionQueue: [fetchThunk]
+      }
     };
     const store = mockStore(initialState);
 
-    store.dispatch(fetchThunk)
-      .then(() => {
-        const actions = store.getActions();
-        expect(actions).toEqual([
-          actionCreators.removeActionFromQueue(fetchThunk),
-          { type: 'FETCH_DATA_REQUEST' },
-          { type: 'FETCH_DATA_SUCCESS' },
-        ]);
-      });
+    store.dispatch(fetchThunk).then(() => {
+      const actions = store.getActions();
+      expect(actions).toEqual([
+        actionCreators.removeActionFromQueue(fetchThunk),
+        { type: 'FETCH_DATA_REQUEST' },
+        { type: 'FETCH_DATA_SUCCESS' }
+      ]);
+    });
   });
 });
 
@@ -238,12 +238,12 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
   const getFetchActionWithDismiss = (type, ...actionsToDismiss) => ({
     type,
     payload: {
-      isFetching: true,
+      isFetching: true
     },
     meta: {
       retry: true,
-      dismiss: actionsToDismiss,
-    },
+      dismiss: actionsToDismiss
+    }
   });
 
   it('NO actions enqueued with dismiss options', () => {
@@ -256,30 +256,31 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [actionEnqueed],
-      },
+        actionQueue: [actionEnqueed]
+      }
     };
     const store = mockStore(initialState);
     store.dispatch(navigationAction);
 
     const actionsDispatched = store.getActions();
-    expect(actionsDispatched).toEqual([
-      { type: 'NAVIGATE_BACK' },
-    ]);
+    expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_BACK' }]);
   });
 
   it('SOME actions enqueued with dismiss options', () => {
     const networkMiddleware = createNetworkMiddleware();
     const middlewares = [networkMiddleware];
     const mockStore = configureStore(middlewares);
-    const initialFetchAction = getFetchActionWithDismiss('FETCH_DATA', 'NAVIGATE_BACK');
+    const initialFetchAction = getFetchActionWithDismiss(
+      'FETCH_DATA',
+      'NAVIGATE_BACK'
+    );
     const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
     const navigationAction = { type: 'NAVIGATE_BACK' };
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [actionEnqueed],
-      },
+        actionQueue: [actionEnqueed]
+      }
     };
     const store = mockStore(initialState);
     store.dispatch(navigationAction);
@@ -287,7 +288,7 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
     const actionsDispatched = store.getActions();
     expect(actionsDispatched).toEqual([
       actionCreators.dismissActionsFromQueue('NAVIGATE_BACK'),
-      { type: 'NAVIGATE_BACK' },
+      { type: 'NAVIGATE_BACK' }
     ]);
   });
 
@@ -295,22 +296,23 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
     const networkMiddleware = createNetworkMiddleware();
     const middlewares = [networkMiddleware];
     const mockStore = configureStore(middlewares);
-    const initialFetchAction = getFetchActionWithDismiss('FETCH_DATA', 'NAVIGATE_BACK');
+    const initialFetchAction = getFetchActionWithDismiss(
+      'FETCH_DATA',
+      'NAVIGATE_BACK'
+    );
     const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
     const navigationAction = { type: 'NAVIGATE_TO_LOGIN' };
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [actionEnqueed],
-      },
+        actionQueue: [actionEnqueed]
+      }
     };
     const store = mockStore(initialState);
     store.dispatch(navigationAction);
 
     const actionsDispatched = store.getActions();
-    expect(actionsDispatched).toEqual([
-      { type: 'NAVIGATE_TO_LOGIN' },
-    ]);
+    expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_TO_LOGIN' }]);
   });
 });
 
@@ -319,11 +321,11 @@ describe('createNetworkMiddleware with wrong type params', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const networkMiddleware = createNetworkMiddleware({
-      regexActionType: 'REFRESH',
+      regexActionType: 'REFRESH'
     });
     const middlewares = [networkMiddleware];
     const mockStore = configureStore(middlewares);
@@ -331,18 +333,20 @@ describe('createNetworkMiddleware with wrong type params', () => {
     const store = mockStore(initialState);
     const action = getFetchAction('REFRESH_DATA');
 
-    expect(() => store.dispatch(action)).toThrow('You should pass a regex as regexActionType param');
+    expect(() => store.dispatch(action)).toThrow(
+      'You should pass a regex as regexActionType param'
+    );
   });
 
   it('invalid actionTypes', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const networkMiddleware = createNetworkMiddleware({
-      actionTypes: 'REFRESH',
+      actionTypes: 'REFRESH'
     });
 
     const middlewares = [networkMiddleware];
@@ -351,18 +355,20 @@ describe('createNetworkMiddleware with wrong type params', () => {
     const store = mockStore(initialState);
     const action = getFetchAction('REFRESH_DATA');
 
-    expect(() => store.dispatch(action)).toThrow('You should pass an array as actionTypes param');
+    expect(() => store.dispatch(action)).toThrow(
+      'You should pass an array as actionTypes param'
+    );
   });
 
   it('invalid regexFunctionName', () => {
     const initialState = {
       network: {
         isConnected: false,
-        actionQueue: [],
-      },
+        actionQueue: []
+      }
     };
     const networkMiddleware = createNetworkMiddleware({
-      regexFunctionName: 'REFRESH',
+      regexFunctionName: 'REFRESH'
     });
     const middlewares = [networkMiddleware];
     const mockStore = configureStore(middlewares);
@@ -370,6 +376,8 @@ describe('createNetworkMiddleware with wrong type params', () => {
     const store = mockStore(initialState);
     const action = getFetchAction('REFRESH_DATA');
 
-    expect(() => store.dispatch(action)).toThrow('You should pass a regex as regexFunctionName param');
+    expect(() => store.dispatch(action)).toThrow(
+      'You should pass a regex as regexFunctionName param'
+    );
   });
 });
