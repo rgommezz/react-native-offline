@@ -1,3 +1,4 @@
+// @flow
 import find from 'lodash/find';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
@@ -6,15 +7,33 @@ import {
   removeActionFromQueue,
   dismissActionsFromQueue
 } from './actionCreators';
+import type { NetworkState } from './types';
+
+type MiddlewareAPI<S> = {
+  dispatch: (action: any) => void,
+  getState(): S
+};
+
+type State = {
+  network: NetworkState
+};
+
+type Arguments = {|
+  regexActionType: RegExp,
+  actionTypes: Array<string>,
+  regexFunctionName: RegExp
+|};
 
 function createNetworkMiddleware(
   {
     regexActionType = /FETCH.*REQUEST/,
     actionTypes = [],
     regexFunctionName = /fetch/
-  } = {}
+  }: Arguments = {}
 ) {
-  return ({ getState }) => next => action => {
+  return ({ getState }: MiddlewareAPI<State>) => (
+    next: (action: any) => void
+  ) => (action: any) => {
     if ({}.toString.call(regexActionType) !== '[object RegExp]')
       throw new Error('You should pass a regex as regexActionType param');
 

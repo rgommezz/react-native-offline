@@ -8,7 +8,8 @@
   "scripts": {
     "lint": "eslint .",
     "jest": "jest",
-    "test": "concurrently \"npm run lint\" \"npm run jest\""
+    "test": "concurrently \"npm run lint\" \"npm run jest\" \"npm run flow\"",
+    "flow": "flow"
   },
   "repository": {
     "type": "git",

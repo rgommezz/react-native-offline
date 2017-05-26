@@ -1,3 +1,4 @@
+// @flow
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
@@ -8,6 +9,7 @@ import {
   REMOVE_FROM_ACTION_QUEUE,
   DISMISS_ACTIONS_FROM_QUEUE
 } from './actionTypes';
+import type { FluxAction, NetworkState } from './types';
 
 export const initialState = {
   isConnected: true,
@@ -16,7 +18,7 @@ export const initialState = {
 
 function handleOfflineAction(
   state,
-  { payload: { prevAction, prevThunk }, meta = {} }
+  { payload: { prevAction, prevThunk } = {}, meta = {} }
 ) {
   const isActionWithRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;
@@ -67,7 +69,10 @@ function dismissActionsFromQueue(state, triggerActionToDismiss) {
   };
 }
 
-export default function(state = initialState, action) {
+export default function(
+  state: NetworkState = initialState,
+  action: FluxAction
+) {
   switch (action.type) {
     case CONNECTION_CHANGE:
       return {
