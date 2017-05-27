@@ -21,7 +21,7 @@ function handleOfflineAction(
   const isActionWithRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;
   const isThunkWithRetry =
-    typeof prevThunk === 'function' && prevThunk.retry === true;
+    typeof prevThunk === 'function' && get(prevThunk, 'meta.retry') === true;
   if (isActionWithRetry || isThunkWithRetry) {
     // If a similar action already existed on the queue, we remove it and append it again to the end of the queue
     const actionToLookUp = prevAction || prevThunk;
@@ -54,7 +54,7 @@ function handleRemoveActionFromQueue(state, action) {
   };
 
   const similarActionQueued =
-    find(state.actionQueue, a => isEqual(action, a)) || dummyAction;
+    find(state.actionQueue, a => isEqual(action, a)) || dummyAction; // To prevent Flow from yelling at us
   return {
     ...state,
     actionQueue: without(state.actionQueue, similarActionQueued)

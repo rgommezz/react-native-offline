@@ -170,7 +170,9 @@ describe('reducer', () => {
 
     it('OFFLINE_ACTION action type, thunk with meta.retry === true', () => {
       const prevState = getState(false);
-      fetchThunk.retry = true;
+      fetchThunk.meta = {
+        retry: true
+      };
       const action = actionCreators.fetchOfflineMode(fetchThunk);
 
       expect(reducer(prevState, action)).toEqual(getState(false, fetchThunk));

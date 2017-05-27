@@ -235,84 +235,134 @@ describe('createNetworkMiddleware with thunks', () => {
 });
 
 describe('createNetworkMiddleware with dismissing actions functionality', () => {
-  const getFetchActionWithDismiss = (type, ...actionsToDismiss) => ({
-    type,
-    payload: {
-      isFetching: true
-    },
-    meta: {
-      retry: true,
-      dismiss: actionsToDismiss
+  describe('Plain objects', () => {
+    const getFetchActionWithDismiss = (type, ...actionsToDismiss) => ({
+      type,
+      payload: {
+        isFetching: true
+      },
+      meta: {
+        retry: true,
+        dismiss: actionsToDismiss
+      }
+    });
+
+    it('NO actions enqueued with dismiss options', () => {
+      const networkMiddleware = createNetworkMiddleware();
+      const middlewares = [networkMiddleware];
+      const mockStore = configureStore(middlewares);
+      const actionEnqueued = getFetchActionWithDismiss('FETCH_DATA');
+      const navigationAction = { type: 'NAVIGATE_BACK' };
+      const initialState = {
+        network: {
+          isConnected: false,
+          actionQueue: [actionEnqueued]
+        }
+      };
+      const store = mockStore(initialState);
+      store.dispatch(navigationAction);
+
+      const actionsDispatched = store.getActions();
+      expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_BACK' }]);
+    });
+
+    it('SOME actions enqueued with dismiss options', () => {
+      const networkMiddleware = createNetworkMiddleware();
+      const middlewares = [networkMiddleware];
+      const mockStore = configureStore(middlewares);
+      const actionEnqueued = getFetchActionWithDismiss(
+        'FETCH_DATA',
+        'NAVIGATE_BACK'
+      );
+      const navigationAction = { type: 'NAVIGATE_BACK' };
+      const initialState = {
+        network: {
+          isConnected: false,
+          actionQueue: [actionEnqueued]
+        }
+      };
+      const store = mockStore(initialState);
+      store.dispatch(navigationAction);
+
+      const actionsDispatched = store.getActions();
+      expect(actionsDispatched).toEqual([
+        actionCreators.dismissActionsFromQueue('NAVIGATE_BACK'),
+        { type: 'NAVIGATE_BACK' }
+      ]);
+    });
+
+    it('SOME actions enqueued with dismiss options, but no match', () => {
+      const networkMiddleware = createNetworkMiddleware();
+      const middlewares = [networkMiddleware];
+      const mockStore = configureStore(middlewares);
+      const actionEnqueued = getFetchActionWithDismiss(
+        'FETCH_DATA',
+        'NAVIGATE_BACK'
+      );
+      const navigationAction = { type: 'NAVIGATE_TO_LOGIN' };
+      const initialState = {
+        network: {
+          isConnected: false,
+          actionQueue: [actionEnqueued]
+        }
+      };
+      const store = mockStore(initialState);
+      store.dispatch(navigationAction);
+
+      const actionsDispatched = store.getActions();
+      expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_TO_LOGIN' }]);
+    });
+  });
+  describe('thunks', () => {
+    function fetchThunk(dispatch) {
+      dispatch({ type: 'FETCH_DATA_REQUEST' });
     }
-  });
 
-  it('NO actions enqueued with dismiss options', () => {
-    const networkMiddleware = createNetworkMiddleware();
-    const middlewares = [networkMiddleware];
-    const mockStore = configureStore(middlewares);
-    const initialFetchAction = getFetchActionWithDismiss('FETCH_DATA');
-    const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
-    const navigationAction = { type: 'NAVIGATE_BACK' };
-    const initialState = {
-      network: {
-        isConnected: false,
-        actionQueue: [actionEnqueed]
-      }
-    };
-    const store = mockStore(initialState);
-    store.dispatch(navigationAction);
+    it('Thunks enqueued with NO dismiss options', () => {
+      const networkMiddleware = createNetworkMiddleware();
+      const middlewares = [networkMiddleware];
+      const mockStore = configureStore(middlewares);
+      fetchThunk.meta = {
+        retry: true
+      };
+      const navigationAction = { type: 'NAVIGATE_BACK' };
+      const initialState = {
+        network: {
+          isConnected: false,
+          actionQueue: [fetchThunk]
+        }
+      };
+      const store = mockStore(initialState);
+      store.dispatch(navigationAction);
 
-    const actionsDispatched = store.getActions();
-    expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_BACK' }]);
-  });
+      const actionsDispatched = store.getActions();
+      expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_BACK' }]);
+    });
 
-  it('SOME actions enqueued with dismiss options', () => {
-    const networkMiddleware = createNetworkMiddleware();
-    const middlewares = [networkMiddleware];
-    const mockStore = configureStore(middlewares);
-    const initialFetchAction = getFetchActionWithDismiss(
-      'FETCH_DATA',
-      'NAVIGATE_BACK'
-    );
-    const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
-    const navigationAction = { type: 'NAVIGATE_BACK' };
-    const initialState = {
-      network: {
-        isConnected: false,
-        actionQueue: [actionEnqueed]
-      }
-    };
-    const store = mockStore(initialState);
-    store.dispatch(navigationAction);
+    it('SOME thunks enqueued with dismiss options', () => {
+      const networkMiddleware = createNetworkMiddleware();
+      const middlewares = [networkMiddleware];
+      const mockStore = configureStore(middlewares);
+      fetchThunk.meta = {
+        retry: true,
+        dismiss: ['NAVIGATE_TO_LOGIN']
+      };
+      const navigationAction = { type: 'NAVIGATE_TO_LOGIN' };
+      const initialState = {
+        network: {
+          isConnected: false,
+          actionQueue: [fetchThunk]
+        }
+      };
+      const store = mockStore(initialState);
+      store.dispatch(navigationAction);
 
-    const actionsDispatched = store.getActions();
-    expect(actionsDispatched).toEqual([
-      actionCreators.dismissActionsFromQueue('NAVIGATE_BACK'),
-      { type: 'NAVIGATE_BACK' }
-    ]);
-  });
-
-  it('SOME actions enqueued with dismiss options, but no match', () => {
-    const networkMiddleware = createNetworkMiddleware();
-    const middlewares = [networkMiddleware];
-    const mockStore = configureStore(middlewares);
-    const initialFetchAction = getFetchActionWithDismiss(
-      'FETCH_DATA',
-      'NAVIGATE_BACK'
-    );
-    const actionEnqueed = actionCreators.fetchOfflineMode(initialFetchAction);
-    const navigationAction = { type: 'NAVIGATE_TO_LOGIN' };
-    const initialState = {
-      network: {
-        isConnected: false,
-        actionQueue: [actionEnqueed]
-      }
-    };
-    const store = mockStore(initialState);
-    store.dispatch(navigationAction);
-
-    const actionsDispatched = store.getActions();
-    expect(actionsDispatched).toEqual([{ type: 'NAVIGATE_TO_LOGIN' }]);
+      const actionsDispatched = store.getActions();
+      expect(actionsDispatched).toEqual([
+        actionCreators.dismissActionsFromQueue('NAVIGATE_TO_LOGIN'),
+        { type: 'NAVIGATE_TO_LOGIN' }
+      ]);
+    });
   });
 });
 
