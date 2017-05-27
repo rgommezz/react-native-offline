@@ -1,7 +1,6 @@
-// @flow
-import find from 'lodash/find';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
+/* @flow */
+
+import { find, get, isEqual } from 'lodash';
 import {
   fetchOfflineMode,
   removeActionFromQueue,

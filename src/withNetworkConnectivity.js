@@ -1,12 +1,14 @@
+/* @flow */
+
 import React, { Component, PropTypes } from 'react';
 import { NetInfo } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import { setInternetConnectivity } from './isNetworkConnected';
 
-const withNetworkConnectivity = (
-  withConnectivityProp = true
-) => WrappedComponent => {
+const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
+  WrappedComponent: Class<React$Component<*, *, *>>
+) => {
   if (typeof withConnectivityProp !== 'boolean')
     throw new Error('you should pass a boolean as withConnectivityProp');
 

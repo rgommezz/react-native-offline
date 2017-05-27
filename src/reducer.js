@@ -1,8 +1,6 @@
-// @flow
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import find from 'lodash/find';
-import without from 'lodash/without';
+/* @flow */
+
+import { get, isEqual, find, without } from 'lodash';
 import {
   CONNECTION_CHANGE,
   FETCH_OFFLINE_MODE,
@@ -51,7 +49,12 @@ function handleOfflineAction(
 }
 
 function handleRemoveActionFromQueue(state, action) {
-  const similarActionQueued = find(state.actionQueue, a => isEqual(action, a));
+  const dummyAction = {
+    type: 'Dummy'
+  };
+
+  const similarActionQueued =
+    find(state.actionQueue, a => isEqual(action, a)) || dummyAction;
   return {
     ...state,
     actionQueue: without(state.actionQueue, similarActionQueued)

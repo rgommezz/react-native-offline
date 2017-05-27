@@ -1,14 +1,4 @@
-// @flow
-export type EnqueuedAction =
-  | {
-      type: string,
-      payload?: any,
-      meta: {
-        retry: boolean,
-        dismiss?: Array<string>
-      }
-    }
-  | Function;
+/* @flow */
 
 export type FluxAction = {
   type: string,

@@ -1,8 +1,18 @@
+/* @flow */
+
 import { Component, PropTypes } from 'react';
 import { NetInfo } from 'react-native';
 import isNetworkConnected from './isNetworkConnected';
 
-class ConnectivityRenderer extends Component {
+type Props = {
+  children: (isConnected: boolean) => React$Element<any>
+};
+
+type State = {
+  isConnected: boolean
+};
+
+class ConnectivityRenderer extends Component<void, Props, State> {
   static propTypes = {
     children: PropTypes.func.isRequired
   };
@@ -34,7 +44,7 @@ class ConnectivityRenderer extends Component {
     );
   }
 
-  handleConnectivityChange = isConnected => {
+  handleConnectivityChange = (isConnected: boolean) => {
     if (isConnected !== this.state.isConnected) {
       this.setState({
         isConnected

@@ -1,4 +1,5 @@
-// @flow
+/* @flow */
+
 import {
   CONNECTION_CHANGE,
   FETCH_OFFLINE_MODE,
