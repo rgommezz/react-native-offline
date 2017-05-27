@@ -1,9 +1,11 @@
+/* @flow */
+
 let hasInternetConnectivity = true;
 
-export default function () {
+export default function() {
   return hasInternetConnectivity;
 }
 
-export function setInternetConnectivity(connectivity) {
+export function setInternetConnectivity(connectivity: boolean) {
   hasInternetConnectivity = connectivity;
 }

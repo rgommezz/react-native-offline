@@ -26,7 +26,8 @@ Having an offline first class citizen app is very important for a successful use
 - Reducer to keep your connectivity state in the Redux store
 - Middleware to intercept internet request actions in offline mode
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
-- Offline queue support to automatically re-dispatch actions when connection is back online
+- Offline queue support to automatically re-dispatch actions when connection is back online or dismiss actions based on other actions dispatched (i.e navigation related)
+- Typed with Flow
 
 ## Installation
 This package exports modules using ES2015 syntax, so in order for this package to work properly you need to either add to your `.babelrc` config a preset that supports it, like [babel-preset-react-native-stage-0](https://github.com/skevy/babel-preset-react-native-stage-0) or alternatively the [babel-plugin-syntax-export-extensions](https://github.com/babel/babel/tree/master/packages/babel-plugin-syntax-export-extensions) plugin
@@ -45,8 +46,8 @@ Higher order function that returns a higher order component (HOC). By default, t
 
 ```js
 withNetworkConnectivity(
-  withConnectivityProp = true?: boolean
-): (YourComponent) => EnhancedComponent
+  withConnectivityProp: boolean = true
+): (WrappedComponent) => EnhancedComponent
 ```
 ##### Usage
 
@@ -115,8 +116,12 @@ There are 3 features that this library provides in order to leverage offline cap
 A network reducer to be provided to the store
 
 #### State
-##### `isConnected: boolean`
-##### `actionQueue: Array<ReduxActions>`
+```js
+type NetworkState = {
+  isConnected: boolean,
+  actionQueue: Array<*>
+}
+```
 
 #### Usage
 
@@ -174,11 +179,13 @@ import { CONNECTION_CHANGE } from 'react-native-offline-utils';
 Function that returns a redux middleware which listens to specific actions targetting API calls in online/offline mode.
 
 ```js
-createNetworkMiddleware(
-  regexActionType = /FETCH.*REQUEST/?: RegExp,
-  regexFunctionName = /fetch/?: RegExp,
-  actionTypes = []?: Array<string>
-): reduxMiddleware
+createNetworkMiddleware(config: Config): ReduxMiddleware
+
+type Config = {
+  regexActionType?: RegExp = /FETCH.*REQUEST/,
+  regexFunctionName?: RegExp = /fetch/,
+  actionTypes?: Array<string> = [] 
+}
 ```
 
 ##### Params
@@ -208,22 +215,28 @@ const store = createStore(
 );
 ```
 
-When you attempt to fetch data on the internet by means of dispatching a plain action or a thunk in offline mode, the middleware blocks the action and dispatches an action of type `@@network-connectivity/FETCH_OFFLINE_MODE` instead, containing useful information about "what you attempted to do". It provides the below action payload for plain objects:
+When you attempt to fetch data on the internet by means of dispatching a plain action or a thunk in offline mode, the middleware blocks the action and dispatches an action of type `@@network-connectivity/FETCH_OFFLINE_MODE` instead, containing useful information about "what you attempted to do". The action dispatched signature for plain objects is as follows:
 
 ```js
-{
-  prevAction: {
-    type: string, // Your previous action type
-    payload: *, // Your previous payload
-  },
+type FetchOfflineModeActionForPO = {
+  type: '@@network-connectivity/FETCH_OFFLINE_MODE',
+  payload: {
+    prevAction: {
+      type: string, // Your previous action type
+      payload?: any, // Your previous payload
+    }
+  }
 }
 ```
 
-And for thunks, the thunk itself:
+And for thunks it attaches it under `prevThunk` property:
 
 ```js
-{
-  prevThunk: ThunkAction,
+type FetchOfflineModeActionForThunks = {
+  type: '@@network-connectivity/FETCH_OFFLINE_MODE',
+  payload: {
+    prevThunk: Function
+  }
 }
 ```
 
@@ -234,33 +247,69 @@ import { FETCH_OFFLINE_MODE } from 'react-native-offline-utils';
 SnackBars, Dialog, Popups, or simple informative text are good means of conveying to the user that the operation failed due to lack of internet connection.
 
 ### Offline Queue
-A queue system to store actions that failed due to lack of connectivity, that will be re-dispatched as soon as the internet connection is back online again. It works for both plain actions and thunks
+A queue system to store actions that failed due to lack of connectivity. It works for both plain object actions and thunks.
+It allows you to:
+- Re-dispatch the action/thunk as soon as the internet connection is back online again
+- Dismiss the action from the queue based on a different action dispatched (i.e. navigating to a different screen, the fetch action is no longer relevant)
 
-In order to enable retry functionality on an action you need to:
-
-- For plain actions, pass as a `meta` object in the payload, with `retry = true`.
+#### Plain Objects
+In order to configure your PO actions to interact with the offline queue you need to use the `meta` property in your actions, following [flux standard actions convention](https://github.com/acdlite/flux-standard-action#meta). They need to adhere to the below API:
 
 ```js
-{
-  type: FETCH_USER_ID_REQUEST
-  payload: {
-    id: '3',
-    meta: {
-      retry: true,
-    },
-  },
+type ActionToBeQueued = {
+  type: string,
+  payload?: any,
+  meta: {
+    retry?: boolean, // By passing true, your action will be enqueued on offline mode
+    dismiss?: Array<string> // Array of actions which, once dispatched, will trigger a dismissal from the queue
+  }
 }
 ```
 
-- For thunks, append a property `retry` to the thunk
+##### Examples
+
+- Action that will be added to the queue on offline mode and that will be re-dispatched as soon as the connection is back online again
 
 ```js
-function fetchUserId(dispatch, getState) {
+const action = {
+  type: 'FETCH_USER_ID',
+  payload: {
+    id: 2
+  },
+  meta: {
+    retry: true
+  }
+};
+```
+
+- Action that will be added to the queue on offline mode and that will be re-dispatched as soon as the connection is back online again, as long as a `NAVIGATE_BACK` action type hasn't been dispatched in between, in which case the action would be removed from the queue.
+
+```js
+const action = {
+  type: 'FETCH_USER_ID',
+  payload: {
+    id: 2
+  },
+  meta: {
+    retry: true,
+    dismiss: ['NAVIGATE_BACK']
+  }
+};
+```
+
+#### Thunks
+- For thunks, append a `meta` property to the function with the same shape:
+
+```js
+function fetchThunk(dispatch, getState) {
   dispatch({ type: FETCH_USER_ID_REQUEST, payload: { id: '3' } });
   ...
 }
 
-fetchUserId.retry = true;
+fetchThunk.meta = {
+  retry?: boolean, // By passing true, your thunk will be enqueued on offline mode
+  dismiss?: Array<string> // Array of actions which, once dispatched, will trigger a dismissal from the queue
+}
 ```
 
 ## License
