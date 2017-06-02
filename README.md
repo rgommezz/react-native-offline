@@ -36,6 +36,11 @@ This package exports modules using ES2015 syntax, so in order for this package t
 $ yarn add react-native-offline-utils
 ```
 
+#### Android
+This library uses `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
+
+`<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
+
 ## API
 
 ### Component Utilities
