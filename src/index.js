@@ -1,5 +1,5 @@
-export reducer from './reducer';
-export withNetworkConnectivity from './withNetworkConnectivity';
-export ConnectivityRenderer from './ConnectivityRenderer';
-export createNetworkMiddleware from './createNetworkMiddleware';
-export * as actionTypes from './actionTypes';
+export { default as reducer } from './reducer';
+export { default as withNetworkConnectivity } from './withNetworkConnectivity';
+export { default as ConnectivityRenderer } from './ConnectivityRenderer';
+export { default as createNetworkMiddleware } from './createNetworkMiddleware';
+export { default as offlineActionTypes } from './actionTypes';

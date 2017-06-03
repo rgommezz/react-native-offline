@@ -1,4 +1,4 @@
 {
-  "presets": ["es2015", "stage-0"],
+  "presets": ["react-native"],
   "plugins": ["transform-flow-strip-types"]
 }

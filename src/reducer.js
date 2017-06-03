@@ -1,12 +1,7 @@
 /* @flow */
 
 import { get, isEqual, find, without } from 'lodash';
-import {
-  CONNECTION_CHANGE,
-  FETCH_OFFLINE_MODE,
-  REMOVE_FROM_ACTION_QUEUE,
-  DISMISS_ACTIONS_FROM_QUEUE
-} from './actionTypes';
+import actionTypes from './actionTypes';
 import type { FluxAction, NetworkState } from './types';
 
 export const initialState = {
@@ -77,16 +72,16 @@ export default function(
   action: FluxAction
 ) {
   switch (action.type) {
-    case CONNECTION_CHANGE:
+    case actionTypes.CONNECTION_CHANGE:
       return {
         ...state,
         isConnected: action.payload
       };
-    case FETCH_OFFLINE_MODE:
+    case actionTypes.FETCH_OFFLINE_MODE:
       return handleOfflineAction(state, action);
-    case REMOVE_FROM_ACTION_QUEUE:
+    case actionTypes.REMOVE_FROM_ACTION_QUEUE:
       return handleRemoveActionFromQueue(state, action.payload);
-    case DISMISS_ACTIONS_FROM_QUEUE:
+    case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
       return dismissActionsFromQueue(state, action.payload);
     default:
       return state;
