@@ -30,7 +30,6 @@ Having an offline first class citizen app is very important for a successful use
 - Typed with Flow
 
 ## Installation
-This package exports modules using ES2015 syntax, so in order for this package to work properly you need to either add to your `.babelrc` config a preset that supports it, like [babel-preset-react-native-stage-0](https://github.com/skevy/babel-preset-react-native-stage-0) or alternatively the [babel-plugin-syntax-export-extensions](https://github.com/babel/babel/tree/master/packages/babel-plugin-syntax-export-extensions) plugin
 
 ```
 $ yarn add react-native-offline-utils
@@ -175,9 +174,12 @@ const Root = () => (
 
 Now your network state can be accessed by any Redux container inside `mapStateToProps()`, as `state.network.isConnected`.
 
-**Note**: If you wanna listen to the action dispatched internally in your reducers, you can import the action type as:
+**Note**: If you wanna listen to the action dispatched internally in your reducers, import the offline action types and reference `CONNECTION_CHANGE`:
 ```js
-import { CONNECTION_CHANGE } from 'react-native-offline-utils';
+import { offlineActionTypes } from 'react-native-offline-utils';
+...
+if(action.type === offlineActionTypes.CONNECTION_CHANGE) // do something in your reducer
+...
 ```
 
 #### `createNetworkMiddleware()`
@@ -245,9 +247,12 @@ type FetchOfflineModeActionForThunks = {
 }
 ```
 
-That allows you to react conveniently and update your state in the way you desire, based on your previous intent. Just import the action in your reducer:
+That allows you to react conveniently and update your state in the way you desire, based on your previous intent. Just reference `FETCH_OFFLINE_MODE` action type in your reducer:
 ```js
-import { FETCH_OFFLINE_MODE } from 'react-native-offline-utils';
+import { offlineActionTypes } from 'react-native-offline-utils';
+...
+if(action.type === offlineActionTypes.FETCH_OFFLINE_MODE) // do something in your reducer
+...
 ```
 SnackBars, Dialog, Popups, or simple informative text are good means of conveying to the user that the operation failed due to lack of internet connection.
 
