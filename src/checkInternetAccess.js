@@ -10,7 +10,7 @@ export default async (
   }
   let timedOut = false;
 
-  timeout(() => {
+  setTimeout(() => {
     timedOut = true;
   }, timeout);
 
@@ -22,23 +22,3 @@ export default async (
       .catch(() => resolve(false));
   });
 };
-
-/*
-
-export default function makeCancelable(promise: Promise<*>): CancelablePromise {
-  let hasCanceled_ = false;
-
-  const wrappedPromise = new Promise((resolve, reject) => {
-    promise.then((val) => !hasCanceled_ && resolve(val));
-    promise.catch((error) => !hasCanceled_ && reject(error));
-  });
-
-  return {
-    promise: wrappedPromise,
-    cancel() {
-      hasCanceled_ = true;
-    },
-  };
-}
-
-*/
