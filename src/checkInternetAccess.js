@@ -8,16 +8,12 @@ export default async (
   if (!isConnected) {
     return isConnected;
   }
-  let timedOut = false;
-
-  setTimeout(() => {
-    timedOut = true;
-  }, timeout);
+  const start = new Date();
 
   return new Promise(resolve => {
     fetch(address)
       .then(() => {
-        resolve(!timedOut); // We have internet connection if not timmed out
+        resolve(!(new Date() - start > timeout));
       })
       .catch(() => resolve(false));
   });
