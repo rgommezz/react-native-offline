@@ -8,12 +8,15 @@ export default async (
   if (!isConnected) {
     return isConnected;
   }
-  const start = new Date();
 
   return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(false);
+    }, timeout);
+
     fetch(address)
       .then(() => {
-        resolve(!(new Date() - start > timeout));
+        resolve(true);
       })
       .catch(() => resolve(false));
   });
