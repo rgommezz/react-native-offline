@@ -38,6 +38,12 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
     if (typeof this.props.children !== 'function') {
       throw new Error('You should pass a function as a children');
     }
+    if (typeof this.props.timeout !== 'number') {
+      throw new Error('you should pass a number as timeout prop');
+    }
+    if (typeof this.props.pingServerUrl !== 'string') {
+      throw new Error('you should pass a string as pingServerUrl prop');
+    }
   }
 
   componentDidMount() {

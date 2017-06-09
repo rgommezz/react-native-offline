@@ -20,11 +20,15 @@ const withNetworkConnectivity = (
     pingServerUrl = 'https://google.com'
   }: Arguments = {}
 ) => (WrappedComponent: Class<React$Component<*, *, *>>) => {
-  if (typeof withRedux !== 'boolean')
+  if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
-
-  if (typeof timeout !== 'number')
+  }
+  if (typeof timeout !== 'number') {
     throw new Error('you should pass a number as timeout parameter');
+  }
+  if (typeof pingServerUrl !== 'string') {
+    throw new Error('you should pass a string as pingServerUrl parameter');
+  }
 
   class EnhancedComponent extends Component {
     static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
