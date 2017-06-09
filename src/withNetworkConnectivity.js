@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component, PropTypes } from 'react';
-import { NetInfo } from 'react-native';
+import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import { setInternetConnectivity } from './isNetworkConnected';
@@ -30,6 +30,12 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
         'change',
         this.handleConnectivityChange
       );
+      // On Android the listener does not fire on startup
+      if (Platform.OS === 'android') {
+        NetInfo.isConnected
+          .fetch()
+          .then(isConnected => this.handleConnectivityChange(isConnected));
+      }
     }
 
     componentWillUnmount() {
