@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
-import { setInternetConnectivity } from './isNetworkConnected';
+import reactConnectionStore from './reactConnectionStore';
 import checkInternetAccess from './checkInternetAccess';
 
 const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
@@ -23,7 +23,7 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
     };
 
     state = {
-      isConnected: true
+      isConnected: reactConnectionStore.getConnection()
     };
 
     componentDidMount() {
@@ -48,8 +48,7 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
 
     handleConnectivityChange = isConnected => {
       const { store } = this.context;
-      // This is triggered on startup as well, so we can detect the connection on initialization in both Android and iOS
-      setInternetConnectivity(isConnected);
+      reactConnectionStore.setConnection(isConnected);
       // Top most component, syncing with store
       if (
         typeof store === 'object' &&

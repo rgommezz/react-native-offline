@@ -1,8 +1,9 @@
 /* @flow */
 
 import { Component, PropTypes } from 'react';
-import { NetInfo } from 'react-native';
-import isNetworkConnected from './isNetworkConnected';
+import { NetInfo, Platform } from 'react-native';
+import checkInternetAccess from './checkInternetAccess';
+import reactConnectionStore from './reactConnectionStore';
 
 type Props = {
   children: (isConnected: boolean) => React$Element<any>
@@ -18,33 +19,31 @@ class ConnectivityRenderer extends Component<void, Props, State> {
   };
 
   state = {
-    isConnected: true
+    isConnected: reactConnectionStore.getConnection()
   };
 
   componentDidMount() {
-    NetInfo.isConnected.addEventListener(
-      'change',
-      this.handleConnectivityChange
-    );
-    // If user is not using the networkHOC, no harm in the below call. handleFirstConnectivityChange will fire
-    // as soon as the component mounts, setting the right connectivity, hence re-rendering child components
-    const isConnected = isNetworkConnected();
-    if (isConnected !== this.state.isConnected) {
-      // eslint-disable-next-line react/no-did-mount-set-state
-      this.setState({
-        isConnected
-      });
+    NetInfo.isConnected.addEventListener('change', this.checkInternet);
+    // On Android the listener does not fire on startup
+    if (Platform.OS === 'android') {
+      NetInfo.isConnected
+        .fetch()
+        .then(isConnected => this.checkInternet(isConnected));
     }
   }
 
   componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener(
-      'change',
-      this.handleConnectivityChange
-    );
+    NetInfo.isConnected.removeEventListener('change', this.checkInternet);
   }
 
+  checkInternet = (isConnected: boolean) => {
+    checkInternetAccess(isConnected).then(hasInternetAccess => {
+      this.handleConnectivityChange(hasInternetAccess);
+    });
+  };
+
   handleConnectivityChange = (isConnected: boolean) => {
+    reactConnectionStore.setConnection(isConnected);
     if (isConnected !== this.state.isConnected) {
       this.setState({
         isConnected

@@ -4,7 +4,7 @@ export default async (
   isConnected: boolean,
   address: string = 'https://google.com/text.txt', // We don't need a valid response, but ANY response
   timeout: number = 3000
-) => {
+): Promise<boolean> => {
   if (!isConnected) {
     return false;
   }
