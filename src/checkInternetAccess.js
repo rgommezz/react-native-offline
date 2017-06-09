@@ -2,22 +2,26 @@
 
 export default async (
   isConnected: boolean,
-  address: string = 'http://google.com/text.txt', // We don't need a valid respond, but ANY respond
+  address: string = 'https://google.com/text.txt', // We don't need a valid response, but ANY response
   timeout: number = 3000
 ) => {
   if (!isConnected) {
-    return isConnected;
+    return false;
   }
 
   return new Promise(resolve => {
-    setTimeout(() => {
+    const tm = setTimeout(() => {
       resolve(false);
     }, timeout);
 
-    fetch(address)
+    fetch(address, { method: 'HEAD' })
       .then(() => {
+        clearTimeout(tm);
         resolve(true);
       })
-      .catch(() => resolve(false));
+      .catch(() => {
+        clearTimeout(tm);
+        resolve(false);
+      });
   });
 };

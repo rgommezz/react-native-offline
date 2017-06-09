@@ -5,7 +5,7 @@ import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import { setInternetConnectivity } from './isNetworkConnected';
-import checkInternetConnection from './checkInternetAccess';
+import checkInternetAccess from './checkInternetAccess';
 
 const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
   WrappedComponent: Class<React$Component<*, *, *>>
@@ -41,8 +41,8 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
     }
 
     checkInternet = isConnected => {
-      checkInternetConnection(isConnected).then(isInternet => {
-        this.handleConnectivityChange(isInternet);
+      checkInternetAccess(isConnected).then(hasInternetAccess => {
+        this.handleConnectivityChange(hasInternetAccess);
       });
     };
 
