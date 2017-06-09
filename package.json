@@ -1,6 +1,6 @@
 {
   "name": "react-native-offline-utils",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Utility functions for dealing with offline mode in React Native",
   "main": "./src/index.js",
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
