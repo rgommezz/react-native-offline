@@ -5,7 +5,12 @@ import { NetInfo, Platform } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
 import reactConnectionStore from './reactConnectionStore';
 
-type Props = {
+type DefaultProps = {
+  timeout: number,
+  pingServerUrl: string
+};
+
+type Props = DefaultProps & {
   children: (isConnected: boolean) => React$Element<any>
 };
 
@@ -13,14 +18,27 @@ type State = {
   isConnected: boolean
 };
 
-class ConnectivityRenderer extends Component<void, Props, State> {
+class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   static propTypes = {
-    children: PropTypes.func.isRequired
+    children: PropTypes.func.isRequired,
+    timeout: PropTypes.number,
+    pingServerUrl: PropTypes.string
+  };
+
+  static defaultProps: DefaultProps = {
+    timeout: 3000,
+    pingServerUrl: 'https://google.com'
   };
 
   state = {
     isConnected: reactConnectionStore.getConnection()
   };
+
+  componentWillMount() {
+    if (typeof this.props.children !== 'function') {
+      throw new Error('You should pass a function as a children');
+    }
+  }
 
   componentDidMount() {
     NetInfo.isConnected.addEventListener('change', this.checkInternet);
@@ -37,7 +55,11 @@ class ConnectivityRenderer extends Component<void, Props, State> {
   }
 
   checkInternet = (isConnected: boolean) => {
-    checkInternetAccess(isConnected).then(hasInternetAccess => {
+    checkInternetAccess(
+      isConnected,
+      this.props.timeout,
+      this.props.pingServerUrl
+    ).then(hasInternetAccess => {
       this.handleConnectivityChange(hasInternetAccess);
     });
   };

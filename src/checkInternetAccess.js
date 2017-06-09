@@ -1,12 +1,12 @@
 /* @flow */
 
-export default async (
+export default function checkInternetAccess(
   isConnected: boolean,
-  address: string = 'https://google.com',
-  timeout: number = 3000
-): Promise<boolean> => {
+  timeout: number = 3000,
+  address: string = 'https://google.com'
+): Promise<boolean> {
   if (!isConnected) {
-    return false;
+    return Promise.resolve(false);
   }
 
   return new Promise(resolve => {
@@ -24,4 +24,4 @@ export default async (
         resolve(false);
       });
   });
-};
+}

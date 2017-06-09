@@ -7,11 +7,24 @@ import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
 import checkInternetAccess from './checkInternetAccess';
 
-const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
-  WrappedComponent: Class<React$Component<*, *, *>>
-) => {
-  if (typeof withConnectivityProp !== 'boolean')
-    throw new Error('you should pass a boolean as withConnectivityProp');
+type Arguments = {|
+  withRedux: boolean,
+  timeout: 3000,
+  pingServerUrl: string
+|};
+
+const withNetworkConnectivity = (
+  {
+    withRedux = false,
+    timeout = 3000,
+    pingServerUrl = 'https://google.com'
+  }: Arguments = {}
+) => (WrappedComponent: Class<React$Component<*, *, *>>) => {
+  if (typeof withRedux !== 'boolean')
+    throw new Error('you should pass a boolean as withRedux parameter');
+
+  if (typeof timeout !== 'number')
+    throw new Error('you should pass a number as timeout parameter');
 
   class EnhancedComponent extends Component {
     static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
@@ -41,7 +54,11 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
     }
 
     checkInternet = isConnected => {
-      checkInternetAccess(isConnected).then(hasInternetAccess => {
+      checkInternetAccess(
+        isConnected,
+        timeout,
+        pingServerUrl
+      ).then(hasInternetAccess => {
         this.handleConnectivityChange(hasInternetAccess);
       });
     };
@@ -53,7 +70,7 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
       if (
         typeof store === 'object' &&
         typeof store.dispatch === 'function' &&
-        withConnectivityProp === false
+        withRedux === true
       ) {
         const actionQueue = store.getState().network.actionQueue;
         store.dispatch(connectionChange(isConnected));
@@ -75,9 +92,7 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
       return (
         <WrappedComponent
           {...this.props}
-          isConnected={
-            withConnectivityProp ? this.state.isConnected : undefined
-          }
+          isConnected={!withRedux ? this.state.isConnected : undefined}
         />
       );
     }
