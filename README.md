@@ -15,7 +15,9 @@ If you wanna jump straight to the API:
 ## Motivation
 When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behaves in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
 
-Having an offline first class citizen app is very important for a successful user experience. React Native ships with `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not garantee internet access so it can provide false positives. This library aims to gather a variety of modules that follow React and redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
+Having an offline first class citizen app is very important for a successful user experience. React Native ships with `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not garantee internet access so it can provide false positives. 
+
+This library aims to gather a variety of modules that follow React and redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
 
 ## Features
 - Offline/online conditional rendering through HOC or Render Callback techniques
