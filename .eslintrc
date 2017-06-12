@@ -24,7 +24,8 @@
   "env": {
     "es6": true,
     "node": true,
-    "jest": true
+    "jest": true,
+    "browser": true // This is necessary for React Native fetch, see https://github.com/eslint/eslint/issues/4015
   },
   "rules": {
     "import/extensions": 0,

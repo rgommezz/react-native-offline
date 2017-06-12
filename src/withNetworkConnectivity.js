@@ -4,13 +4,31 @@ import React, { Component, PropTypes } from 'react';
 import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
-import { setInternetConnectivity } from './isNetworkConnected';
+import reactConnectionStore from './reactConnectionStore';
+import checkInternetAccess from './checkInternetAccess';
 
-const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
-  WrappedComponent: Class<React$Component<*, *, *>>
-) => {
-  if (typeof withConnectivityProp !== 'boolean')
-    throw new Error('you should pass a boolean as withConnectivityProp');
+type Arguments = {
+  withRedux?: boolean,
+  timeout?: number,
+  pingServerUrl?: string
+};
+
+const withNetworkConnectivity = (
+  {
+    withRedux = false,
+    timeout = 3000,
+    pingServerUrl = 'https://google.com'
+  }: Arguments = {}
+) => (WrappedComponent: Class<React$Component<*, *, *>>) => {
+  if (typeof withRedux !== 'boolean') {
+    throw new Error('you should pass a boolean as withRedux parameter');
+  }
+  if (typeof timeout !== 'number') {
+    throw new Error('you should pass a number as timeout parameter');
+  }
+  if (typeof pingServerUrl !== 'string') {
+    throw new Error('you should pass a string as pingServerUrl parameter');
+  }
 
   class EnhancedComponent extends Component {
     static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
@@ -22,38 +40,41 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
     };
 
     state = {
-      isConnected: true
+      isConnected: reactConnectionStore.getConnection()
     };
 
     componentDidMount() {
-      NetInfo.isConnected.addEventListener(
-        'change',
-        this.handleConnectivityChange
-      );
+      NetInfo.isConnected.addEventListener('change', this.checkInternet);
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
         NetInfo.isConnected
           .fetch()
-          .then(isConnected => this.handleConnectivityChange(isConnected));
+          .then(isConnected => this.checkInternet(isConnected));
       }
     }
 
     componentWillUnmount() {
-      NetInfo.isConnected.removeEventListener(
-        'change',
-        this.handleConnectivityChange
-      );
+      NetInfo.isConnected.removeEventListener('change', this.checkInternet);
     }
+
+    checkInternet = isConnected => {
+      checkInternetAccess(
+        isConnected,
+        timeout,
+        pingServerUrl
+      ).then(hasInternetAccess => {
+        this.handleConnectivityChange(hasInternetAccess);
+      });
+    };
 
     handleConnectivityChange = isConnected => {
       const { store } = this.context;
-      // This is triggered on startup as well, so we can detect the connection on initialization in both Android and iOS
-      setInternetConnectivity(isConnected);
+      reactConnectionStore.setConnection(isConnected);
       // Top most component, syncing with store
       if (
         typeof store === 'object' &&
         typeof store.dispatch === 'function' &&
-        withConnectivityProp === false
+        withRedux === true
       ) {
         const actionQueue = store.getState().network.actionQueue;
         store.dispatch(connectionChange(isConnected));
@@ -75,9 +96,7 @@ const withNetworkConnectivity = (withConnectivityProp: boolean = true) => (
       return (
         <WrappedComponent
           {...this.props}
-          isConnected={
-            withConnectivityProp ? this.state.isConnected : undefined
-          }
+          isConnected={!withRedux ? this.state.isConnected : undefined}
         />
       );
     }
