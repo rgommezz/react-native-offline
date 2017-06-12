@@ -6,8 +6,8 @@ import checkInternetAccess from './checkInternetAccess';
 import reactConnectionStore from './reactConnectionStore';
 
 type DefaultProps = {
-  timeout: number,
-  pingServerUrl: string
+  timeout?: number,
+  pingServerUrl?: string
 };
 
 type Props = DefaultProps & {

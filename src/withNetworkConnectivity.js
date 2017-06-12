@@ -7,11 +7,11 @@ import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
 import checkInternetAccess from './checkInternetAccess';
 
-type Arguments = {|
-  withRedux: boolean,
-  timeout: 3000,
-  pingServerUrl: string
-|};
+type Arguments = {
+  withRedux?: boolean,
+  timeout?: number,
+  pingServerUrl?: string
+};
 
 const withNetworkConnectivity = (
   {
