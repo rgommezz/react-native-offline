@@ -156,7 +156,7 @@ export default store;
 ```
 
 ##### 2.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
-The other config parameters, `timeout` and `pingServerUrl` can be provided for the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
+The other config parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
 ```js
 // Root.js
