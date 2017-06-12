@@ -59,7 +59,7 @@ type Config = {
 
 `timeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
 
-`pingServerUrl`: remote server to ping to. It defaults to https://google.com, but you can provide your own if needed.
+`pingServerUrl`: remote server to ping to. It defaults to https://google.com since it's probably one the most stable servers out there, but you can provide your own if needed.
 
 ##### Usage
 ```js
