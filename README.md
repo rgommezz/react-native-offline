@@ -75,7 +75,7 @@ export default withNetworkConnectivity()(YourComponent);
 ```
 
 #### `ConnectivityRenderer`
-React component that accepts a function as children. It allows you to decouple your parent component and your child component, managing connectivity state on behalf of the components it is composed with, without making demands on how that state is leveraged by its children. Useful for conditionally render different children based on connectivity status.
+React component that accepts a function as children. It allows you to decouple your parent component and your child component, managing connectivity state on behalf of the components it is composed with, without making demands on how that state is leveraged by its children. Useful for conditionally render different children based on connectivity status. `timeout` and `pingServerUrl` can be provided through props in this case.
 
 ##### Props
 ```js
@@ -153,8 +153,8 @@ const store = createStore(rootReducer);
 export default store;
 ```
 
-##### 2.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`
-Make sure your component is a descendant of the react-redux `<Provider>` component, so that withNetworkConnectivity has access to the store.
+##### 2.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
+The other config parameters, `timeout` and `pingServerUrl` can be provided for the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
 ```js
 // Root.js
@@ -210,7 +210,7 @@ By default it's configured to intercept actions for fetching data following the 
 
 `regexFunctionName`: only for redux-thunk, regular expression for specifying the thunk names you are interested to catch in offline mode. Since in ECMAScript 2015, variables and methods can infer the name of an anonymous function from its syntactic position, it's safe to use any sort of function style. It defaults to function names that contains the string "fetch", as `fetchUserId`.
 
-`actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
+`actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
 ##### Usage
 You should apply the middleware to the store using `applyMiddleware`. **The network middleware should be the first on the chain**, before any other middleware used for handling async actions, such as [redux-thunk](https://github.com/gaearon/redux-thunk), [redux-saga](https://github.com/redux-saga/redux-saga) or [redux-observable](https://github.com/redux-observable/redux-observable).
