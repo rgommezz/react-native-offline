@@ -3,6 +3,8 @@
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports both iOS and Android platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
+Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀 
+
 If you wanna jump straight to the API:
 * [Component Utilities](#component-utilities)
   + [`withNetworkConnectivity()`](#withnetworkconnectivity)
