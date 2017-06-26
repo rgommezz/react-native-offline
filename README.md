@@ -1,5 +1,5 @@
-# react-native-offline-utils
-[![CircleCI](https://circleci.com/gh/rauliyohmc/react-native-offline-utils.svg?style=shield)](https://circleci.com/gh/rauliyohmc/react-native-offline-utils) [![npm version](https://badge.fury.io/js/react-native-offline-utils.svg)](https://badge.fury.io/js/react-native-offline-utils) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline-utils/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline-utils?branch=master)
+# react-native-offline
+[![CircleCI](https://circleci.com/gh/rauliyohmc/react-native-offline.svg?style=shield)](https://circleci.com/gh/rauliyohmc/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports both iOS and Android platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
@@ -40,7 +40,7 @@ This library aims to gather a variety of modules that follow React and redux bes
 
 ## Installation
 ```
-$ yarn add react-native-offline-utils
+$ yarn add react-native-offline
 ```
 
 #### Android
@@ -77,7 +77,7 @@ type Config = {
 ```js
 import React from 'react';
 import { Text } from 'react-native';
-import { withNetworkConnectivity } from 'react-native-offline-utils';
+import { withNetworkConnectivity } from 'react-native-offline';
 
 const YourComponent = ({ isConnected }) => (
   <Text>{isConnected ? 'Look ma, I am connected to the internet!' : 'Offline :('}</Text>
@@ -101,7 +101,7 @@ type Props = {
 ##### Usage
 ```js
 ...
-import { ConnectivityRenderer } from 'react-native-offline-utils';
+import { ConnectivityRenderer } from 'react-native-offline';
 
 const YourComponent = () => (
   <View>
@@ -154,7 +154,7 @@ type NetworkState = {
 ```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
-import { reducer as network } from 'react-native-offline-utils';
+import { reducer as network } from 'react-native-offline';
 
 const rootReducer = combineReducers({
   // ... your other reducers here ...
@@ -173,7 +173,7 @@ The other config parameters, `timeout` and `pingServerUrl` can be provided to th
 import store from './configureStore';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { withNetworkConnectivity } from 'react-native-offline-utils';
+import { withNetworkConnectivity } from 'react-native-offline';
 
 let App = () => (
   <Navigator>
@@ -197,7 +197,7 @@ Now your network state can be accessed by any Redux container inside `mapStateTo
 
 **Note**: If you wanna listen to the action dispatched internally in your reducers, import the offline action types and reference `CONNECTION_CHANGE`:
 ```js
-import { offlineActionTypes } from 'react-native-offline-utils';
+import { offlineActionTypes } from 'react-native-offline';
 ...
 if(action.type === offlineActionTypes.CONNECTION_CHANGE) // do something in your reducer
 ...
@@ -229,7 +229,7 @@ You should apply the middleware to the store using `applyMiddleware`. **The netw
 
 ```js
 import { createStore, applyMiddleware } from 'redux';
-import { createNetworkMiddleware } from 'react-native-offline-utils';
+import { createNetworkMiddleware } from 'react-native-offline';
 import createSagaMiddleware from 'redux-saga';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -268,7 +268,7 @@ type FetchOfflineModeActionForThunks = {
 
 That allows you to react conveniently and update your state in the way you desire, based on your previous intent. Just reference `FETCH_OFFLINE_MODE` action type in your reducer:
 ```js
-import { offlineActionTypes } from 'react-native-offline-utils';
+import { offlineActionTypes } from 'react-native-offline';
 ...
 if(action.type === offlineActionTypes.FETCH_OFFLINE_MODE) // do something in your reducer
 ...
