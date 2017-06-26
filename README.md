@@ -5,14 +5,22 @@ Handful of utilities you should keep in your toolbelt to handle offline/online c
 
 Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀 
 
-If you wanna jump straight to the API:
-* [Component Utilities](#component-utilities)
-  + [`withNetworkConnectivity()`](#withnetworkconnectivity)
-  + [`ConnectivityRenderer`](#connectivityrenderer)
-* [Integration with Redux](#integration-with-redux)
-  + [`Network reducer`](#network-reducer)
-  + [`createNetworkMiddleware()`](#createnetworkmiddleware)
-  + [`Offline Queue`](#offline-queue)
+## Contents
+
+* [Motivation](#motivation)
+* [Features](#features)
+* [Installation](#installation)
+* [API](#api)
+  * [Component Utilities](#component-utilities)
+    + [`withNetworkConnectivity()`](#withnetworkconnectivity)
+    + [`ConnectivityRenderer`](#connectivityrenderer)
+  * [Integration with Redux](#integration-with-redux)
+    + [`Network reducer`](#network-reducer)
+    + [`createNetworkMiddleware()`](#createnetworkmiddleware)
+    + [`Offline Queue`](#offline-queue)
+* [Miscellanea](#miscellanea)
+  * [Inspiration](#inspiration)
+  * [License](#license)
 
 ## Motivation
 When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behaves in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
@@ -332,6 +340,11 @@ fetchThunk.meta = {
 }
 ```
 
-## License
+## Miscellanea
+
+### Inspiration
+Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.
+
+### License
 MIT
 
