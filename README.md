@@ -117,7 +117,7 @@ const YourComponent = () => (
     </ConnectivityRenderer>
     <View>
       <Text>Another Section</Text>
-    <View>
+    </View>
     <ConnectivityRenderer>
       {isConnected => (
         <SnackBar
