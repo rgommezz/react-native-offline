@@ -220,7 +220,22 @@ type Config = {
 `regexActionType`: regular expression to indicate the action types to be intercepted in offline mode.
 By default it's configured to intercept actions for fetching data following the Redux [convention](http://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
-`regexFunctionName`: only for redux-thunk, regular expression for specifying the thunk names you are interested to catch in offline mode. Since in ECMAScript 2015, variables and methods can infer the name of an anonymous function from its syntactic position, it's safe to use any sort of function style. It defaults to function names that contains the string "fetch", as `fetchUserId`.
+`regexFunctionName`: only for redux-thunk, regular expression for specifying the function names you are interested to catch in offline mode. Keep in mind that **it refers to the function returned by your action creator, not the action creator itself, so make sure to use a named function instead of an anonymous arrow function**. It defaults to function names that contains the string "fetch", such as `fetchData`. See the snippet below as reference.
+
+```javascript
+export const fetchUser = (url) => {
+  return function fetchData(dispatch) { // Name this function accordingly
+    fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        dispatch({type: FETCH_USER_SUCCESS, payload: responseJson});
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+```
 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
