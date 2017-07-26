@@ -341,15 +341,15 @@ const action = {
 ```
 
 #### Thunks
-- For thunks, append a `meta` property to the function with the same shape:
+- For thunks, append a `meta` property to the function returned by the thunk with the same shape:
 
 ```js
-function fetchThunk(dispatch, getState) {
+function fetchData(dispatch, getState) {
   dispatch({ type: FETCH_USER_ID_REQUEST, payload: { id: '3' } });
   ...
 }
 
-fetchThunk.meta = {
+fetchData.meta = {
   retry?: boolean, // By passing true, your thunk will be enqueued on offline mode
   dismiss?: Array<string> // Array of actions which, once dispatched, will trigger a dismissal from the queue
 }
