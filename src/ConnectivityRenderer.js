@@ -7,31 +7,31 @@ import reactConnectionStore from './reactConnectionStore';
 
 type DefaultProps = {
   timeout?: number,
-  pingServerUrl?: string
+  pingServerUrl?: string,
 };
 
 type Props = DefaultProps & {
-  children: (isConnected: boolean) => React$Element<any>
+  children: (isConnected: boolean) => React$Element<any>,
 };
 
 type State = {
-  isConnected: boolean
+  isConnected: boolean,
 };
 
 class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   static propTypes = {
     children: PropTypes.func.isRequired,
     timeout: PropTypes.number,
-    pingServerUrl: PropTypes.string
+    pingServerUrl: PropTypes.string,
   };
 
   static defaultProps: DefaultProps = {
     timeout: 3000,
-    pingServerUrl: 'https://google.com'
+    pingServerUrl: 'https://google.com',
   };
 
   state = {
-    isConnected: reactConnectionStore.getConnection()
+    isConnected: reactConnectionStore.getConnection(),
   };
 
   componentWillMount() {
@@ -52,7 +52,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
     if (Platform.OS === 'android') {
       NetInfo.isConnected
         .fetch()
-        .then(isConnected => this.checkInternet(isConnected));
+        .then((isConnected: boolean) => this.checkInternet(isConnected));
     }
   }
 
@@ -64,8 +64,8 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
     checkInternetAccess(
       isConnected,
       this.props.timeout,
-      this.props.pingServerUrl
-    ).then(hasInternetAccess => {
+      this.props.pingServerUrl,
+    ).then((hasInternetAccess: boolean) => {
       this.handleConnectivityChange(hasInternetAccess);
     });
   };
@@ -74,7 +74,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
     reactConnectionStore.setConnection(isConnected);
     if (isConnected !== this.state.isConnected) {
       this.setState({
-        isConnected
+        isConnected,
       });
     }
   };
