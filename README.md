@@ -211,20 +211,29 @@ createNetworkMiddleware(config: Config): ReduxMiddleware
 
 type Config = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
-  regexFunctionName?: RegExp = /fetch/,
   actionTypes?: Array<string> = [] 
 }
 ```
 
-##### Config
+##### PO Config
+This is the setup you need to put in place for libraries such as `redux-saga` or `redux-observable`, which rely on plain actions being dispatched to trigger async flow:
+
 `regexActionType`: regular expression to indicate the action types to be intercepted in offline mode.
 By default it's configured to intercept actions for fetching data following the Redux [convention](http://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
-`regexFunctionName`: only for redux-thunk, regular expression for specifying the function names you are interested to catch in offline mode. Keep in mind that **it refers to the function returned by your action creator, not the action creator itself, so make sure to use a named function instead of an anonymous arrow function**. It defaults to function names that contains the string "fetch", such as `fetchData`. See the snippet below as reference.
+`actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
+
+##### Thunks Config
+For `redux-thunk` library, the async flow is wrapped inside functions that will be lazily evaluated when dispatched, so our store is able to dispatch functions as well. Therefore, the configuration differs:
+
+- Make sure to use a named function instead of an anonymous arrow function for the thunk returned by your action creator.
+- Use `interceptInOffline` property in your thunk and set it to `true`.
+
+Example:
 
 ```javascript
 export const fetchUser = (url) => {
-  return function fetchData(dispatch) { // Name this function accordingly
+  return function thunk(dispatch) {
     fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -234,10 +243,10 @@ export const fetchUser = (url) => {
         console.error(error);
       });
   };
+  
+  thunk.interceptInOffline = true; // This is the important part
 };
 ```
-
-`actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
 ##### Usage
 You should apply the middleware to the store using `applyMiddleware`. **The network middleware should be the first on the chain**, before any other middleware used for handling async actions, such as [redux-thunk](https://github.com/gaearon/redux-thunk), [redux-saga](https://github.com/redux-saga/redux-saga) or [redux-observable](https://github.com/redux-observable/redux-observable).
