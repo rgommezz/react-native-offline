@@ -10,16 +10,20 @@ import checkInternetAccess from './checkInternetAccess';
 type Arguments = {
   withRedux?: boolean,
   timeout?: number,
-  pingServerUrl?: string
+  pingServerUrl?: string,
+};
+
+type State = {
+  isConnected: boolean,
 };
 
 const withNetworkConnectivity = (
   {
     withRedux = false,
     timeout = 3000,
-    pingServerUrl = 'https://google.com'
-  }: Arguments = {}
-) => (WrappedComponent: Class<React$Component<*, *, *>>) => {
+    pingServerUrl = 'https://google.com',
+  }: Arguments = {},
+) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
   }
@@ -30,17 +34,17 @@ const withNetworkConnectivity = (
     throw new Error('you should pass a string as pingServerUrl parameter');
   }
 
-  class EnhancedComponent extends Component {
+  class EnhancedComponent extends Component<void, void, State> {
     static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
 
     static contextTypes = {
       store: PropTypes.shape({
-        dispatch: PropTypes.func
-      })
+        dispatch: PropTypes.func,
+      }),
     };
 
     state = {
-      isConnected: reactConnectionStore.getConnection()
+      isConnected: reactConnectionStore.getConnection(),
     };
 
     componentDidMount() {
@@ -49,7 +53,7 @@ const withNetworkConnectivity = (
       if (Platform.OS === 'android') {
         NetInfo.isConnected
           .fetch()
-          .then(isConnected => this.checkInternet(isConnected));
+          .then((isConnected: boolean) => this.checkInternet(isConnected));
       }
     }
 
@@ -57,17 +61,17 @@ const withNetworkConnectivity = (
       NetInfo.isConnected.removeEventListener('change', this.checkInternet);
     }
 
-    checkInternet = isConnected => {
+    checkInternet = (isConnected: boolean) => {
       checkInternetAccess(
         isConnected,
         timeout,
-        pingServerUrl
-      ).then(hasInternetAccess => {
+        pingServerUrl,
+      ).then((hasInternetAccess: boolean) => {
         this.handleConnectivityChange(hasInternetAccess);
       });
     };
 
-    handleConnectivityChange = isConnected => {
+    handleConnectivityChange = (isConnected: boolean) => {
       const { store } = this.context;
       reactConnectionStore.setConnection(isConnected);
       // Top most component, syncing with store
@@ -80,15 +84,13 @@ const withNetworkConnectivity = (
         store.dispatch(connectionChange(isConnected));
         // dispatching queued actions in order of arrival (if we have any)
         if (isConnected && actionQueue.length > 0) {
-          actionQueue.forEach(action => {
+          actionQueue.forEach((action: *) => {
             store.dispatch(action);
           });
         }
       } else {
         // Standard HOC, passing connectivity as props
-        this.setState({
-          isConnected
-        });
+        this.setState({ isConnected });
       }
     };
 

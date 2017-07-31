@@ -6,11 +6,14 @@
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint src",
     "jest": "jest",
     "test": "concurrently \"npm run lint\" \"npm run jest:coverage\" \"npm run flow\"",
     "flow": "flow",
-    "jest:coverage": "node --harmony_proxies node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "format": "eslint --fix js/**/",
+    "prettier": "prettier --single-quote --trailing-comma all --write \"src/**/*.js\"",
+    "jest:coverage": "node --harmony_proxies node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "precommit": "yarn run lint"
   },
   "repository": {
     "type": "git",
@@ -47,6 +50,7 @@
     "eslint-plugin-prettier": "^2.1.1",
     "eslint-plugin-react": "^6.9.0",
     "flow-bin": "0.42.0",
+    "husky": "^0.14.3",
     "jest": "^19.0.2",
     "prettier": "^1.3.1",
     "react": "16.0.0-alpha.6",

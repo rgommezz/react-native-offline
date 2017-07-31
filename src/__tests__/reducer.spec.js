@@ -1,21 +1,22 @@
-import reducer, { initialState } from '../src/reducer';
-import * as actionCreators from '../src/actionCreators';
+/* eslint flowtype/require-parameter-type: 0 */
+import reducer, { initialState } from '../reducer';
+import * as actionCreators from '../actionCreators';
 
 describe('reducer', () => {
   const getState = (isConnected = false, ...actionQueue) => ({
     isConnected,
-    actionQueue
+    actionQueue,
   });
 
   it('returns prevState on initialization', () => {
     expect(reducer(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(
-      initialState
+      initialState,
     );
   });
 
   it('returns prevState if the action is not handled', () => {
     expect(
-      reducer(initialState, { type: 'ANOTHER_ACTION_I_DONT_CARE' })
+      reducer(initialState, { type: 'ANOTHER_ACTION_I_DONT_CARE' }),
     ).toEqual(initialState);
   });
 
@@ -23,7 +24,7 @@ describe('reducer', () => {
     const mockAction = actionCreators.connectionChange(false);
     expect(reducer(initialState, mockAction)).toEqual({
       isConnected: false,
-      actionQueue: []
+      actionQueue: [],
     });
   });
 
@@ -31,29 +32,29 @@ describe('reducer', () => {
   const prevActionToRetry1 = {
     type: 'FETCH_DATA_REQUEST',
     payload: {
-      id: '1'
+      id: '1',
     },
     meta: {
-      retry: true
-    }
+      retry: true,
+    },
   };
   const prevActionToRetry2 = {
     type: 'FETCH_OTHER_REQUEST',
     payload: {
-      isFetching: true
+      isFetching: true,
     },
     meta: {
-      retry: true
-    }
+      retry: true,
+    },
   };
   const prevActionToRetry1WithDifferentPayload = {
     type: 'FETCH_DATA_REQUEST',
     payload: {
-      id: '2'
+      id: '2',
     },
     meta: {
-      retry: true
-    }
+      retry: true,
+    },
   };
   /** */
 
@@ -62,17 +63,17 @@ describe('reducer', () => {
       const prevAction = {
         type: 'FETCH_DATA_REQUEST',
         payload: {
-          id: '1'
-        }
+          id: '1',
+        },
       };
       const anotherPrevAction = {
         type: 'FETCH_DATA_REQUEST',
         payload: {
-          id: '1'
+          id: '1',
         },
         meta: {
-          retry: false
-        }
+          retry: false,
+        },
       };
 
       const action = actionCreators.fetchOfflineMode(prevAction);
@@ -89,7 +90,7 @@ describe('reducer', () => {
 
       expect(reducer(prevState, action2)).toEqual({
         isConnected: false,
-        actionQueue: [prevActionToRetry1]
+        actionQueue: [prevActionToRetry1],
       });
     });
 
@@ -98,7 +99,7 @@ describe('reducer', () => {
       const action = actionCreators.fetchOfflineMode(prevActionToRetry2);
 
       expect(reducer(prevState, action)).toEqual(
-        getState(false, prevActionToRetry1, prevActionToRetry2)
+        getState(false, prevActionToRetry1, prevActionToRetry2),
       );
     });
 
@@ -107,14 +108,14 @@ describe('reducer', () => {
       const action = actionCreators.fetchOfflineMode(prevActionToRetry1);
 
       expect(reducer(prevState, action)).toEqual(
-        getState(false, prevActionToRetry2, prevActionToRetry1)
+        getState(false, prevActionToRetry2, prevActionToRetry1),
       );
     });
 
     it('1st action arrives with different payload', () => {
       const prevState = getState(false, prevActionToRetry2, prevActionToRetry1);
       const action = actionCreators.fetchOfflineMode(
-        prevActionToRetry1WithDifferentPayload
+        prevActionToRetry1WithDifferentPayload,
       );
 
       expect(reducer(prevState, action)).toEqual(
@@ -122,8 +123,8 @@ describe('reducer', () => {
           false,
           prevActionToRetry2,
           prevActionToRetry1,
-          prevActionToRetry1WithDifferentPayload
-        )
+          prevActionToRetry1WithDifferentPayload,
+        ),
       );
     });
   });
@@ -134,19 +135,19 @@ describe('reducer', () => {
         false,
         prevActionToRetry2,
         prevActionToRetry1,
-        prevActionToRetry1WithDifferentPayload
+        prevActionToRetry1WithDifferentPayload,
       );
       // Different object references but same shape, checking that deep equal works correctly
       const action = actionCreators.removeActionFromQueue({
-        ...prevActionToRetry2
+        ...prevActionToRetry2,
       });
 
       expect(reducer(prevState, action)).toEqual(
         getState(
           false,
           prevActionToRetry1,
-          prevActionToRetry1WithDifferentPayload
-        )
+          prevActionToRetry1WithDifferentPayload,
+        ),
       );
     });
 
@@ -171,7 +172,7 @@ describe('reducer', () => {
     it('OFFLINE_ACTION action type, thunk with meta.retry === true', () => {
       const prevState = getState(false);
       fetchThunk.meta = {
-        retry: true
+        retry: true,
       };
       const action = actionCreators.fetchOfflineMode(fetchThunk);
 
@@ -190,31 +191,31 @@ describe('reducer', () => {
     const actionEnqueued1 = {
       type: 'FETCH_PAGE_REQUEST',
       payload: {
-        id: '2'
+        id: '2',
       },
       meta: {
         retry: true,
-        dismiss: ['NAVIGATE_BACK', 'NAVIGATE_TO_LOGIN']
-      }
+        dismiss: ['NAVIGATE_BACK', 'NAVIGATE_TO_LOGIN'],
+      },
     };
     const actionEnqueued2 = {
       type: 'FETCH_USER_REQUEST',
       payload: {
-        id: '4'
+        id: '4',
       },
       meta: {
         retry: true,
-        dismiss: ['NAVIGATE_TO_LOGIN']
-      }
+        dismiss: ['NAVIGATE_TO_LOGIN'],
+      },
     };
     const actionEnqueued3 = {
       type: 'FETCH_USER_REQUEST',
       payload: {
-        id: '4'
+        id: '4',
       },
       meta: {
-        retry: true
-      }
+        retry: true,
+      },
     };
 
     it('NAVIGATE_BACK dispatched, dismissing 1 action', () => {
@@ -222,12 +223,12 @@ describe('reducer', () => {
         false,
         actionEnqueued1,
         actionEnqueued2,
-        actionEnqueued3
+        actionEnqueued3,
       );
       const action = actionCreators.dismissActionsFromQueue('NAVIGATE_BACK');
 
       expect(reducer(prevState, action)).toEqual(
-        getState(false, actionEnqueued2, actionEnqueued3)
+        getState(false, actionEnqueued2, actionEnqueued3),
       );
     });
 
@@ -236,14 +237,14 @@ describe('reducer', () => {
         false,
         actionEnqueued1,
         actionEnqueued2,
-        actionEnqueued3
+        actionEnqueued3,
       );
       const action = actionCreators.dismissActionsFromQueue(
-        'NAVIGATE_TO_LOGIN'
+        'NAVIGATE_TO_LOGIN',
       );
 
       expect(reducer(prevState, action)).toEqual(
-        getState(false, actionEnqueued3)
+        getState(false, actionEnqueued3),
       );
     });
 
@@ -252,12 +253,12 @@ describe('reducer', () => {
         false,
         actionEnqueued1,
         actionEnqueued2,
-        actionEnqueued3
+        actionEnqueued3,
       );
       const action = actionCreators.dismissActionsFromQueue('NAVIGATE_AWAY');
 
       expect(reducer(prevState, action)).toEqual(
-        getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3)
+        getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3),
       );
     });
   });

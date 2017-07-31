@@ -4,34 +4,34 @@ import { find, get, isEqual } from 'lodash';
 import {
   fetchOfflineMode,
   removeActionFromQueue,
-  dismissActionsFromQueue
+  dismissActionsFromQueue,
 } from './actionCreators';
 import type { NetworkState } from './types';
 
 type MiddlewareAPI<S> = {
   dispatch: (action: any) => void,
-  getState(): S
+  getState(): S,
 };
 
 type State = {
-  network: NetworkState
+  network: NetworkState,
 };
 
 type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
-  regexFunctionName: RegExp
+  regexFunctionName: RegExp,
 |};
 
 function createNetworkMiddleware(
   {
     regexActionType = /FETCH.*REQUEST/,
     actionTypes = [],
-    regexFunctionName = /fetch/
-  }: Arguments = {}
+    regexFunctionName = /fetch/,
+  }: Arguments = {},
 ) {
   return ({ getState }: MiddlewareAPI<State>) => (
-    next: (action: any) => void
+    next: (action: any) => void,
   ) => (action: any) => {
     if ({}.toString.call(regexActionType) !== '[object RegExp]')
       throw new Error('You should pass a regex as regexActionType param');
@@ -58,7 +58,7 @@ function createNetworkMiddleware(
         return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
       }
       const actionQueued = actionQueue.length > 0
-        ? find(actionQueue, a => isEqual(a, action))
+        ? find(actionQueue, (a: *) => isEqual(a, action))
         : null;
       if (actionQueued) {
         // Back online and the action that was queued is about to be dispatched.
@@ -70,7 +70,7 @@ function createNetworkMiddleware(
     }
 
     // We don't want to dispatch actions all the time, but rather when there is a dismissal case
-    const isAnyActionToBeDismissed = find(actionQueue, a => {
+    const isAnyActionToBeDismissed = find(actionQueue, (a: *) => {
       const actionsToDismiss = get(a, 'meta.dismiss', []);
       return actionsToDismiss.includes(action.type);
     });

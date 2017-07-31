@@ -13,5 +13,5 @@ module.exports = {
   },
   get offlineActionTypes() {
     return require('./actionTypes').default;
-  }
+  },
 };

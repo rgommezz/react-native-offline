@@ -10,5 +10,5 @@ export default {
   },
   setConnection(connection: boolean) {
     isConnected = connection;
-  }
+  },
 };

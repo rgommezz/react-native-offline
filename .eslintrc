@@ -28,6 +28,13 @@
     "browser": true // This is necessary for React Native fetch, see https://github.com/eslint/eslint/issues/4015
   },
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "all",
+        "singleQuote": true
+      }
+    ],
     "import/extensions": 0,
     "no-use-before-define": 0,
     "import/no-extraneous-dependencies": 0,
@@ -35,9 +42,22 @@
     "react/prop-types": 0,
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/require-default-props": 0,
-    "prettier/prettier": [2, {
-      "singleQuote": true
-    }]
+    "flowtype/boolean-style": [
+      2,
+      "boolean"
+    ],
+    "flowtype/no-weak-types": 1,
+    "flowtype/require-parameter-type": 2,
+    "flowtype/require-return-type": [
+      0,
+      "always",
+      {
+        "annotateUndefined": "never"
+      }
+    ],
+    "flowtype/require-valid-file-annotation": 2,
+    "flowtype/use-flow-type": 1,
+    "flowtype/valid-syntax": 1
   },
   "globals": {
     "jest": true
