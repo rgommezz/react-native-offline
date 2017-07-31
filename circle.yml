@@ -11,4 +11,5 @@ dependencies:
     - yarn install
 test:
   override:
-    - yarn run test
+    - yarn run flow
+    - yarn run jest:coverage
