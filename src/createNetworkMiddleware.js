@@ -20,15 +20,10 @@ type State = {
 type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
-  regexFunctionName: RegExp,
 |};
 
 function createNetworkMiddleware(
-  {
-    regexActionType = /FETCH.*REQUEST/,
-    actionTypes = [],
-    regexFunctionName = /fetch/,
-  }: Arguments = {},
+  { regexActionType = /FETCH.*REQUEST/, actionTypes = [] }: Arguments = {},
 ) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
@@ -39,19 +34,14 @@ function createNetworkMiddleware(
     if ({}.toString.call(actionTypes) !== '[object Array]')
       throw new Error('You should pass an array as actionTypes param');
 
-    if ({}.toString.call(regexFunctionName) !== '[object RegExp]')
-      throw new Error('You should pass a regex as regexFunctionName param');
-
     const { isConnected, actionQueue } = getState().network;
 
     const isObjectAndMatchCondition =
       typeof action === 'object' &&
       (regexActionType.test(action.type) || actionTypes.includes(action.type));
 
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name
-    // in ECMAScript 2015, variables and methods can infer the name of an anonymous function from its syntactic position
     const isFunctionAndMatchCondition =
-      typeof action === 'function' && regexFunctionName.test(action.name);
+      typeof action === 'function' && action.interceptInOffline === true;
 
     if (isObjectAndMatchCondition || isFunctionAndMatchCondition) {
       if (isConnected === false) {

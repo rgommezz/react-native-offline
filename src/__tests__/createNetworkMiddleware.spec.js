@@ -167,11 +167,14 @@ describe('createNetworkMiddleware with thunks', () => {
       }, 1000);
     });
 
-  function fetchThunk(dispatch) {
+  function fetchData(dispatch) {
     dispatch({ type: 'FETCH_DATA_REQUEST' });
     return fetchMockData(dispatch);
   }
-  function anotherThunk(dispatch) {
+
+  fetchData.interceptInOffline = true;
+
+  function fetchSomethingWithoutInterception(dispatch) {
     return dispatch({ type: 'TOGGLE_DROPDOWN' });
   }
 
@@ -187,9 +190,10 @@ describe('createNetworkMiddleware with thunks', () => {
     };
     const store = mockStore(initialState);
 
-    store.dispatch(anotherThunk);
+    store.dispatch(fetchSomethingWithoutInterception);
 
     const actions = store.getActions();
+    // The action went through and was dispatched
     expect(actions).toEqual([{ type: 'TOGGLE_DROPDOWN' }]);
   });
 
@@ -205,29 +209,29 @@ describe('createNetworkMiddleware with thunks', () => {
     };
     const store = mockStore(initialState);
 
-    store.dispatch(fetchThunk);
+    store.dispatch(fetchData);
 
     const actions = store.getActions();
-    expect(actions).toEqual([actionCreators.fetchOfflineMode(fetchThunk)]);
+    expect(actions).toEqual([actionCreators.fetchOfflineMode(fetchData)]);
   });
 
   it('thunk enqueued, regex MATCHES criteria, back ONLINE -> thunk gets redispatched', () => {
     const networkMiddleware = createNetworkMiddleware();
     const middlewares = [networkMiddleware, thunk];
     const mockStore = configureStore(middlewares);
-    fetchThunk.retry = true;
+    fetchData.retry = true;
     const initialState = {
       network: {
         isConnected: true,
-        actionQueue: [fetchThunk],
+        actionQueue: [fetchData],
       },
     };
     const store = mockStore(initialState);
 
-    store.dispatch(fetchThunk).then(() => {
+    store.dispatch(fetchData).then(() => {
       const actions = store.getActions();
       expect(actions).toEqual([
-        actionCreators.removeActionFromQueue(fetchThunk),
+        actionCreators.removeActionFromQueue(fetchData),
         { type: 'FETCH_DATA_REQUEST' },
         { type: 'FETCH_DATA_SUCCESS' },
       ]);
@@ -408,27 +412,6 @@ describe('createNetworkMiddleware with wrong type params', () => {
 
     expect(() => store.dispatch(action)).toThrow(
       'You should pass an array as actionTypes param',
-    );
-  });
-
-  it('invalid regexFunctionName', () => {
-    const initialState = {
-      network: {
-        isConnected: false,
-        actionQueue: [],
-      },
-    };
-    const networkMiddleware = createNetworkMiddleware({
-      regexFunctionName: 'REFRESH',
-    });
-    const middlewares = [networkMiddleware];
-    const mockStore = configureStore(middlewares);
-
-    const store = mockStore(initialState);
-    const action = getFetchAction('REFRESH_DATA');
-
-    expect(() => store.dispatch(action)).toThrow(
-      'You should pass a regex as regexFunctionName param',
     );
   });
 });
