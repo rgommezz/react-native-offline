@@ -233,7 +233,7 @@ Example:
 
 ```javascript
 export const fetchUser = (url) => {
-  return function thunk(dispatch) {
+  function thunk(dispatch) {
     fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -245,6 +245,7 @@ export const fetchUser = (url) => {
   };
   
   thunk.interceptInOffline = true; // This is the important part
+  return thunk; // Return it afterwards
 };
 ```
 
@@ -350,7 +351,7 @@ const action = {
 ```
 
 #### Thunks
-- For thunks, append a `meta` property to the function returned by the thunk with the same shape:
+- For thunks, append `interceptInOffline` and `meta` properties to the function returned by the action creator, where `meta` has the same shape as for Flux actions:
 
 ```js
 function fetchData(dispatch, getState) {
@@ -358,6 +359,7 @@ function fetchData(dispatch, getState) {
   ...
 }
 
+fetchData.interceptInOffline = true; // In order to be intercepted by the middleware
 fetchData.meta = {
   retry?: boolean, // By passing true, your thunk will be enqueued on offline mode
   dismiss?: Array<string> // Array of actions which, once dispatched, will trigger a dismissal from the queue
