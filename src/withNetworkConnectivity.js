@@ -7,6 +7,10 @@ import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
 import checkInternetAccess from './checkInternetAccess';
+import {
+  setupConnectivityCheckInterval,
+  clearConnectivityCheckInterval,
+} from './checkConnectivityInterval';
 
 type Arguments = {
   withRedux?: boolean,
@@ -25,6 +29,7 @@ const withNetworkConnectivity = (
     timeout = 3000,
     pingServerUrl = 'https://google.com',
     withExtraHeadRequest = true,
+    checkConnectionInterval = 0,
   }: Arguments = {},
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
@@ -55,32 +60,43 @@ const withNetworkConnectivity = (
         'connectionChange',
         withExtraHeadRequest
           ? this.checkInternet
-          : this.handleConnectivityChange,
+          : this.handleNetInfoChange,
       );
+
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
-        NetInfo.isConnected.fetch().then((isConnected: boolean) => {
-          if (withExtraHeadRequest) {
-            this.checkInternet(isConnected);
-          } else {
-            this.handleConnectivityChange(isConnected);
-          }
-        });
+        NetInfo.isConnected.fetch().then(withExtraHeadRequest
+          ? this.handleNetInfoChange
+          : this.handleConnectivityChange
+        );
       }
+
+      setupConnectivityCheckInterval(
+        this.checkInternet,
+        checkConnectionInterval,
+      );
     }
 
     componentWillUnmount() {
       NetInfo.isConnected.removeEventListener(
         'connectionChange',
         withExtraHeadRequest
-          ? this.checkInternet
+          ? this.handleNetInfoChange
           : this.handleConnectivityChange,
       );
+      clearConnectivityCheckInterval();
     }
 
-    checkInternet = (isConnected: boolean) => {
+    handleNetInfoChange = (isConnected: boolean) => {
+      if (!isConnected) {
+        this.handleConnectivityChange(isConnected);
+      } else {
+        this.checkInternet();
+      }
+    };
+
+    checkInternet = () => {
       checkInternetAccess(
-        isConnected,
         timeout,
         pingServerUrl,
       ).then((hasInternetAccess: boolean) => {
@@ -91,6 +107,7 @@ const withNetworkConnectivity = (
     handleConnectivityChange = (isConnected: boolean) => {
       const { store } = this.context;
       reactConnectionStore.setConnection(isConnected);
+
       // Top most component, syncing with store
       if (
         typeof store === 'object' &&
@@ -98,7 +115,10 @@ const withNetworkConnectivity = (
         withRedux === true
       ) {
         const actionQueue = store.getState().network.actionQueue;
-        store.dispatch(connectionChange(isConnected));
+
+        if (isConnected !== store.getState().network.isConnected) {
+          store.dispatch(connectionChange(isConnected));
+        }
         // dispatching queued actions in order of arrival (if we have any)
         if (isConnected && actionQueue.length > 0) {
           actionQueue.forEach((action: *) => {

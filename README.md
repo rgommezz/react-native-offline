@@ -4,7 +4,7 @@
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports both iOS and Android platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
-Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀 
+Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀
 
 ## Contents
 
@@ -28,7 +28,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
 ## Motivation
 When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behaves in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
 
-Having an offline first class citizen app is very important for a successful user experience. React Native ships with `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not garantee internet access so it can provide false positives. 
+Having an offline first class citizen app is very important for a successful user experience. React Native ships with `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
 
 This library aims to gather a variety of modules that follow React and redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
 
@@ -40,6 +40,7 @@ This library aims to gather a variety of modules that follow React and redux bes
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Typed with Flow
+- Check connectivity regularly (optional)
 
 ## Installation
 
@@ -74,6 +75,7 @@ type Config = {
   timeout?: number = 3000,
   pingServerUrl?: string = 'https://google.com',
   withExtraHeadRequest?: boolean = true,
+  checkConnectionInterval?: number = 0,
 }
 ```
 
@@ -85,6 +87,8 @@ type Config = {
 `pingServerUrl`: remote server to ping to. It defaults to https://google.com since it's probably one the most stable servers out there, but you can provide your own if needed.
 
 `withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
+
+`checkConnectionInterval`: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
 
 ##### Usage
 ```js
@@ -198,7 +202,7 @@ let App = () => (
 
 App = withNetworkConnectivity({
   withRedux: true // It won't inject isConnected as a prop in this case
-})(App); 
+})(App);
 
 const Root = () => (
   <Provider store={store}>
@@ -225,7 +229,7 @@ createNetworkMiddleware(config: Config): ReduxMiddleware
 
 type Config = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
-  actionTypes?: Array<string> = [] 
+  actionTypes?: Array<string> = []
 }
 ```
 
@@ -257,7 +261,7 @@ export const fetchUser = (url) => {
         console.error(error);
       });
   };
-  
+
   thunk.interceptInOffline = true; // This is the important part
   return thunk; // Return it afterwards
 };
@@ -453,7 +457,7 @@ export default function configureStore(callback) {
       });
     },
   );
-  
+
   return store;
 }
 ```
@@ -475,10 +479,10 @@ class App extends Component {
       store: configureStore(() => this.setState({ isLoading: false })),
     };
   }
-  
+
   render() {
    if (this.state.isLoading) return null;
-    
+
     return (
       <Provider store={this.state.store}>
         <Root />
@@ -522,4 +526,3 @@ Thanks to Spencer Carli for his awesome article about [Handling Offline actions 
 
 ### License
 MIT
-
