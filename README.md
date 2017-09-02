@@ -263,7 +263,7 @@ const networkMiddleware = createNetworkMiddleware();
 
 const store = createStore(
   rootReducer,
-  applyMiddleware([networkMiddleware, sagaMiddleware])
+  applyMiddleware(networkMiddleware, sagaMiddleware)
 );
 ```
 
