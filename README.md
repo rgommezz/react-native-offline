@@ -20,6 +20,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`createNetworkMiddleware()`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
 * [Miscellanea](#miscellanea)
+  * [Contributions](#contributions)
   * [Inspiration](#inspiration)
   * [License](#license)
 
@@ -368,6 +369,9 @@ fetchData.meta = {
 ```
 
 ## Miscellanea
+
+### Contributions
+PRs are more than welcome. Please, submit an issue for discusing the feature because jumping to coding. Generally speaking, code has to adhere to eslint and prettier rules, be typed with flow and should have some test coverage.
 
 ### Inspiration
 Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.
