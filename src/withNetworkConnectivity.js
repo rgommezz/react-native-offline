@@ -48,7 +48,7 @@ const withNetworkConnectivity = (
     };
 
     componentDidMount() {
-      NetInfo.isConnected.addEventListener('change', this.checkInternet);
+      NetInfo.isConnected.addEventListener('connectionChange', this.checkInternet);
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
         NetInfo.isConnected
@@ -58,7 +58,7 @@ const withNetworkConnectivity = (
     }
 
     componentWillUnmount() {
-      NetInfo.isConnected.removeEventListener('change', this.checkInternet);
+      NetInfo.isConnected.removeEventListener('connectionChange', this.checkInternet);
     }
 
     checkInternet = (isConnected: boolean) => {
