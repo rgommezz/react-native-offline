@@ -1,6 +1,7 @@
 /* @flow */
 
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { NetInfo, Platform } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
 import reactConnectionStore from './reactConnectionStore';
