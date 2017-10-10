@@ -9,6 +9,7 @@ import reactConnectionStore from './reactConnectionStore';
 type DefaultProps = {
   timeout?: number,
   pingServerUrl?: string,
+  withExtraHeadRequest?: boolean,
 };
 
 type Props = DefaultProps & {
@@ -24,11 +25,13 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
     children: PropTypes.func.isRequired,
     timeout: PropTypes.number,
     pingServerUrl: PropTypes.string,
+    withExtraHeadRequest: PropTypes.bool,
   };
 
   static defaultProps: DefaultProps = {
     timeout: 3000,
     pingServerUrl: 'https://google.com',
+    withExtraHeadRequest: true,
   };
 
   state = {
@@ -48,17 +51,31 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   }
 
   componentDidMount() {
-    NetInfo.isConnected.addEventListener('change', this.checkInternet);
+    NetInfo.isConnected.addEventListener(
+      'change',
+      this.props.withExtraHeadRequest
+        ? this.checkInternet
+        : this.handleConnectivityChange,
+    );
     // On Android the listener does not fire on startup
     if (Platform.OS === 'android') {
-      NetInfo.isConnected
-        .fetch()
-        .then((isConnected: boolean) => this.checkInternet(isConnected));
+      NetInfo.isConnected.fetch().then((isConnected: boolean) => {
+        if (this.props.withExtraHeadRequest) {
+          this.checkInternet(isConnected);
+        } else {
+          this.handleConnectivityChange(isConnected);
+        }
+      });
     }
   }
 
   componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener('change', this.checkInternet);
+    NetInfo.isConnected.removeEventListener(
+      'change',
+      this.props.withExtraHeadRequest
+        ? this.checkInternet
+        : this.handleConnectivityChange,
+    );
   }
 
   checkInternet = (isConnected: boolean) => {
