@@ -64,7 +64,8 @@ withNetworkConnectivity(config: Config): (WrappedComponent) => EnhancedComponent
 type Config = {
   withRedux?: boolean = false,
   timeout?: number = 3000,
-  pingServerUrl?: string = 'https://google.com'
+  pingServerUrl?: string = 'https://google.com',
+  withExtraHeadRequest?: boolean = true,
 }
 ```
 
@@ -74,6 +75,8 @@ type Config = {
 `timeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
 
 `pingServerUrl`: remote server to ping to. It defaults to https://google.com since it's probably one the most stable servers out there, but you can provide your own if needed.
+
+`withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
 ##### Usage
 ```js
@@ -89,14 +92,15 @@ export default withNetworkConnectivity()(YourComponent);
 ```
 
 #### `ConnectivityRenderer`
-React component that accepts a function as children. It allows you to decouple your parent component and your child component, managing connectivity state on behalf of the components it is composed with, without making demands on how that state is leveraged by its children. Useful for conditionally render different children based on connectivity status. `timeout` and `pingServerUrl` can be provided through props in this case.
+React component that accepts a function as children. It allows you to decouple your parent component and your child component, managing connectivity state on behalf of the components it is composed with, without making demands on how that state is leveraged by its children. Useful for conditionally render different children based on connectivity status. `timeout`, `pingServerUrl` and `withExtraHeadRequest` can be provided through props in this case.
 
 ##### Props
 ```js
 type Props = {
   children: (isConnected: boolean) => React$Element<any>
-  timeout?: number,
-  pingServerUrl?: string
+  timeout?: number = 3000,
+  pingServerUrl?: string = 'https://google.com',
+  withExtraHeadRequest?: boolean = true,
 }
 ```
 
