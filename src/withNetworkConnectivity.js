@@ -12,6 +12,7 @@ type Arguments = {
   withRedux?: boolean,
   timeout?: number,
   pingServerUrl?: string,
+  withExtraHeadRequest?: boolean,
 };
 
 type State = {
@@ -23,6 +24,7 @@ const withNetworkConnectivity = (
     withRedux = false,
     timeout = 3000,
     pingServerUrl = 'https://google.com',
+    withExtraHeadRequest = true,
   }: Arguments = {},
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
@@ -49,17 +51,31 @@ const withNetworkConnectivity = (
     };
 
     componentDidMount() {
-      NetInfo.isConnected.addEventListener('change', this.checkInternet);
+      NetInfo.isConnected.addEventListener(
+        'change',
+        withExtraHeadRequest
+          ? this.checkInternet
+          : this.handleConnectivityChange,
+      );
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
-        NetInfo.isConnected
-          .fetch()
-          .then((isConnected: boolean) => this.checkInternet(isConnected));
+        NetInfo.isConnected.fetch().then((isConnected: boolean) => {
+          if (withExtraHeadRequest) {
+            this.checkInternet(isConnected);
+          } else {
+            this.handleConnectivityChange(isConnected);
+          }
+        });
       }
     }
 
     componentWillUnmount() {
-      NetInfo.isConnected.removeEventListener('change', this.checkInternet);
+      NetInfo.isConnected.removeEventListener(
+        'change',
+        withExtraHeadRequest
+          ? this.checkInternet
+          : this.handleConnectivityChange,
+      );
     }
 
     checkInternet = (isConnected: boolean) => {
