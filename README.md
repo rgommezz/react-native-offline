@@ -20,6 +20,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`createNetworkMiddleware()`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
 * [Miscellanea](#miscellanea)
+  * [FAQ](#faq)
   * [Contributions](#contributions)
   * [Inspiration](#inspiration)
   * [License](#license)
@@ -373,6 +374,138 @@ fetchData.meta = {
 ```
 
 ## Miscellanea
+
+### FAQ
+
+#### How to test offline behavior while actually being online
+You can use `pingServerUrl` and set it to a non existing url or point to some server that is down.
+
+#### How to orchestrate redux to dispatch `CONNECTION_CHANGE` as the first action when the app starts up
+The solution involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root react component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
+
+As you can see in the snippets below, we create the `store` instance as usual and return it in our `configureStore` function. The only difference is that the function is still _alive_ and will invoke the callback as soon as 2 actions are dispatched into the store (in order):
+- `REHYDRATE` from `redux-persist`
+- `CONNECTION_CHANGE ` from `react-native-offline`
+
+```js
+// configureStore.js
+import { AsyncStorage, Platform, NetInfo } from 'react-native';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { persistStore, autoRehydrate } from 'redux-persist';
+import { createNetworkMiddleware, offlineActionTypes } from 'react-native-offline';
+import rootReducer from '../reducers';
+
+const networkMiddleware = createNetworkMiddleware();
+
+// on iOS, the listener is fired immediately after registration
+// on Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
+function isNetworkConnected(): Promise<boolean> {
+  if (Platform.OS === 'ios') {
+    return new Promise(resolve => {
+      const handleFirstConnectivityChangeIOS = isConnected => {
+        NetInfo.isConnected.removeEventListener( // Cleaning up after initial detection
+          'change',
+          handleFirstConnectivityChangeIOS,
+        );
+        resolve(isConnected);
+      };
+      NetInfo.isConnected.addEventListener(
+        'change',
+        handleFirstConnectivityChangeIOS,
+      );
+    });
+  }
+
+  return NetInfo.isConnected.fetch();
+}
+
+export default function configureStore(callback) {
+  const store = createStore(
+    rootReducer,
+    undefined,
+    compose(
+      applyMiddleware(networkMiddleware),
+      autoRehydrate(),
+    ),
+  );
+  // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
+  persistStore(
+    store,
+    {
+      storage: AsyncStorage,
+      debounce: 500,
+    },
+    () => {
+      // After rehydration completes, we detect initial connection
+      isNetworkConnected().then(isConnected => {
+        store.dispatch({
+          type: offlineActionTypes.CONNECTION_CHANGE,
+          payload: isConnected,
+        });
+        callback(); // Notify our root component we are good to go, so that we can render our app
+      });
+    },
+  );
+  
+  return store;
+}
+```
+
+Then, our root React component will have some local state, that initially will impose the component to return `null`, waiting until the async operations complete. Then, we trigger a `setState` to render the application.
+
+```js
+// App.js
+import React, { Component } from 'react';
+import { Provider } from 'react-redux';
+import configureStore from './store';
+import Root from './Root';
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: true,
+      store: configureStore(() => this.setState({ isLoading: false })),
+    };
+  }
+  
+  render() {
+   if (this.state.isLoading) return null;
+    
+    return (
+      <Provider store={this.state.store}>
+        <Root />
+      </Provider>
+    );
+  }
+}
+
+export default App;
+```
+
+This way, we make sure the right actions are dispatched before anything else can be.
+
+#### How to intercept and queue actions when the server responds with client (4xx) or server (5xx) errors
+You can do that by dispatching yourself an action of type `@@network-connectivity/FETCH_OFFLINE_MODE`. The action types the library uses are exposed under `offlineActionTypes` property.
+
+Unfortunately, the action creators are not exposed yet, so I'll release soon a new version with that fixed. In the meantime, you can check that specific action creator in  [here](https://github.com/rauliyohmc/react-native-offline/blob/master/src/actionCreators.js#L18), so that you can emulate its payload. That should queue up your action properly.
+
+```js
+import { offlineActionTypes } from 'react-native-offline';
+...
+fetch('someurl/data').catch(error => {
+  dispatch({
+    type: actionTypes.FETCH_OFFLINE_MODE,
+    payload: {
+      prevAction: {
+        type: action.type, // <-- action is the one that triggered your api call
+        payload: action.payload,
+      },
+    },
+    meta: { retry: true }
+  })
+);
+```
 
 ### Contributions
 PRs are more than welcome. Please, submit an issue for discusing the feature because jumping to coding. Generally speaking, code has to adhere to eslint and prettier rules, be typed with flow and should have some test coverage.
