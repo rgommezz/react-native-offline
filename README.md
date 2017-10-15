@@ -20,7 +20,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`createNetworkMiddleware()`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
 * [Miscellanea](#miscellanea)
-  * [FAQ](#FAQ)
+  * [FAQ](#faq)
   * [Contributions](#contributions)
   * [Inspiration](#inspiration)
   * [License](#license)
