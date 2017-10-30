@@ -42,8 +42,15 @@ This library aims to gather a variety of modules that follow React and redux bes
 - Typed with Flow
 
 ## Installation
+
+### RN > v0.47
 ```
 $ yarn add react-native-offline
+```
+
+### RN <= v0.47
+```
+$ yarn add react-native-offline@3.2.0
 ```
 
 #### Android
