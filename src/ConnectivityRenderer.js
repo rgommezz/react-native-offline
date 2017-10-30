@@ -52,7 +52,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
 
   componentDidMount() {
     NetInfo.isConnected.addEventListener(
-      'change',
+      'connectionChange',
       this.props.withExtraHeadRequest
         ? this.checkInternet
         : this.handleConnectivityChange,
@@ -71,7 +71,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
 
   componentWillUnmount() {
     NetInfo.isConnected.removeEventListener(
-      'change',
+      'connectionChange',
       this.props.withExtraHeadRequest
         ? this.checkInternet
         : this.handleConnectivityChange,

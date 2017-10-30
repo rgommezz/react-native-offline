@@ -52,7 +52,7 @@ const withNetworkConnectivity = (
 
     componentDidMount() {
       NetInfo.isConnected.addEventListener(
-        'change',
+        'connectionChange',
         withExtraHeadRequest
           ? this.checkInternet
           : this.handleConnectivityChange,
@@ -71,7 +71,7 @@ const withNetworkConnectivity = (
 
     componentWillUnmount() {
       NetInfo.isConnected.removeEventListener(
-        'change',
+        'connectionChange',
         withExtraHeadRequest
           ? this.checkInternet
           : this.handleConnectivityChange,
