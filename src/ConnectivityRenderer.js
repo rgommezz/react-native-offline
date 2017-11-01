@@ -79,13 +79,16 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   }
 
   checkInternet = (isConnected: boolean) => {
-    checkInternetAccess(
-      isConnected,
-      this.props.timeout,
-      this.props.pingServerUrl,
-    ).then((hasInternetAccess: boolean) => {
-      this.handleConnectivityChange(hasInternetAccess);
-    });
+    if (isConnected) {
+      checkInternetAccess(
+        this.props.timeout,
+        this.props.pingServerUrl,
+      ).then((hasInternetAccess: boolean) => {
+        this.handleConnectivityChange(hasInternetAccess);
+      });
+    } else {
+      this.handleConnectivityChange(isConnected);
+    }
   };
 
   handleConnectivityChange = (isConnected: boolean) => {

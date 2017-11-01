@@ -17,6 +17,7 @@ type Arguments = {
   timeout?: number,
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
+  checkConnectionInterval?: number,
 };
 
 type State = {
@@ -58,17 +59,18 @@ const withNetworkConnectivity = (
     componentDidMount() {
       NetInfo.isConnected.addEventListener(
         'connectionChange',
-        withExtraHeadRequest
-          ? this.checkInternet
-          : this.handleNetInfoChange,
+        withExtraHeadRequest ? this.checkInternet : this.handleNetInfoChange,
       );
 
       // On Android the listener does not fire on startup
       if (Platform.OS === 'android') {
-        NetInfo.isConnected.fetch().then(withExtraHeadRequest
-          ? this.handleNetInfoChange
-          : this.handleConnectivityChange
-        );
+        NetInfo.isConnected
+          .fetch()
+          .then(
+            withExtraHeadRequest
+              ? this.handleNetInfoChange
+              : this.handleConnectivityChange,
+          );
       }
 
       setupConnectivityCheckInterval(
