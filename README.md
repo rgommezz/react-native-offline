@@ -39,8 +39,7 @@ This library aims to gather a variety of modules that follow React and redux bes
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
-- Typed with Flow
-- Check connectivity regularly (optional)
+- Ability to check connectivity regularly
 
 ## Installation
 
