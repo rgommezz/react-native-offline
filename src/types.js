@@ -9,6 +9,10 @@ export type FluxAction = {
   },
 };
 
+export type ReducerConfig = {
+  namespace?: string,
+}
+
 export type FluxActionWithPreviousIntent = {
   type: string,
   payload: {

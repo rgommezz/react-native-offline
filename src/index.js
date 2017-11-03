@@ -2,6 +2,9 @@ module.exports = {
   get reducer() {
     return require('./reducer').default;
   },
+  get reducerMaker() {
+    return require('./reducer').maker
+  },
   get withNetworkConnectivity() {
     return require('./withNetworkConnectivity').default;
   },

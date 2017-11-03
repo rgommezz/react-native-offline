@@ -20,10 +20,15 @@ type State = {
 type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
+  namespace?: string,
 |};
 
 function createNetworkMiddleware(
-  { regexActionType = /FETCH.*REQUEST/, actionTypes = [] }: Arguments = {},
+  {
+    regexActionType = /FETCH.*REQUEST/,
+    actionTypes = [],
+    namespace = '',
+  }: Arguments = {},
 ) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
@@ -61,7 +66,7 @@ function createNetworkMiddleware(
 
     // We don't want to dispatch actions all the time, but rather when there is a dismissal case
     const isAnyActionToBeDismissed = find(actionQueue, (a: *) => {
-      const actionsToDismiss = get(a, 'meta.dismiss', []);
+      const actionsToDismiss = get(a, `meta${namespace || ''}.dismiss`, []);
       return actionsToDismiss.includes(action.type);
     });
     if (isAnyActionToBeDismissed && !isConnected) {
