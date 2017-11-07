@@ -59,7 +59,9 @@ const withNetworkConnectivity = (
     componentDidMount() {
       NetInfo.isConnected.addEventListener(
         'connectionChange',
-        withExtraHeadRequest ? this.checkInternet : this.handleNetInfoChange,
+        withExtraHeadRequest
+          ? this.handleNetInfoChange
+          : this.handleConnectivityChange,
       );
 
       // On Android the listener does not fire on startup
