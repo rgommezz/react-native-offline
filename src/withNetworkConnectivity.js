@@ -122,7 +122,7 @@ const withNetworkConnectivity = (
       ) {
         const actionQueue = selector(store.getState()).actionQueue
 
-        if (isConnected !== store.getState().network.isConnected) {
+        if (isConnected !== selector(store.getState()).isConnected) {
           store.dispatch(connectionChange(isConnected));
         }
         // dispatching queued actions in order of arrival (if we have any)
