@@ -75,6 +75,7 @@ type Config = {
   pingServerUrl?: string = 'https://google.com',
   withExtraHeadRequest?: boolean = true,
   checkConnectionInterval?: number = 0,
+  selector?: Function = (state) => state.network
 }
 ```
 
@@ -88,6 +89,8 @@ type Config = {
 `withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
 `checkConnectionInterval`: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
+
+`selector`: location of react native offline reducer. Default location is 'network'.
 
 ##### Usage
 ```js
@@ -228,7 +231,8 @@ createNetworkMiddleware(config: Config): ReduxMiddleware
 
 type Config = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
-  actionTypes?: Array<string> = []
+  actionTypes?: Array<string> = [],
+  selector?: Function = (state) => state.network
 }
 ```
 
@@ -239,6 +243,8 @@ This is the setup you need to put in place for libraries such as `redux-saga` or
 By default it's configured to intercept actions for fetching data following the Redux [convention](http://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
+
+`selector`: location of react native offline reducer. Default location is 'network'.
 
 ##### Thunks Config
 For `redux-thunk` library, the async flow is wrapped inside functions that will be lazily evaluated when dispatched, so our store is able to dispatch functions as well. Therefore, the configuration differs:

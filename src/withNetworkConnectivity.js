@@ -18,6 +18,7 @@ type Arguments = {
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
+  selector: Function
 };
 
 type State = {
@@ -31,6 +32,7 @@ const withNetworkConnectivity = (
     pingServerUrl = 'https://google.com',
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
+    selector = state => state.network
   }: Arguments = {},
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
@@ -118,7 +120,7 @@ const withNetworkConnectivity = (
         typeof store.dispatch === 'function' &&
         withRedux === true
       ) {
-        const actionQueue = store.getState().network.actionQueue;
+        const actionQueue = selector(store.getState()).actionQueue
 
         if (isConnected !== store.getState().network.isConnected) {
           store.dispatch(connectionChange(isConnected));

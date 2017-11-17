@@ -20,10 +20,11 @@ type State = {
 type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
+  selector: Function
 |};
 
 function createNetworkMiddleware(
-  { regexActionType = /FETCH.*REQUEST/, actionTypes = [] }: Arguments = {},
+  { regexActionType = /FETCH.*REQUEST/, actionTypes = [], selector = state => state.network }: Arguments = {},
 ) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
@@ -34,7 +35,7 @@ function createNetworkMiddleware(
     if ({}.toString.call(actionTypes) !== '[object Array]')
       throw new Error('You should pass an array as actionTypes param');
 
-    const { isConnected, actionQueue } = getState().network;
+    const { isConnected, actionQueue } = selector(getState())
 
     const isObjectAndMatchCondition =
       typeof action === 'object' &&
