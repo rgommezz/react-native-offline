@@ -18,7 +18,7 @@ type Arguments = {
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
-  selector: Function
+  selector?: () => object,
 };
 
 type State = {
@@ -32,7 +32,7 @@ const withNetworkConnectivity = (
     pingServerUrl = 'https://google.com',
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
-    selector = state => state.network
+    selector = state => state.network,
   }: Arguments = {},
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
@@ -46,7 +46,9 @@ const withNetworkConnectivity = (
   }
 
   class EnhancedComponent extends Component<void, void, State> {
-    static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
+    static displayName = `withNetworkConnectivity(${
+      WrappedComponent.displayName
+    })`;
 
     static contextTypes = {
       store: PropTypes.shape({
@@ -102,12 +104,11 @@ const withNetworkConnectivity = (
     };
 
     checkInternet = () => {
-      checkInternetAccess(
-        timeout,
-        pingServerUrl,
-      ).then((hasInternetAccess: boolean) => {
-        this.handleConnectivityChange(hasInternetAccess);
-      });
+      checkInternetAccess(timeout, pingServerUrl).then(
+        (hasInternetAccess: boolean) => {
+          this.handleConnectivityChange(hasInternetAccess);
+        },
+      );
     };
 
     handleConnectivityChange = (isConnected: boolean) => {
@@ -120,7 +121,7 @@ const withNetworkConnectivity = (
         typeof store.dispatch === 'function' &&
         withRedux === true
       ) {
-        const actionQueue = selector(store.getState()).actionQueue
+        const actionQueue = selector(store.getState()).actionQueue;
 
         if (isConnected !== selector(store.getState()).isConnected) {
           store.dispatch(connectionChange(isConnected));

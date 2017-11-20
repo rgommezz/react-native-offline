@@ -20,11 +20,15 @@ type State = {
 type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
-  selector: Function
+  selector: () => object,
 |};
 
 function createNetworkMiddleware(
-  { regexActionType = /FETCH.*REQUEST/, actionTypes = [], selector = state => state.network }: Arguments = {},
+  {
+    regexActionType = /FETCH.*REQUEST/,
+    actionTypes = [],
+    selector = state => state.network,
+  }: Arguments = {},
 ) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
@@ -35,7 +39,7 @@ function createNetworkMiddleware(
     if ({}.toString.call(actionTypes) !== '[object Array]')
       throw new Error('You should pass an array as actionTypes param');
 
-    const { isConnected, actionQueue } = selector(getState())
+    const { isConnected, actionQueue } = selector(getState());
 
     const isObjectAndMatchCondition =
       typeof action === 'object' &&
@@ -48,9 +52,10 @@ function createNetworkMiddleware(
       if (isConnected === false) {
         return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
       }
-      const actionQueued = actionQueue.length > 0
-        ? find(actionQueue, (a: *) => isEqual(a, action))
-        : null;
+      const actionQueued =
+        actionQueue.length > 0
+          ? find(actionQueue, (a: *) => isEqual(a, action))
+          : null;
       if (actionQueued) {
         // Back online and the action that was queued is about to be dispatched.
         // Removing action from queue, prior to handing over to next middleware or final dispatch
