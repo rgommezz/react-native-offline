@@ -7,7 +7,7 @@ import checkInternetAccess from './checkInternetAccess';
 import { connectionChange } from './actionCreators';
 import type { NetworkState } from './types';
 
-export function* forceTryConnectivity(): Generator<*, *, *> {
+export function* forceTryConnectivitySaga(): Generator<*, *, *> {
   yield call(handleConnectivityChange, true);
 }
 
@@ -23,9 +23,7 @@ export function* networkEventsListenerSaga(
     }
   } finally {
     if (yield cancelled()) {
-      if (isConnectedChannel) {
-        isConnectedChannel.close();
-      }
+      isConnectedChannel.close();
     }
   }
 }
@@ -47,7 +45,7 @@ function* handleConnectivityChange(
   );
 
   if (hasInternetAccess && actionQueue.length > 0) {
-    for (const action of actionQueue) {
+    for (const action of actionQueue) { // eslint-disable-line
       yield put(action);
     }
   }
@@ -55,11 +53,10 @@ function* handleConnectivityChange(
 
 function createNetInfoIsConnectedChannel() {
   return eventChannel((emit: Function) => {
-    NetInfo.isConnected.addEventListener('change', emit);
+    NetInfo.isConnected.addEventListener('connectionChange', emit);
 
-    const removeEventListener = () => {
-      NetInfo.isConnected.removeEventListener('change', emit);
+    return () => {
+      NetInfo.isConnected.removeEventListener('connectionChange', emit);
     };
-    return removeEventListener;
   });
 }
