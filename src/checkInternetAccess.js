@@ -14,7 +14,7 @@ export default function checkInternetAccess(
       .then(() => {
         resolve(true);
       })
-      .catch((e) => {
+      .catch(() => {
         resolve(false);
       });
   });

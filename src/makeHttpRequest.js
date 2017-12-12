@@ -1,3 +1,5 @@
+/* @flow */
+
 type Options = {
   method?: string,
   url: string,
@@ -22,7 +24,7 @@ type Options = {
 export default function makeHttpRequest(
   { method = 'get', url, params, headers, timeout = 10000 }: Options = {},
 ) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve: any, reject: any) => {
     const xhr = new XMLHttpRequest();
 
     const tOut = setTimeout(() => {
@@ -51,7 +53,7 @@ export default function makeHttpRequest(
       });
     };
     if (headers) {
-      Object.keys(headers).forEach(key => {
+      Object.keys(headers).forEach((key: string) => {
         xhr.setRequestHeader(key, headers[key]);
       });
     }
