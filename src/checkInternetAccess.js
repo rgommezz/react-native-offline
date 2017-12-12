@@ -1,21 +1,20 @@
 /* @flow */
+import makeHttpRequest from './makeHttpRequest';
 
 export default function checkInternetAccess(
   timeout: number = 3000,
-  address: string = 'https://google.com',
+  url: string = 'https://google.com',
 ): Promise<boolean> {
   return new Promise((resolve: (value: boolean) => void) => {
-    const tm = setTimeout(() => {
-      resolve(false);
-    }, timeout);
-
-    fetch(address, { method: 'HEAD' })
+    makeHttpRequest({
+      method: 'HEAD',
+      url,
+      timeout,
+    })
       .then(() => {
-        clearTimeout(tm);
         resolve(true);
       })
-      .catch(() => {
-        clearTimeout(tm);
+      .catch((e) => {
         resolve(false);
       });
   });
