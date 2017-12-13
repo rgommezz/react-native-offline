@@ -3,12 +3,12 @@
 type Options = {
   method?: string,
   url: string,
-  params:
+  params?:
     | string
     | {
         [name: string]: string,
       },
-  headers: Object,
+  headers?: Object,
   timeout?: number,
 };
 
