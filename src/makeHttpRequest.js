@@ -22,7 +22,7 @@ type Options = {
  * @returns {Promise}
  */
 export default function makeHttpRequest(
-  { method = 'get', url, params, headers, timeout = 10000 }: Options = {},
+  { method = 'get', url, params, headers = {}, timeout = 10000 }: Options = {},
 ) {
   return new Promise((resolve: any, reject: any) => {
     const xhr = new XMLHttpRequest();
