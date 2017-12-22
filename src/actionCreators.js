@@ -7,6 +7,7 @@ import type {
   FluxActionForRemoval,
   FluxActionForDismissal,
 } from './types';
+import checkInternetAccess from './checkInternetAccess';
 
 type EnqueuedAction = FluxAction | Function;
 
@@ -53,3 +54,11 @@ export const dismissActionsFromQueue = (
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
 });
+
+export const checkConnectivity = (
+  timeout: number = 3000,
+  url: string = 'https://google.com',
+) => (dispatch: Function) =>
+  checkInternetAccess(timeout, url)
+    .then(() => dispatch(connectionChange(true)))
+    .catch(() => dispatch(connectionChange(false)));

@@ -3,6 +3,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import createNetworkMiddleware from '../createNetworkMiddleware';
 import * as actionCreators from '../actionCreators';
+import checkInternetAccess from '../checkInternetAccess';
 
 const getFetchAction = type => ({
   type,
@@ -413,5 +414,26 @@ describe('createNetworkMiddleware with wrong type params', () => {
     expect(() => store.dispatch(action)).toThrow(
       'You should pass an array as actionTypes param',
     );
+  });
+});
+
+describe('checkConnectivity', () => {
+  beforeAll(() => {
+    mock.mock('HEAD', 'https://google.com', {});
+    mock.mock('HEAD', 'https://timeout.com', (req, res) => {
+      return Promise.reject()
+    })
+  });
+
+  it('should return a valide Promise', () => {
+    checkInternetAccess().then(val => expect(val).toBe(true));
+  });
+
+  it('should return a failing Promise', () => {
+    checkInternetAccess(10000, 'https://timeout.com').then(val => {
+      console.log(val)
+      expect(val).toBe(true)
+      expect(1).toBe(2)
+    });
   });
 });
