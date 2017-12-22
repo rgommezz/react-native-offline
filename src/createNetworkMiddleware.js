@@ -22,9 +22,10 @@ type Arguments = {|
   actionTypes: Array<string>,
 |};
 
-function createNetworkMiddleware(
-  { regexActionType = /FETCH.*REQUEST/, actionTypes = [] }: Arguments = {},
-) {
+function createNetworkMiddleware({
+  regexActionType = /FETCH.*REQUEST/,
+  actionTypes = [],
+}: Arguments = {}) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {
@@ -47,9 +48,10 @@ function createNetworkMiddleware(
       if (isConnected === false) {
         return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
       }
-      const actionQueued = actionQueue.length > 0
-        ? find(actionQueue, (a: *) => isEqual(a, action))
-        : null;
+      const actionQueued =
+        actionQueue.length > 0
+          ? find(actionQueue, (a: *) => isEqual(a, action))
+          : null;
       if (actionQueued) {
         // Back online and the action that was queued is about to be dispatched.
         // Removing action from queue, prior to handing over to next middleware or final dispatch
