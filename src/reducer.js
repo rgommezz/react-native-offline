@@ -30,9 +30,10 @@ function handleOfflineAction(
   if (isActionToRetry || isThunkToRetry) {
     // If a similar action already existed on the queue, we remove it and push it again to the end of the queue
     const actionToLookUp = prevAction || prevThunk;
-    const actionWithMetaData = typeof actionToLookUp === 'object'
-      ? { ...actionToLookUp, meta }
-      : actionToLookUp;
+    const actionWithMetaData =
+      typeof actionToLookUp === 'object'
+        ? { ...actionToLookUp, meta }
+        : actionToLookUp;
     const similarActionQueued = find(state.actionQueue, (action: *) =>
       isEqual(action, actionWithMetaData),
     );
