@@ -17,4 +17,7 @@ module.exports = {
   get checkInternetAccess() {
     return require('./checkInternetAccess').default;
   },
+  get actionCreators() {
+    return require('./actionCreators');
+  },
 };
