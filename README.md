@@ -414,13 +414,13 @@ function isNetworkConnected(): Promise<boolean> {
     return new Promise(resolve => {
       const handleFirstConnectivityChangeIOS = isConnected => {
         NetInfo.isConnected.removeEventListener( // Cleaning up after initial detection
-          'change',
+          'connectionChange',
           handleFirstConnectivityChangeIOS,
         );
         resolve(isConnected);
       };
       NetInfo.isConnected.addEventListener(
-        'change',
+        'connectionChange',
         handleFirstConnectivityChangeIOS,
       );
     });
