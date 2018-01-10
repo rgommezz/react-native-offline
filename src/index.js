@@ -14,4 +14,7 @@ module.exports = {
   get offlineActionTypes() {
     return require('./actionTypes').default;
   },
+  get checkInternetAccess() {
+    return require('./checkInternetAccess').default;
+  },
 };
