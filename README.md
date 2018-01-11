@@ -37,6 +37,7 @@ This library aims to gather a variety of modules that follow React and redux bes
 - Reducer to keep your connectivity state in the Redux store
 - **Redux middleware to intercept internet request actions in offline mode and apply DRY principle**
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
+- A saga to place the logic outside of your components, making them cleaner
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Ability to check connectivity regularly
@@ -182,7 +183,9 @@ const store = createStore(rootReducer);
 export default store;
 ```
 
-##### 2.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
+##### 2.- Here you have 2 options:
+
+##### 2a.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
 The other config parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
 ```js
@@ -208,6 +211,25 @@ const Root = () => (
     <App />
   </Provider
 );
+```
+
+##### 2b.- Fork `networkEventsListenerSaga` from your root saga.
+If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same config options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case. 
+
+```js
+// rootSaga.js
+import { all } from 'redux-saga/effects';
+import saga1 from './saga1';
+import saga2 from './saga2';
+import { networkEventsListenerSaga } from 'react-native-offline';
+
+export default function* rootSaga(): Generator<*, *, *> {
+  yield all([
+    fork(saga1),
+    fork(saga2),
+    fork(networkEventsListenerSaga, { timeout: 2000, checkConnectionInterval: 20000 }),
+  ]);
+}
 ```
 
 Now your network state can be accessed by any Redux container inside `mapStateToProps()`, as `state.network.isConnected`.
