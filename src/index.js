@@ -15,6 +15,6 @@ module.exports = {
     return require('./actionTypes').default;
   },
   get networkEventsListenerSaga() {
-    return require('./saga').default;
+    return require('./sagas').default;
   },
 };
