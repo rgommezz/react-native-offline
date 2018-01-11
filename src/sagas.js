@@ -116,7 +116,7 @@ function* checkInternetAccessSaga(
 /**
  * Takes action under the new network connection value:
  * - Dispatches a '@@network-connectivity/CONNECTION_CHANGE' action type
- * - Flushes de queue of pending actions if we are connected back to the internet
+ * - Flushes the queue of pending actions if we are connected back to the internet
  * @param hasInternetAccess
  */
 function* handleConnectivityChange(
