@@ -37,7 +37,7 @@ This library aims to gather a variety of modules that follow React and redux bes
 - Reducer to keep your connectivity state in the Redux store
 - **Redux middleware to intercept internet request actions in offline mode and apply DRY principle**
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
-- A saga to place the logic outside of your components, making them cleaner
+- A saga to place the logic outside of your components
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Ability to check connectivity regularly
@@ -232,7 +232,7 @@ export default function* rootSaga(): Generator<*, *, *> {
 }
 ```
 
-Now your network state can be accessed by any Redux container inside `mapStateToProps()`, as `state.network.isConnected`.
+##### 3.- Access your network state in your components using `mapStateToProps()`, as `state.network.isConnected`.
 
 **Note**: If you wanna listen to the action dispatched internally in your reducers, import the offline action types and reference `CONNECTION_CHANGE`:
 ```js
