@@ -186,7 +186,7 @@ export default store;
 ##### 2.- Here you have 2 options:
 
 ##### 2a.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
-The other config parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
+The other [config](#config) parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
 ```js
 // Root.js
@@ -214,7 +214,7 @@ const Root = () => (
 ```
 
 ##### 2b.- Fork `networkEventsListenerSaga` from your root saga.
-If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same config options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case. 
+If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same [config](#config) options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case. 
 
 ```js
 // rootSaga.js
