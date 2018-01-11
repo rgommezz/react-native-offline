@@ -14,4 +14,7 @@ module.exports = {
   get offlineActionTypes() {
     return require('./actionTypes').default;
   },
+  get networkEventsListenerSaga() {
+    return require('./saga').default;
+  },
 };
