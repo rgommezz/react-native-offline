@@ -37,7 +37,7 @@ This library aims to gather a variety of modules that follow React and redux bes
 - Reducer to keep your connectivity state in the Redux store
 - **Redux middleware to intercept internet request actions in offline mode and apply DRY principle**
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
-- A saga to place the logic outside of your components
+- A saga to place the network event subscriptions outside of your components
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Ability to check connectivity regularly
@@ -51,7 +51,7 @@ $ yarn add react-native-offline
 
 ### RN <= v0.47
 ```
-$ yarn add react-native-offline@3.2.0
+$ yarn add react-native-offline@3.6.0
 ```
 
 #### Android
