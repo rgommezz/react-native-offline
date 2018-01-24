@@ -1,6 +1,6 @@
 {
   "name": "react-native-offline",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
   "main": "./src/index.js",
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
