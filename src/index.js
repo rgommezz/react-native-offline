@@ -20,4 +20,7 @@ module.exports = {
   get actionCreators() {
     return require('./actionCreators');
   },
+  get networkEventsListenerSaga() {
+    return require('./sagas').default;
+  },
 };
