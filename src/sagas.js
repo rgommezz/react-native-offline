@@ -123,7 +123,7 @@ function* handleConnectivityChange(
   hasInternetAccess: boolean,
 ): Generator<*, *, *> {
   yield put(connectionChange(hasInternetAccess));
-  const actionQueue = select(
+  const actionQueue = yield select(
     (state: { network: NetworkState }) => state.network.actionQueue,
   );
 
