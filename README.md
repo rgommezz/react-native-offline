@@ -89,6 +89,8 @@ type Config = {
 
 `checkConnectionInterval`: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
 
+`checkIntervalOfflineOnly`: boolean who trigger the interval function only if there is no connection when set to `true`. Defaults to `false`.
+
 ##### Usage
 ```js
 import React from 'react';
