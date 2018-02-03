@@ -51,7 +51,7 @@ $ yarn add react-native-offline
 
 ### RN <= v0.47
 ```
-$ yarn add react-native-offline@3.6.0
+$ yarn add react-native-offline@3.6.2
 ```
 
 #### Android
