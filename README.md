@@ -19,6 +19,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`Network reducer`](#network-reducer)
     + [`createNetworkMiddleware()`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
+    + [`checkInternetAccess()`](#checkInternetAccess)
 * [Miscellanea](#miscellanea)
   * [FAQ](#faq)
   * [Contributions](#contributions)
@@ -185,7 +186,6 @@ export default store;
 
 ##### 2.- Here you have 2 options:
 
-##### 2a.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
 The other [config](#config) parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
 ```js
@@ -403,6 +403,16 @@ fetchData.meta = {
   retry?: boolean, // By passing true, your thunk will be enqueued on offline mode
   dismiss?: Array<string> // Array of actions which, once dispatched, will trigger a dismissal from the queue
 }
+```
+
+### checkInternetAccess()
+If you want to manually trigger an online access check, import the offline action creators and dispatch `checkInternetAccess()` action:
+```js
+import { offlineActionCreators } from 'react-native-offline';
+
+const mapDispatchToProps = dispatch => ({
+  checkInternetAccess: () => dispatch(checkInternetAccess());
+});
 ```
 
 ## Miscellanea
