@@ -1,6 +1,14 @@
 /* @flow */
 
-import { put, select, call, take, cancelled, fork, takeLatest } from 'redux-saga/effects';
+import {
+  put,
+  select,
+  call,
+  take,
+  cancelled,
+  fork,
+  takeLatest
+} from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { NetInfo } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
@@ -154,7 +162,11 @@ export default function* networkEventsListenerSaga(
   }: Arguments = {},
 ): Generator<*, *, *> {
   yield fork(netInfoChangeSaga, timeout, pingServerUrl, withExtraHeadRequest);
-  yield takeLatest(actionTypes.CHECK_INTERNET_ACCESS, checkInternetAccessSaga, timeout, pingServerUrl);
+  yield takeLatest(
+    actionTypes.CHECK_INTERNET_ACCESS,
+    checkInternetAccessSaga,
+    timeout, pingServerUrl
+  );
   if (checkConnectionInterval) {
     yield fork(
       connectionIntervalSaga,
