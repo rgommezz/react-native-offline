@@ -7,7 +7,7 @@ import {
   take,
   cancelled,
   fork,
-  takeLatest
+  takeLatest,
 } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { NetInfo } from 'react-native';
@@ -165,7 +165,8 @@ export default function* networkEventsListenerSaga(
   yield takeLatest(
     actionTypes.CHECK_INTERNET_ACCESS,
     checkInternetAccessSaga,
-    timeout, pingServerUrl
+    timeout,
+    pingServerUrl
   );
   if (checkConnectionInterval) {
     yield fork(
