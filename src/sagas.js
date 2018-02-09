@@ -166,7 +166,7 @@ export default function* networkEventsListenerSaga(
     actionTypes.CHECK_INTERNET_ACCESS,
     checkInternetAccessSaga,
     timeout,
-    pingServerUrl
+    pingServerUrl,
   );
   if (checkConnectionInterval) {
     yield fork(
