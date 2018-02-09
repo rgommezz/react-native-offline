@@ -55,5 +55,6 @@ export const dismissActionsFromQueue = (
 });
 
 export const checkInternetConnection = (): FluxAction => ({
-  type: actionTypes.CHECK_INTERNET_CONNECTION,
+  type: actionTypes.CHECK_INTERNET_ACCESS,
+  payload: {},
 });
