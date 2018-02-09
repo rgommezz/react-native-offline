@@ -53,3 +53,7 @@ export const dismissActionsFromQueue = (
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
 });
+
+export const checkInternetConnection = (): FluxAction => ({
+  type: actionTypes.CHECK_INTERNET_CONNECTION,
+});
