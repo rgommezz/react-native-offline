@@ -18,21 +18,21 @@ type Arguments = {
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
+  checkIntervalOfflineOnly?: boolean,
 };
 
 type State = {
   isConnected: boolean,
 };
 
-const withNetworkConnectivity = (
-  {
-    withRedux = false,
-    timeout = 3000,
-    pingServerUrl = 'https://google.com',
-    withExtraHeadRequest = true,
-    checkConnectionInterval = 0,
-  }: Arguments = {},
-) => (WrappedComponent: ReactClass<*>) => {
+const withNetworkConnectivity = ({
+  withRedux = false,
+  timeout = 3000,
+  pingServerUrl = 'https://google.com',
+  withExtraHeadRequest = true,
+  checkConnectionInterval = 0,
+  checkIntervalOfflineOnly = false,
+}: Arguments = {}) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
   }
@@ -44,7 +44,9 @@ const withNetworkConnectivity = (
   }
 
   class EnhancedComponent extends Component<void, void, State> {
-    static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
+    static displayName = `withNetworkConnectivity(${
+      WrappedComponent.displayName
+    })`;
 
     static contextTypes = {
       store: PropTypes.shape({
@@ -75,10 +77,12 @@ const withNetworkConnectivity = (
           );
       }
 
-      setupConnectivityCheckInterval(
-        this.checkInternet,
-        checkConnectionInterval,
-      );
+      setupConnectivityCheckInterval(() => {
+        if (this.state.isConnected && checkIntervalOfflineOnly) {
+          return;
+        }
+        this.checkInternet();
+      }, checkConnectionInterval);
     }
 
     componentWillUnmount() {
@@ -100,12 +104,11 @@ const withNetworkConnectivity = (
     };
 
     checkInternet = () => {
-      checkInternetAccess(
-        timeout,
-        pingServerUrl,
-      ).then((hasInternetAccess: boolean) => {
-        this.handleConnectivityChange(hasInternetAccess);
-      });
+      checkInternetAccess(timeout, pingServerUrl).then(
+        (hasInternetAccess: boolean) => {
+          this.handleConnectivityChange(hasInternetAccess);
+        },
+      );
     };
 
     handleConnectivityChange = (isConnected: boolean) => {
