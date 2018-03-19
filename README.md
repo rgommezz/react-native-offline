@@ -28,7 +28,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
 ## Motivation
 When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behave in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
 
-Having an offline first class citizen app is very important for a successful user experience. React Native ships with the `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but it's usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
+Having an offline first class citizen app is very important for a successful user experience. React Native ships with the `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
 
 This library aims to gather a variety of modules that follow React and Redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
 
@@ -80,7 +80,7 @@ type Config = {
 ```
 
 ##### Config
-`withRedux`: flag that indicates whether the HoC should be wired up to the redux store. By default, this parameter is `false` and the HoC injects `isConnected` as a prop into `WrappedComponent`. If `true` provided, it won't act as a component utility and pass any prop down, but instead perform the needed actions to sync up with the store. See below [Redux integration](#integration-with-redux) for more details.
+`withRedux`: flag that indicates whether the HoC should be wired up to the Redux store. By default, this parameter is `false` and the HoC injects `isConnected` as a prop into `WrappedComponent`. If `true` provided, it won't act as a component utility and pass any prop down, but instead perform the needed actions to sync up with the store. See below [Redux integration](#integration-with-redux) for more details.
 
 `timeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
 
@@ -153,7 +153,7 @@ const YourComponent = () => (
 Note: since this component will re-render its children every time its parent's props or state changes, it's recommended to use it on leaf components in your tree.
 
 ## Integration with Redux
-There are 3 features that this library provides in order to leverage offline capabilities in your redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
+There are 3 features that this library provides in order to leverage offline capabilities in your Redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
 
 ### Network reducer
 A network reducer to be provided to the store.
@@ -168,7 +168,7 @@ type NetworkState = {
 
 #### Usage
 
-##### 1.- Give the network reducer to redux
+##### 1.- Give the network reducer to Redux
 ```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
@@ -243,7 +243,7 @@ if(action.type === offlineActionTypes.CONNECTION_CHANGE) // do something in your
 ```
 
 #### `createNetworkMiddleware()`
-Function that returns a redux middleware which listens to specific actions targetting API calls in online/offline mode.
+Function that returns a Redux middleware which listens to specific actions targetting API calls in online/offline mode.
 
 ```js
 createNetworkMiddleware(config: Config): ReduxMiddleware
@@ -412,8 +412,8 @@ fetchData.meta = {
 #### How to test offline behavior while actually being online
 You can use `pingServerUrl` and set it to a non existing url or point to some server that is down.
 
-#### How to orchestrate redux to dispatch `CONNECTION_CHANGE` as the first action when the app starts up
-The solution involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root react component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
+#### How to orchestrate Redux to dispatch `CONNECTION_CHANGE` as the first action when the app starts up
+The solution involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root React component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
 
 As you can see in the snippets below, we create the `store` instance as usual and return it in our `configureStore` function. The only difference is that the function is still _alive_ and will invoke the callback as soon as 2 actions are dispatched into the store (in order):
 - `REHYDRATE` from `redux-persist`
