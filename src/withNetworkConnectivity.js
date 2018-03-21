@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { NetInfo, Platform } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
@@ -43,7 +43,7 @@ const withNetworkConnectivity = (
     throw new Error('you should pass a string as pingServerUrl parameter');
   }
 
-  class EnhancedComponent extends Component<void, void, State> {
+  class EnhancedComponent extends PureComponent<void, void, State> {
     static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
 
     static contextTypes = {
