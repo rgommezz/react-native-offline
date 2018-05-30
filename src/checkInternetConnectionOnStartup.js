@@ -7,7 +7,7 @@ import checkInternetAccess from './checkInternetAccess';
 // on Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
 export default checkInternetConnectionOnStartup(
   timeout: number = 3000,
-  url: string = 'https://google.com',
+  url: string = 'https://google.com'
 ): Promise<boolean> {
   if (Platform.OS === 'ios') {
     var connectionChecked = new Promise(resolve => {
