@@ -9,7 +9,7 @@ export default function checkInternetConnectionOnStartup(
   timeout: number = 3000,
   url: string = 'https://google.com'
 ): Promise<boolean> {
-  let connectionChecked;
+  let connectionChecked: Promise<boolean>;
   if (Platform.OS === 'ios') {
     connectionChecked = new Promise(resolve => {
       const handleFirstConnectivityChangeIOS = isConnected => {
@@ -29,6 +29,6 @@ export default function checkInternetConnectionOnStartup(
   }
 
   return connectionChecked.then(isConnected => {
-    return (isConnected ? checkInternetAccess(timeout, url) : Promise.resolve(false));
+    return isConnected ? checkInternetAccess(timeout, url) : Promise.resolve(false);
   });
 }
