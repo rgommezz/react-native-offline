@@ -214,7 +214,7 @@ const Root = () => (
 ```
 
 ##### 2b.- Fork `networkEventsListenerSaga` from your root saga.
-If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same [config](#config) options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case. 
+If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same [config](#config) options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case.
 
 ```js
 // rootSaga.js
@@ -424,32 +424,10 @@ As you can see in the snippets below, we create the `store` instance as usual an
 import { AsyncStorage, Platform, NetInfo } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { createNetworkMiddleware, offlineActionTypes } from 'react-native-offline';
+import { createNetworkMiddleware, offlineActionTypes, checkInternetConnectionOnStartup } from 'react-native-offline';
 import rootReducer from '../reducers';
 
 const networkMiddleware = createNetworkMiddleware();
-
-// on iOS, the listener is fired immediately after registration
-// on Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
-function isNetworkConnected(): Promise<boolean> {
-  if (Platform.OS === 'ios') {
-    return new Promise(resolve => {
-      const handleFirstConnectivityChangeIOS = isConnected => {
-        NetInfo.isConnected.removeEventListener( // Cleaning up after initial detection
-          'connectionChange',
-          handleFirstConnectivityChangeIOS,
-        );
-        resolve(isConnected);
-      };
-      NetInfo.isConnected.addEventListener(
-        'connectionChange',
-        handleFirstConnectivityChangeIOS,
-      );
-    });
-  }
-
-  return NetInfo.isConnected.fetch();
-}
 
 export default function configureStore(callback) {
   const store = createStore(
@@ -469,7 +447,7 @@ export default function configureStore(callback) {
     },
     () => {
       // After rehydration completes, we detect initial connection
-      isNetworkConnected().then(isConnected => {
+      checkInternetConnectionOnStartup().then(isConnected => {
         store.dispatch({
           type: offlineActionTypes.CONNECTION_CHANGE,
           payload: isConnected,
