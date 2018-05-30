@@ -12,7 +12,7 @@ export default function checkInternetConnectionOnStartup(
   let connectionChecked: Promise<boolean>;
   if (Platform.OS === 'ios') {
     connectionChecked = new Promise((resolve: Function) => {
-      const handleFirstConnectivityChangeIOS = isConnected => {
+      const handleFirstConnectivityChangeIOS = (isConnected: boolean) => {
         NetInfo.isConnected.removeEventListener(
           'connectionChange',
           handleFirstConnectivityChangeIOS,
@@ -31,8 +31,7 @@ export default function checkInternetConnectionOnStartup(
   return connectionChecked.then((isConnected: boolean) => {
     if (isConnected) {
       return checkInternetAccess(timeout, url);
-    } else {
-      return Promise.resolve(false);
     }
+    return Promise.resolve(false);
   });
 }
