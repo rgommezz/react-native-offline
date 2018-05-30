@@ -7,13 +7,13 @@ import checkInternetAccess from './checkInternetAccess';
 // on Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
 export default function checkInternetConnectionOnStartup(
   timeout: number = 3000,
-  url: string = 'https://google.com'
+  url: string = 'https://google.com',
 ): Promise<boolean> {
   let connectionChecked: Promise<boolean>;
   if (Platform.OS === 'ios') {
-    connectionChecked = new Promise(resolve => {
+    connectionChecked = new Promise(resolve: Function => {
       const handleFirstConnectivityChangeIOS = isConnected => {
-        NetInfo.isConnected.removeEventListener( // Cleaning up after initial detection
+        NetInfo.isConnected.removeEventListener(
           'connectionChange',
           handleFirstConnectivityChangeIOS,
         );
@@ -28,7 +28,11 @@ export default function checkInternetConnectionOnStartup(
     connectionChecked = NetInfo.isConnected.fetch();
   }
 
-  return connectionChecked.then(isConnected => {
-    return isConnected ? checkInternetAccess(timeout, url) : Promise.resolve(false);
+  return connectionChecked.then(isConnected: boolean => {
+    if (isConnected) {
+      return checkInternetAccess(timeout, url);
+    } else {
+      return Promise.resolve(false);
+    }
   });
 }
