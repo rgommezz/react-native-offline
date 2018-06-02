@@ -517,6 +517,99 @@ fetch('someurl/data').catch(error => {
 );
 ```
 
+#### How to persist and rehydrate thunks in the offline queue with Redux Persist
+
+Due to the way Redux Persist serializes the store, persisting and rehydrating thunks will return an invalid action. Fortunately, there is a workaround.
+
+In your action creator, make sure to format it as specified from the [thunks config](https://github.com/rauliyohmc/react-native-offline#thunks-config) with a couple of additions.
+```javascript
+// actions.js
+
+export const fetchUser = (url) => {
+  function thunk(dispatch) {
+    fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        dispatch({type: FETCH_USER_SUCCESS, payload: responseJson});
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  thunk.interceptInOffline = true;
+  
+  // Add these
+  thunk.meta = {
+    retry: true, 
+    name: 'fetchUser', // This should be the name of your function
+    args: [url], // These are the arguments for the function. Add more as needed.
+  };
+  return thunk;
+};
+```
+Add the following into your redux store. Refer to the [transforms](https://github.com/rt2zz/redux-persist#transforms) section for more information on how Redux Persist transforms data.
+
+```javascript
+// store.js
+
+import { fetchUser } from './actions.js';
+import { fetchOtherUsers } from './otherActions.js';
+
+// We have to map our actions to an object
+const actions = {
+  fetchUser,
+  fetchOtherUsers,
+};
+
+// Transform how the persistor reads the network state
+const networkTransform = createTransform(
+  (inboundState, key) => {
+    const actionQueue = [];
+
+    inboundState.actionQueue.forEach(action => {
+      if (typeof action === 'function') {
+        actionQueue.push({
+          function: action.meta.name,
+          args: action.meta.args,
+        });
+      } else if (typeof action === 'object') {
+        actionQueue.push(action);
+      }
+    });
+
+    return {
+      ...inboundState,
+      actionQueue,
+    };
+  },
+  (outboundState, key) => {
+    const actionQueue = [];
+
+    outboundState.actionQueue.forEach(action => {
+      if (action.function) {
+        const actionFunction = actions[action.function];
+        actionQueue.push(actionFunction(...action.args));
+      } else {
+        actionQueue.push(action);
+      }
+    });
+
+    return { ...outboundState, actionQueue };
+  },
+  // The 'network' key may change depending on what you
+  // named your network reducer.
+  { whitelist: ['network'] }, 
+);
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  transforms: [networkTransform], // Add the transform into the persist config
+};
+```
+
+
 ### Contributions
 PRs are more than welcome. Please, submit an issue for discusing the feature because jumping to coding. Generally speaking, code has to adhere to eslint and prettier rules, be typed with flow and should have some test coverage.
 
