@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { NetInfo, Platform } from 'react-native';
+import { NetInfo, Platform, AppState } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
@@ -18,6 +18,7 @@ type Arguments = {
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
+  checkInBackground?: boolean,
 };
 
 type State = {
@@ -31,6 +32,7 @@ const withNetworkConnectivity = (
     pingServerUrl = 'https://google.com',
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
+    checkInBackground = false,
   }: Arguments = {},
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
@@ -100,6 +102,9 @@ const withNetworkConnectivity = (
     };
 
     checkInternet = () => {
+      if (checkInBackground === false && AppState.currentState !== 'active') {
+        return; // <-- Return early as we dont care about connectivity if apps' not in foreground.
+      }
       checkInternetAccess(
         timeout,
         pingServerUrl,
