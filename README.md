@@ -76,6 +76,7 @@ type Config = {
   pingServerUrl?: string = 'https://google.com',
   withExtraHeadRequest?: boolean = true,
   checkConnectionInterval?: number = 0,
+  checkInBackground?: boolean = false,
 }
 ```
 
@@ -89,6 +90,8 @@ type Config = {
 `withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
 `checkConnectionInterval`: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
+
+`checkInBackground`: whether or not to check connectivity when app isn't active. Default is `false`.
 
 ##### Usage
 ```js
