@@ -73,7 +73,7 @@ withNetworkConnectivity(config: Config): (WrappedComponent) => EnhancedComponent
 type Config = {
   withRedux?: boolean = false,
   timeout?: number = 3000,
-  pingServerUrl?: string = 'https://google.com',
+  pingServerUrl?: string = 'http://www.google.com/',
   withExtraHeadRequest?: boolean = true,
   checkConnectionInterval?: number = 0,
   checkInBackground?: boolean = false,
@@ -85,7 +85,7 @@ type Config = {
 
 `timeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
 
-`pingServerUrl`: remote server to ping to. It defaults to https://google.com since it's probably one the most stable servers out there, but you can provide your own if needed.
+`pingServerUrl`: remote server to ping to. It defaults to http://www.google.com/ since it's probably one the most stable servers out there, but you can provide your own if needed.
 
 `withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
@@ -114,7 +114,7 @@ React component that accepts a function as children. It allows you to decouple y
 type Props = {
   children: (isConnected: boolean) => React$Element<any>
   timeout?: number = 3000,
-  pingServerUrl?: string = 'https://google.com',
+  pingServerUrl?: string = 'http://www.google.com/',
   withExtraHeadRequest?: boolean = true,
 }
 ```
