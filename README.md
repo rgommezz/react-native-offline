@@ -19,6 +19,8 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`Network reducer`](#network-reducer)
     + [`createNetworkMiddleware()`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
+  * [Other Utilities](#other-utilities)
+    + [`checkInternetConnection`](#checkinternetconnection)
 * [Miscellanea](#miscellanea)
   * [FAQ](#faq)
   * [Contributions](#contributions)
@@ -408,6 +410,31 @@ fetchData.meta = {
 }
 ```
 
+### Other utilities
+
+#### `checkInternetConnection()`
+Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type to inform the `network` reducer accordingly and keep it up to date. Check the example below.
+
+```js
+checkInternetConnection(timeout?: number = 3000, url?: string = 'http://www.google.com/'): Promise<boolean>
+```
+
+##### Example
+
+```js
+import { checkInternetConnection, offlineActionTypes } from 'react-native-offline';
+
+async function internetChecker(dispatch) {
+  const isConnected = await checkInternetConnection();
+  // Dispatching can be done inside a connected component, a thunk (where dispatch is injected), saga, or any sort of middleware
+  // In this example we are using a thunk
+  dispatch({
+    type: offlineActionTypes.CONNECTION_CHANGE,
+    payload: isConnected,
+  });
+}
+```
+
 ## Miscellanea
 
 ### FAQ
@@ -427,7 +454,7 @@ As you can see in the snippets below, we create the `store` instance as usual an
 import { AsyncStorage, Platform, NetInfo } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { createNetworkMiddleware, offlineActionTypes, checkInternetConnectionOnStartup } from 'react-native-offline';
+import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
 const networkMiddleware = createNetworkMiddleware();
@@ -450,7 +477,7 @@ export default function configureStore(callback) {
     },
     () => {
       // After rehydration completes, we detect initial connection
-      checkInternetConnectionOnStartup().then(isConnected => {
+      checkInternetConnection().then(isConnected => {
         store.dispatch({
           type: offlineActionTypes.CONNECTION_CHANGE,
           payload: isConnected,
