@@ -29,7 +29,7 @@ const withNetworkConnectivity = (
   {
     withRedux = false,
     timeout = 3000,
-    pingServerUrl = 'https://google.com',
+    pingServerUrl = 'http://www.google.com/',
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
     checkInBackground = false,
