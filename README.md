@@ -413,7 +413,8 @@ fetchData.meta = {
 ### Other utilities
 
 #### `checkInternetConnection()`
-Utility function that allows you to query for internet connectivity on demand
+Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type
+to inform the `network` reducer accordingly and keep it up to date. Check the example below
 
 ```js
 checkInternetConnection(timeout?: number = 3000, url?: string = 'http://www.google.com/'): Promise<boolean>
@@ -422,11 +423,16 @@ checkInternetConnection(timeout?: number = 3000, url?: string = 'http://www.goog
 ##### Example
 
 ```js
-import { checkInternetConnection } from 'react-native-offline';
+import { checkInternetConnection, offlineActionTypes } from 'react-native-offline';
 
-async function internetChecker() {
+async function internetChecker(dispatch) {
   const isConnected = await checkInternetConnection();
-  console.log(isConnected ? 'yay! I am surfing the internet' : 'No connectivity :(');
+  // Dispatching can be done inside a connected component, a thunk (where dispatch is injected), saga, or any sort of middleware
+  // In this example we are using a thunk
+  dispatch({
+    type: offlineActionTypes.CONNECTION_CHANGE,
+    payload: isConnected,
+  });
 }
 ```
 
