@@ -3,8 +3,14 @@
 import { Platform, NetInfo } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
 
-// on iOS, the listener is fired immediately after registration
-// on Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
+/**
+ * Utility that allows to query for internet connectivity on demand
+ * On iOS, the listener is fired immediately after registration
+ * On Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
+ * @param timeout
+ * @param url
+ * @returns {Promise<boolean>}
+ */
 export default function checkInternetConnection(
   timeout: number = 3000,
   url: string = 'http://www.google.com/',
