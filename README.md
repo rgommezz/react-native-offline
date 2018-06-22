@@ -2,7 +2,7 @@
 [![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
-Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports both iOS and Android platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
+Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
 Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀
 
