@@ -147,7 +147,7 @@ function* handleConnectivityChange(
 export default function* networkEventsListenerSaga(
   {
     timeout = 3000,
-    pingServerUrl = 'http://www.google.com/',
+    pingServerUrl = 'https://www.google.com/',
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
   }: Arguments = {},
