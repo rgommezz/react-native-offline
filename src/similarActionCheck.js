@@ -10,14 +10,12 @@ import { isEqual } from 'lodash';
  * @param actionQueue
  */
 export default function similarActionCheck(
-  action: FluxActionWithPreviousIntent,
+  action: *,
   actionQueue: Array<*>,
 ) {
-  const { prevAction, prevThunk } = action.payload;
-
-  if (typeof prevAction === 'object') {
+  if (typeof action === 'object') {
     return actionQueue.find((queued: *) => isEqual(queued, action));
-  } else if (prevThunk === 'function') {
+  } else if (typeof action === 'function') {
     return actionQueue.find(
       (queued: *) => action.toString() === queued.toString(),
     );
