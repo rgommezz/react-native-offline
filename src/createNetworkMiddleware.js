@@ -7,6 +7,7 @@ import {
   dismissActionsFromQueue,
 } from './actionCreators';
 import type { NetworkState } from './types';
+import similarActionCheck from "./similarActionCheck";
 
 type MiddlewareAPI<S> = {
   dispatch: (action: any) => void,
@@ -48,7 +49,7 @@ function createNetworkMiddleware(
         return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
       }
       const actionQueued = actionQueue.length > 0
-        ? find(actionQueue, (a: *) => isEqual(a, action))
+        ? similarActionCheck(action, actionQueue)
         : null;
       if (actionQueued) {
         // Back online and the action that was queued is about to be dispatched.

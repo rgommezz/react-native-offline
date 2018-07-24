@@ -8,6 +8,7 @@ import type {
   FluxActionForRemoval,
   NetworkState,
 } from './types';
+import similarActionCheck from './similarActionCheck';
 
 export const initialState = {
   isConnected: true,
@@ -33,8 +34,9 @@ function handleOfflineAction(
     const actionWithMetaData = typeof actionToLookUp === 'object'
       ? { ...actionToLookUp, meta }
       : actionToLookUp;
-    const similarActionQueued = find(state.actionQueue, (action: *) =>
-      isEqual(action, actionWithMetaData),
+    const similarActionQueued = similarActionCheck(
+      actionWithMetaData,
+      state.actionQueue,
     );
 
     return {
@@ -54,9 +56,7 @@ function handleRemoveActionFromQueue(
   state: NetworkState,
   action: FluxActionForRemoval,
 ): NetworkState {
-  const similarActionQueued = find(state.actionQueue, (a: *) =>
-    isEqual(action, a),
-  );
+  const similarActionQueued = similarActionCheck(action, state.actionQueue);
 
   return {
     ...state,
