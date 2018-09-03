@@ -134,8 +134,8 @@ const withNetworkConnectivity = (
             store.dispatch(action);
           });
         }
-      } 
-        
+      }
+
       this.setState({ isConnected });
     };
 
