@@ -79,6 +79,7 @@ type Config = {
   withExtraHeadRequest?: boolean = true,
   checkConnectionInterval?: number = 0,
   checkInBackground?: boolean = false,
+  httpMethod?: string = 'HEAD',
 }
 ```
 
@@ -94,6 +95,8 @@ type Config = {
 `checkConnectionInterval`: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
 
 `checkInBackground`: whether or not to check connectivity when app isn't active. Default is `false`.
+
+`httpMethod`: usage http method to check the internet-access. Supports HEAD or OPTIONS. Default is `HEAD`.
 
 ##### Usage
 ```js

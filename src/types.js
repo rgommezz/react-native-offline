@@ -35,3 +35,5 @@ export type NetworkState = {
   isConnected: boolean,
   actionQueue: Array<*>,
 };
+
+export type HTTPMethod = 'HEAD' | 'OPTIONS';

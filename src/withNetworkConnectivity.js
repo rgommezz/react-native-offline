@@ -11,6 +11,7 @@ import {
   setupConnectivityCheckInterval,
   clearConnectivityCheckInterval,
 } from './checkConnectivityInterval';
+import type { HTTPMethod } from './types';
 
 type Arguments = {
   withRedux?: boolean,
@@ -19,6 +20,7 @@ type Arguments = {
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
   checkInBackground?: boolean,
+  httpMethod?: HTTPMethod,
 };
 
 type State = {
@@ -33,6 +35,7 @@ const withNetworkConnectivity = (
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
     checkInBackground = false,
+    httpMethod = 'HEAD',
   }: Arguments = {},
 ) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
@@ -108,6 +111,7 @@ const withNetworkConnectivity = (
       checkInternetAccess(
         timeout,
         pingServerUrl,
+        httpMethod,
       ).then((hasInternetAccess: boolean) => {
         this.handleConnectivityChange(hasInternetAccess);
       });
