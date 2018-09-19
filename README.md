@@ -644,7 +644,7 @@ const persistConfig = {
 
 
 ### Contributions
-PRs are more than welcome. Please, submit an issue for discusing the feature because jumping to coding. Generally speaking, code has to adhere to eslint and prettier rules, be typed with flow and should have some test coverage.
+PRs are more than welcome. If you're planning to contribute please make sure to read the contributing guide: [CONTRIBUTING.md](https://github.com/rgommezz/react-native-offline/blob/master/CONTRIBUTING.md)
 
 ### Inspiration
 Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.
