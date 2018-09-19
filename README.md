@@ -10,6 +10,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
 
 * [Motivation](#motivation)
 * [Features](#features)
+* [Contributions](#contributions)
 * [Installation](#installation)
 * [API](#api)
   * [Component Utilities](#component-utilities)
@@ -23,7 +24,6 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`checkInternetConnection`](#checkinternetconnection)
 * [Miscellanea](#miscellanea)
   * [FAQ](#faq)
-  * [Contributions](#contributions)
   * [Inspiration](#inspiration)
   * [License](#license)
 
@@ -44,16 +44,13 @@ This library aims to gather a variety of modules that follow React and Redux bes
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Ability to check connectivity regularly
 
-## Installation
+## Contributions
+PRs are more than welcome. If you're planning to contribute please make sure to read the contributing guide: [CONTRIBUTING.md](https://github.com/rgommezz/react-native-offline/blob/master/CONTRIBUTING.md)
 
-### RN > v0.47
+## Installation
+This library supports React Native v0.48 or higher.
 ```
 $ yarn add react-native-offline
-```
-
-### RN <= v0.47
-```
-$ yarn add react-native-offline@3.6.2
 ```
 
 #### Android
@@ -641,10 +638,6 @@ const persistConfig = {
   transforms: [networkTransform], // Add the transform into the persist config
 };
 ```
-
-
-### Contributions
-PRs are more than welcome. If you're planning to contribute please make sure to read the contributing guide: [CONTRIBUTING.md](https://github.com/rgommezz/react-native-offline/blob/master/CONTRIBUTING.md)
 
 ### Inspiration
 Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.
