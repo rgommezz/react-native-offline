@@ -21,9 +21,13 @@ type Options = {
  * @param timeout -> Timeout for rejecting the promise and aborting the API request
  * @returns {Promise}
  */
-export default function makeHttpRequest(
-  { method = 'get', url, params, headers = {}, timeout = 10000 }: Options = {},
-) {
+export default function makeHttpRequest({
+  method = 'get',
+  url,
+  params,
+  headers = {},
+  timeout = 10000,
+}: Options = {}) {
   return new Promise((resolve: any, reject: any) => {
     const xhr = new XMLHttpRequest();
 

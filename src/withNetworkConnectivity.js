@@ -19,6 +19,7 @@ type Arguments = {
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
+  checkIntervalOfflineOnly?: boolean,
   checkInBackground?: boolean,
   httpMethod?: HTTPMethod,
 };
@@ -34,6 +35,7 @@ const withNetworkConnectivity = (
     pingServerUrl = 'http://www.google.com/',
     withExtraHeadRequest = true,
     checkConnectionInterval = 0,
+    checkIntervalOfflineOnly = false,
     checkInBackground = false,
     httpMethod = 'HEAD',
   }: Arguments = {},
@@ -80,10 +82,12 @@ const withNetworkConnectivity = (
           );
       }
 
-      setupConnectivityCheckInterval(
-        this.checkInternet,
-        checkConnectionInterval,
-      );
+      setupConnectivityCheckInterval(() => {
+        if (this.state.isConnected && checkIntervalOfflineOnly) {
+          return;
+        }
+        this.checkInternet();
+      }, checkConnectionInterval);
     }
 
     componentWillUnmount() {
