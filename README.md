@@ -72,7 +72,7 @@ withNetworkConnectivity(config: Config): (WrappedComponent) => EnhancedComponent
 type Config = {
   withRedux?: boolean = false,
   timeout?: number = 3000,
-  pingServerUrl?: string = 'http://www.google.com/',
+  pingServerUrl?: string = 'https://www.google.com/',
   withExtraHeadRequest?: boolean = true,
   checkConnectionInterval?: number = 0,
   checkIntervalOfflineOnly?: boolean = false,
@@ -86,7 +86,7 @@ type Config = {
 
 `timeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
 
-`pingServerUrl`: remote server to ping to. It defaults to http://www.google.com/ since it's probably one the most stable servers out there, but you can provide your own if needed.
+`pingServerUrl`: remote server to ping to. It defaults to https://www.google.com/ since it's probably one the most stable servers out there, but you can provide your own if needed.
 
 `withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
@@ -119,7 +119,7 @@ React component that accepts a function as children. It allows you to decouple y
 type Props = {
   children: (isConnected: boolean) => React$Element<any>
   timeout?: number = 3000,
-  pingServerUrl?: string = 'http://www.google.com/',
+  pingServerUrl?: string = 'https://www.google.com/',
   withExtraHeadRequest?: boolean = true,
 }
 ```
@@ -266,7 +266,7 @@ type Config = {
 This is the setup you need to put in place for libraries such as `redux-saga` or `redux-observable`, which rely on plain actions being dispatched to trigger async flow:
 
 `regexActionType`: regular expression to indicate the action types to be intercepted in offline mode.
-By default it's configured to intercept actions for fetching data following the Redux [convention](http://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
+By default it's configured to intercept actions for fetching data following the Redux [convention](https://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
@@ -419,7 +419,7 @@ fetchData.meta = {
 Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type to inform the `network` reducer accordingly and keep it up to date. Check the example below.
 
 ```js
-checkInternetConnection(timeout?: number = 3000, url?: string = 'http://www.google.com/'): Promise<boolean>
+checkInternetConnection(timeout?: number = 3000, url?: string = 'https://www.google.com/'): Promise<boolean>
 ```
 
 ##### Example

@@ -38,7 +38,8 @@ export default function makeHttpRequest({
 
     xhr.open(method, url);
     xhr.onload = function onLoad() {
-      if (this.status >= 200 && this.status < 300) {
+      // 3xx is a valid response for us, since the server was reachable
+      if (this.status >= 200 && this.status < 400) {
         clearTimeout(tOut);
         resolve(xhr.response);
       } else {

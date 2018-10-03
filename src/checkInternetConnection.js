@@ -13,7 +13,7 @@ import checkInternetAccess from './checkInternetAccess';
  */
 export default function checkInternetConnection(
   timeout: number = 3000,
-  url: string = 'http://www.google.com/',
+  url: string = 'https://www.google.com/',
 ): Promise<boolean> {
   let connectionChecked: Promise<boolean>;
   if (Platform.OS === 'ios') {

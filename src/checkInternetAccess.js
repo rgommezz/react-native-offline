@@ -4,7 +4,7 @@ import type { HTTPMethod } from './types';
 
 export default function checkInternetAccess(
   timeout: number = 3000,
-  url: string = 'http://www.google.com/',
+  url: string = 'https://www.google.com/',
   method: HTTPMethod = 'HEAD',
 ): Promise<boolean> {
   return new Promise((resolve: (value: boolean) => void) => {
