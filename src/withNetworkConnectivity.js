@@ -28,18 +28,16 @@ type State = {
   isConnected: boolean,
 };
 
-const withNetworkConnectivity = (
-  {
-    withRedux = false,
-    timeout = 3000,
-    pingServerUrl = 'http://www.google.com/',
-    withExtraHeadRequest = true,
-    checkConnectionInterval = 0,
-    checkIntervalOfflineOnly = false,
-    checkInBackground = false,
-    httpMethod = 'HEAD',
-  }: Arguments = {},
-) => (WrappedComponent: ReactClass<*>) => {
+const withNetworkConnectivity = ({
+  withRedux = false,
+  timeout = 3000,
+  pingServerUrl = 'http://www.google.com/',
+  withExtraHeadRequest = true,
+  checkConnectionInterval = 0,
+  checkIntervalOfflineOnly = false,
+  checkInBackground = false,
+  httpMethod = 'HEAD',
+}: Arguments = {}) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
   }
@@ -51,7 +49,9 @@ const withNetworkConnectivity = (
   }
 
   class EnhancedComponent extends PureComponent<void, void, State> {
-    static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
+    static displayName = `withNetworkConnectivity(${
+      WrappedComponent.displayName
+    })`;
 
     static contextTypes = {
       store: PropTypes.shape({
@@ -112,13 +112,11 @@ const withNetworkConnectivity = (
       if (checkInBackground === false && AppState.currentState !== 'active') {
         return; // <-- Return early as we dont care about connectivity if apps' not in foreground.
       }
-      checkInternetAccess(
-        timeout,
-        pingServerUrl,
-        httpMethod,
-      ).then((hasInternetAccess: boolean) => {
-        this.handleConnectivityChange(hasInternetAccess);
-      });
+      checkInternetAccess(timeout, pingServerUrl, httpMethod).then(
+        (hasInternetAccess: boolean) => {
+          this.handleConnectivityChange(hasInternetAccess);
+        },
+      );
     };
 
     handleConnectivityChange = (isConnected: boolean) => {

@@ -1,6 +1,6 @@
 {
   "name": "react-native-offline",
-  "version": "3.12.0",
+  "version": "3.13.0",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
   "main": "./src/index.js",
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rgommezz)",
@@ -12,7 +12,7 @@
     "flow": "flow",
     "format": "eslint --fix js/**/",
     "prettier": "prettier --single-quote --trailing-comma all --write \"src/**/*.js\"",
-    "jest:coverage": "node --harmony_proxies node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "jest:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "precommit": "yarn run lint"
   },
   "repository": {

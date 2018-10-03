@@ -144,14 +144,12 @@ function* handleConnectivityChange(
  * @param withExtraHeadRequest
  * @param checkConnectionInterval
  */
-export default function* networkEventsListenerSaga(
-  {
-    timeout = 3000,
-    pingServerUrl = 'https://www.google.com/',
-    withExtraHeadRequest = true,
-    checkConnectionInterval = 0,
-  }: Arguments = {},
-): Generator<*, *, *> {
+export default function* networkEventsListenerSaga({
+  timeout = 3000,
+  pingServerUrl = 'https://www.google.com/',
+  withExtraHeadRequest = true,
+  checkConnectionInterval = 0,
+}: Arguments = {}): Generator<*, *, *> {
   yield fork(netInfoChangeSaga, timeout, pingServerUrl, withExtraHeadRequest);
   if (checkConnectionInterval) {
     yield fork(
