@@ -1,8 +1,8 @@
 # react-native-offline
-[![CircleCI](https://circleci.com/gh/rauliyohmc/react-native-offline.svg?style=shield)](https://circleci.com/gh/rauliyohmc/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
+[![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
-Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports both iOS and Android platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
+Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
 Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀
 
@@ -10,6 +10,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
 
 * [Motivation](#motivation)
 * [Features](#features)
+* [Contributions](#contributions)
 * [Installation](#installation)
 * [API](#api)
   * [Component Utilities](#component-utilities)
@@ -19,42 +20,41 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
     + [`Network reducer`](#network-reducer)
     + [`createNetworkMiddleware()`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
+  * [Other Utilities](#other-utilities)
+    + [`checkInternetConnection`](#checkinternetconnection)
 * [Miscellanea](#miscellanea)
   * [FAQ](#faq)
-  * [Contributions](#contributions)
   * [Inspiration](#inspiration)
   * [License](#license)
 
 ## Motivation
-When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behaves in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
+When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behave in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
 
-Having an offline first class citizen app is very important for a successful user experience. React Native ships with `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
+Having an offline first class citizen app is very important for a successful user experience. React Native ships with the `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
 
-This library aims to gather a variety of modules that follow React and redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
+This library aims to gather a variety of modules that follow React and Redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
 
 ## Features
 - Offline/online conditional rendering through HOC or Render Callback techniques
 - Reducer to keep your connectivity state in the Redux store
 - **Redux middleware to intercept internet request actions in offline mode and apply DRY principle**
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
+- A saga to place the network event subscriptions outside of your components
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Ability to check connectivity regularly
 
-## Installation
+## Contributions
+PRs are more than welcome. If you're planning to contribute please make sure to read the contributing guide: [CONTRIBUTING.md](https://github.com/rgommezz/react-native-offline/blob/master/CONTRIBUTING.md)
 
-### RN > v0.47
+## Installation
+This library supports React Native v0.48 or higher.
 ```
 $ yarn add react-native-offline
 ```
 
-### RN <= v0.47
-```
-$ yarn add react-native-offline@3.2.0
-```
-
 #### Android
-This library uses `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
+This library uses the `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
 `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
 
@@ -72,24 +72,31 @@ withNetworkConnectivity(config: Config): (WrappedComponent) => EnhancedComponent
 type Config = {
   withRedux?: boolean = false,
   timeout?: number = 3000,
-  pingServerUrl?: string = 'https://google.com',
+  pingServerUrl?: string = 'http://www.google.com/',
   withExtraHeadRequest?: boolean = true,
   checkConnectionInterval?: number = 0,
+  checkIntervalOfflineOnly?: boolean = false,
+  checkInBackground?: boolean = false,
+  httpMethod?: string = 'HEAD',
 }
 ```
 
 ##### Config
-`withRedux`: flag that indicates whether the HoC should be wired up to the redux store. By default, this parameter is `false` and the HoC injects `isConnected` as a prop into `WrappedComponent`. If `true` provided, it won't act as a component utility and pass any prop down, but instead perform the needed actions to sync up with the store. See below [Redux integration](#integration-with-redux) for more details.
+`withRedux`: flag that indicates whether the HoC should be wired up to the Redux store. By default, this parameter is `false` and the HoC injects `isConnected` as a prop into `WrappedComponent`. If `true` provided, it won't act as a component utility and pass any prop down, but instead perform the needed actions to sync up with the store. See below [Redux integration](#integration-with-redux) for more details.
 
 `timeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
 
-`pingServerUrl`: remote server to ping to. It defaults to https://google.com since it's probably one the most stable servers out there, but you can provide your own if needed.
+`pingServerUrl`: remote server to ping to. It defaults to http://www.google.com/ since it's probably one the most stable servers out there, but you can provide your own if needed.
 
 `withExtraHeadRequest`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
 `checkConnectionInterval`: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
 
 `checkIntervalOfflineOnly`: boolean who trigger the interval function only if there is no connection when set to `true`. Defaults to `false`.
+
+`checkInBackground`: whether or not to check connectivity when app isn't active. Default is `false`.
+
+`httpMethod`: usage http method to check the internet-access. Supports HEAD or OPTIONS. Default is `HEAD`.
 
 ##### Usage
 ```js
@@ -112,7 +119,7 @@ React component that accepts a function as children. It allows you to decouple y
 type Props = {
   children: (isConnected: boolean) => React$Element<any>
   timeout?: number = 3000,
-  pingServerUrl?: string = 'https://google.com',
+  pingServerUrl?: string = 'http://www.google.com/',
   withExtraHeadRequest?: boolean = true,
 }
 ```
@@ -154,7 +161,7 @@ const YourComponent = () => (
 Note: since this component will re-render its children every time its parent's props or state changes, it's recommended to use it on leaf components in your tree.
 
 ## Integration with Redux
-There are 3 features that this library provides in order to leverage offline capabilities in your redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
+There are 3 features that this library provides in order to leverage offline capabilities in your Redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
 
 ### Network reducer
 A network reducer to be provided to the store.
@@ -169,7 +176,7 @@ type NetworkState = {
 
 #### Usage
 
-##### 1.- Give the network reducer to redux
+##### 1.- Give the network reducer to Redux
 ```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
@@ -184,8 +191,10 @@ const store = createStore(rootReducer);
 export default store;
 ```
 
-##### 2.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
-The other config parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
+##### 2.- Here you have 2 options:
+
+##### 2a.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
+The other [config](#config) parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
 ```js
 // Root.js
@@ -212,7 +221,26 @@ const Root = () => (
 );
 ```
 
-Now your network state can be accessed by any Redux container inside `mapStateToProps()`, as `state.network.isConnected`.
+##### 2b.- Fork `networkEventsListenerSaga` from your root saga.
+If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same [config](#config) options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case.
+
+```js
+// rootSaga.js
+import { all } from 'redux-saga/effects';
+import saga1 from './saga1';
+import saga2 from './saga2';
+import { networkEventsListenerSaga } from 'react-native-offline';
+
+export default function* rootSaga(): Generator<*, *, *> {
+  yield all([
+    fork(saga1),
+    fork(saga2),
+    fork(networkEventsListenerSaga, { timeout: 2000, checkConnectionInterval: 20000 }),
+  ]);
+}
+```
+
+##### 3.- Access your network state in your components using `mapStateToProps()`, as `state.network.isConnected`.
 
 **Note**: If you wanna listen to the action dispatched internally in your reducers, import the offline action types and reference `CONNECTION_CHANGE`:
 ```js
@@ -223,7 +251,7 @@ if(action.type === offlineActionTypes.CONNECTION_CHANGE) // do something in your
 ```
 
 #### `createNetworkMiddleware()`
-Function that returns a redux middleware which listens to specific actions targetting API calls in online/offline mode.
+Function that returns a Redux middleware which listens to specific actions targetting API calls in online/offline mode.
 
 ```js
 createNetworkMiddleware(config: Config): ReduxMiddleware
@@ -385,6 +413,31 @@ fetchData.meta = {
 }
 ```
 
+### Other utilities
+
+#### `checkInternetConnection()`
+Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type to inform the `network` reducer accordingly and keep it up to date. Check the example below.
+
+```js
+checkInternetConnection(timeout?: number = 3000, url?: string = 'http://www.google.com/'): Promise<boolean>
+```
+
+##### Example
+
+```js
+import { checkInternetConnection, offlineActionTypes } from 'react-native-offline';
+
+async function internetChecker(dispatch) {
+  const isConnected = await checkInternetConnection();
+  // Dispatching can be done inside a connected component, a thunk (where dispatch is injected), saga, or any sort of middleware
+  // In this example we are using a thunk
+  dispatch({
+    type: offlineActionTypes.CONNECTION_CHANGE,
+    payload: isConnected,
+  });
+}
+```
+
 ## Miscellanea
 
 ### FAQ
@@ -392,8 +445,8 @@ fetchData.meta = {
 #### How to test offline behavior while actually being online
 You can use `pingServerUrl` and set it to a non existing url or point to some server that is down.
 
-#### How to orchestrate redux to dispatch `CONNECTION_CHANGE` as the first action when the app starts up
-The solution involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root react component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
+#### How to orchestrate Redux to dispatch `CONNECTION_CHANGE` as the first action when the app starts up
+The solution involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root React component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
 
 As you can see in the snippets below, we create the `store` instance as usual and return it in our `configureStore` function. The only difference is that the function is still _alive_ and will invoke the callback as soon as 2 actions are dispatched into the store (in order):
 - `REHYDRATE` from `redux-persist`
@@ -404,32 +457,10 @@ As you can see in the snippets below, we create the `store` instance as usual an
 import { AsyncStorage, Platform, NetInfo } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, autoRehydrate } from 'redux-persist';
-import { createNetworkMiddleware, offlineActionTypes } from 'react-native-offline';
+import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
 const networkMiddleware = createNetworkMiddleware();
-
-// on iOS, the listener is fired immediately after registration
-// on Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
-function isNetworkConnected(): Promise<boolean> {
-  if (Platform.OS === 'ios') {
-    return new Promise(resolve => {
-      const handleFirstConnectivityChangeIOS = isConnected => {
-        NetInfo.isConnected.removeEventListener( // Cleaning up after initial detection
-          'change',
-          handleFirstConnectivityChangeIOS,
-        );
-        resolve(isConnected);
-      };
-      NetInfo.isConnected.addEventListener(
-        'change',
-        handleFirstConnectivityChangeIOS,
-      );
-    });
-  }
-
-  return NetInfo.isConnected.fetch();
-}
 
 export default function configureStore(callback) {
   const store = createStore(
@@ -449,7 +480,7 @@ export default function configureStore(callback) {
     },
     () => {
       // After rehydration completes, we detect initial connection
-      isNetworkConnected().then(isConnected => {
+      checkInternetConnection().then(isConnected => {
         store.dispatch({
           type: offlineActionTypes.CONNECTION_CHANGE,
           payload: isConnected,
@@ -519,8 +550,97 @@ fetch('someurl/data').catch(error => {
 );
 ```
 
-### Contributions
-PRs are more than welcome. Please, submit an issue for discusing the feature because jumping to coding. Generally speaking, code has to adhere to eslint and prettier rules, be typed with flow and should have some test coverage.
+#### How to persist and rehydrate thunks in the offline queue with Redux Persist
+
+Due to the way Redux Persist serializes the store, persisting and rehydrating thunks will return an invalid action. Fortunately, there is a workaround.
+
+In your action creator, make sure to format it as specified from the [thunks config](https://github.com/rauliyohmc/react-native-offline#thunks-config) with a couple of additions.
+```javascript
+// actions.js
+
+export const fetchUser = (url) => {
+  function thunk(dispatch) {
+    fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        dispatch({type: FETCH_USER_SUCCESS, payload: responseJson});
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  thunk.interceptInOffline = true;
+  
+  // Add these
+  thunk.meta = {
+    retry: true, 
+    name: 'fetchUser', // This should be the name of your function
+    args: [url], // These are the arguments for the function. Add more as needed.
+  };
+  return thunk;
+};
+```
+Add the following into your redux store. Refer to the [transforms](https://github.com/rt2zz/redux-persist#transforms) section for more information on how Redux Persist transforms data.
+
+```javascript
+// store.js
+
+import { fetchUser } from './actions.js';
+import { fetchOtherUsers } from './otherActions.js';
+
+// We have to map our actions to an object
+const actions = {
+  fetchUser,
+  fetchOtherUsers,
+};
+
+// Transform how the persistor reads the network state
+const networkTransform = createTransform(
+  (inboundState, key) => {
+    const actionQueue = [];
+
+    inboundState.actionQueue.forEach(action => {
+      if (typeof action === 'function') {
+        actionQueue.push({
+          function: action.meta.name,
+          args: action.meta.args,
+        });
+      } else if (typeof action === 'object') {
+        actionQueue.push(action);
+      }
+    });
+
+    return {
+      ...inboundState,
+      actionQueue,
+    };
+  },
+  (outboundState, key) => {
+    const actionQueue = [];
+
+    outboundState.actionQueue.forEach(action => {
+      if (action.function) {
+        const actionFunction = actions[action.function];
+        actionQueue.push(actionFunction(...action.args));
+      } else {
+        actionQueue.push(action);
+      }
+    });
+
+    return { ...outboundState, actionQueue };
+  },
+  // The 'network' key may change depending on what you
+  // named your network reducer.
+  { whitelist: ['network'] }, 
+);
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  transforms: [networkTransform], // Add the transform into the persist config
+};
+```
 
 ### Inspiration
 Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.

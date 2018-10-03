@@ -1,9 +1,9 @@
 {
   "name": "react-native-offline",
-  "version": "3.5.0",
+  "version": "3.12.0",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
   "main": "./src/index.js",
-  "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rauliyohmc)",
+  "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rgommezz)",
   "license": "MIT",
   "scripts": {
     "lint": "eslint src",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rauliyohmc/react-native-offline.git"
+    "url": "git+https://github.com/rgommezz/react-native-offline.git"
   },
   "keywords": [
     "react-native",
@@ -30,9 +30,9 @@
     "src"
   ],
   "bugs": {
-    "url": "https://github.com/rauliyohmc/react-native-offline/issues"
+    "url": "https://github.com/rgommezz/react-native-offline/issues"
   },
-  "homepage": "https://github.com/rauliyohmc/react-native-offline#readme",
+  "homepage": "https://github.com/rgommezz/react-native-offline#readme",
   "devDependencies": {
     "babel-eslint": "^7.2.1",
     "babel-jest": "^19.0.0",
@@ -58,11 +58,13 @@
     "react-native": "0.44.2",
     "redux": "^3.6.0",
     "redux-mock-store": "^1.2.2",
+    "redux-saga": "^0.16.0",
     "redux-thunk": "^2.2.0"
   },
   "dependencies": {
     "hoist-non-react-statics": "^1.2.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "redux-saga": "*"
   },
   "jest": {
     "collectCoverage": true

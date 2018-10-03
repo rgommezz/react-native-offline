@@ -14,5 +14,6 @@ export const setupConnectivityCheckInterval = (
 export const clearConnectivityCheckInterval = () => {
   if (interval) {
     clearInterval(interval);
+    interval = null;
   }
 };

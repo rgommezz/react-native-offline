@@ -30,7 +30,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
 
   static defaultProps: DefaultProps = {
     timeout: 3000,
-    pingServerUrl: 'https://google.com',
+    pingServerUrl: 'http://www.google.com/',
     withExtraHeadRequest: true,
   };
 

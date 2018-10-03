@@ -14,4 +14,10 @@ module.exports = {
   get offlineActionTypes() {
     return require('./actionTypes').default;
   },
+  get networkEventsListenerSaga() {
+    return require('./sagas').default;
+  },
+  get checkInternetConnection() {
+    return require('./checkInternetConnection').default;
+  },
 };

@@ -1,8 +1,8 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { NetInfo, Platform } from 'react-native';
+import { NetInfo, Platform, AppState } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
 import { connectionChange } from './actionCreators';
 import reactConnectionStore from './reactConnectionStore';
@@ -11,6 +11,7 @@ import {
   setupConnectivityCheckInterval,
   clearConnectivityCheckInterval,
 } from './checkConnectivityInterval';
+import type { HTTPMethod } from './types';
 
 type Arguments = {
   withRedux?: boolean,
@@ -19,20 +20,26 @@ type Arguments = {
   withExtraHeadRequest?: boolean,
   checkConnectionInterval?: number,
   checkIntervalOfflineOnly?: boolean,
+  checkInBackground?: boolean,
+  httpMethod?: HTTPMethod,
 };
 
 type State = {
   isConnected: boolean,
 };
 
-const withNetworkConnectivity = ({
-  withRedux = false,
-  timeout = 3000,
-  pingServerUrl = 'https://google.com',
-  withExtraHeadRequest = true,
-  checkConnectionInterval = 0,
-  checkIntervalOfflineOnly = false,
-}: Arguments = {}) => (WrappedComponent: ReactClass<*>) => {
+const withNetworkConnectivity = (
+  {
+    withRedux = false,
+    timeout = 3000,
+    pingServerUrl = 'http://www.google.com/',
+    withExtraHeadRequest = true,
+    checkConnectionInterval = 0,
+    checkIntervalOfflineOnly = false,
+    checkInBackground = false,
+    httpMethod = 'HEAD',
+  }: Arguments = {},
+) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
   }
@@ -43,10 +50,8 @@ const withNetworkConnectivity = ({
     throw new Error('you should pass a string as pingServerUrl parameter');
   }
 
-  class EnhancedComponent extends Component<void, void, State> {
-    static displayName = `withNetworkConnectivity(${
-      WrappedComponent.displayName
-    })`;
+  class EnhancedComponent extends PureComponent<void, void, State> {
+    static displayName = `withNetworkConnectivity(${WrappedComponent.displayName})`;
 
     static contextTypes = {
       store: PropTypes.shape({
@@ -104,11 +109,16 @@ const withNetworkConnectivity = ({
     };
 
     checkInternet = () => {
-      checkInternetAccess(timeout, pingServerUrl).then(
-        (hasInternetAccess: boolean) => {
-          this.handleConnectivityChange(hasInternetAccess);
-        },
-      );
+      if (checkInBackground === false && AppState.currentState !== 'active') {
+        return; // <-- Return early as we dont care about connectivity if apps' not in foreground.
+      }
+      checkInternetAccess(
+        timeout,
+        pingServerUrl,
+        httpMethod,
+      ).then((hasInternetAccess: boolean) => {
+        this.handleConnectivityChange(hasInternetAccess);
+      });
     };
 
     handleConnectivityChange = (isConnected: boolean) => {
@@ -132,10 +142,9 @@ const withNetworkConnectivity = ({
             store.dispatch(action);
           });
         }
-      } else {
-        // Standard HOC, passing connectivity as props
-        this.setState({ isConnected });
       }
+
+      this.setState({ isConnected });
     };
 
     render() {
