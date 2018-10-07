@@ -64,7 +64,7 @@
   "dependencies": {
     "hoist-non-react-statics": "^1.2.0",
     "lodash": "^4.17.4",
-    "redux-saga": "*"
+    "redux-saga": "^0.16.1"
   },
   "jest": {
     "collectCoverage": true
