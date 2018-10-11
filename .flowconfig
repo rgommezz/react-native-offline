@@ -30,6 +30,8 @@
 ; Ignore react-native-fbads dependency of the expo sdk
 .*/node_modules/react-native-fbads/*
 
+.*/node_modules/all-contributors-cli/*
+
 [include]
 
 [libs]
