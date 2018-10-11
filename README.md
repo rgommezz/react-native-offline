@@ -12,6 +12,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
 * [Motivation](#motivation)
 * [Features](#features)
 * [Contributions](#contributions)
+* [Sponsors](#sponsors)
 * [Installation](#installation)
 * [API](#api)
   * [Component Utilities](#component-utilities)
@@ -48,6 +49,15 @@ This library aims to gather a variety of modules that follow React and Redux bes
 
 ## Contributions
 PRs are more than welcome. If you're planning to contribute please make sure to read the contributing guide: [CONTRIBUTING.md](https://github.com/rgommezz/react-native-offline/blob/master/CONTRIBUTING.md)
+
+## Sponsors
+If you use this library on your commercial/personal projects, you can help us by funding the work on specific issues that you choose by using IssueHunt.io!
+
+This gives you the power to prioritize our work and support the project contributors. Moreover it'll guarantee the project will be updated and maintained in the long run.
+
+> Sponsors will be listed in the contributors section at the bottom. If you want to be removed please contact me at: rauliyohmc@gmail.com
+
+[![issuehunt-image](https://github.com/BoostIO/issuehunt-materials/blob/master/issuehunt-badge@1x.png?raw=true)](https://issuehunt.io/repos/86369462)
 
 ## Installation
 This library supports React Native v0.48 or higher.
