@@ -140,9 +140,10 @@ const withNetworkConnectivity = ({
             store.dispatch(action);
           });
         }
+      } else {
+        // Standard HOC, passing connectivity as props
+        this.setState({ isConnected });
       }
-
-      this.setState({ isConnected });
     };
 
     render() {
