@@ -1,6 +1,5 @@
 # react-native-offline
 [![All Contributors](https://img.shields.io/badge/all_contributors-23-orange.svg?style=flat-square)](#contributors)
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
@@ -28,6 +27,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
   * [FAQ](#faq)
   * [Inspiration](#inspiration)
   * [License](#license)
+  * [Contributors](#contributors)
 
 ## Motivation
 When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behave in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
