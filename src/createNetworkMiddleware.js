@@ -15,6 +15,8 @@ type MiddlewareAPI<S> = {
 
 type State = {
   network: NetworkState,
+  toJS: Function,
+  get: Function,
 };
 
 type Arguments = {|
@@ -35,7 +37,10 @@ function createNetworkMiddleware({
     if ({}.toString.call(actionTypes) !== '[object Array]')
       throw new Error('You should pass an array as actionTypes param');
 
-    const { isConnected, actionQueue } = getState().network;
+    const isImmutable = typeof getState().toJS === 'function';
+    const { isConnected, actionQueue } = isImmutable
+      ? getState().get('network')
+      : getState().network;
 
     const isObjectAndMatchCondition =
       typeof action === 'object' &&

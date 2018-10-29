@@ -129,9 +129,15 @@ const withNetworkConnectivity = ({
         typeof store.dispatch === 'function' &&
         withRedux === true
       ) {
-        const actionQueue = store.getState().network.actionQueue;
+        const isImmutable = typeof store.getState().toJS === 'function';
+        const actionQueue = isImmutable
+          ? store.getState().get('network').actionQueue
+          : store.getState().network.actionQueue;
+        const storedIsConnected = isImmutable
+          ? store.getState().get('network').isConnected
+          : store.getState().network.isConnected;
 
-        if (isConnected !== store.getState().network.isConnected) {
+        if (isConnected !== storedIsConnected) {
           store.dispatch(connectionChange(isConnected));
         }
         // dispatching queued actions in order of arrival (if we have any)
