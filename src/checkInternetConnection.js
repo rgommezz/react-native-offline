@@ -15,9 +15,10 @@ export default function checkInternetConnection(
   timeout: number = 3000,
   url: string = 'https://www.google.com/',
 ): Promise<boolean> {
-  let connectionChecked: Promise<boolean>;
+  let connectionChecked: Promise<boolean> = NetInfo.isConnected.fetch();
   if (Platform.OS === 'ios') {
-    connectionChecked = new Promise((resolve: Function) => {
+    const fetchChecked = connectionChecked;
+    connectionChecked = new Promise((resolve: Function, reject: Function) => {
       const handleFirstConnectivityChangeIOS = (isConnected: boolean) => {
         NetInfo.isConnected.removeEventListener(
           'connectionChange',
@@ -29,9 +30,17 @@ export default function checkInternetConnection(
         'connectionChange',
         handleFirstConnectivityChangeIOS,
       );
+      // Wire up our fetch, if it resolves, just use that
+      fetchChecked
+        .then(resolve)
+        .catch(reject)
+        .then(() => {
+          NetInfo.isConnected.removeEventListener(
+            'connectionChange',
+            handleFirstConnectivityChangeIOS,
+          );
+        })
     });
-  } else {
-    connectionChecked = NetInfo.isConnected.fetch();
   }
 
   return connectionChecked.then((isConnected: boolean) => {
