@@ -39,7 +39,7 @@ export default function checkInternetConnection(
             'connectionChange',
             handleFirstConnectivityChangeIOS,
           );
-        })
+        });
     });
   }
 
