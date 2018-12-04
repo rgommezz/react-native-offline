@@ -18,16 +18,16 @@ export const connectionChange = (isConnected: boolean): FluxAction => ({
 export const fetchOfflineMode = (
   action: EnqueuedAction,
 ): FluxActionWithPreviousIntent => {
+  const { meta = {}, ...actionRest } = action;
   if (typeof action === 'object') {
     return {
       type: actionTypes.FETCH_OFFLINE_MODE,
       payload: {
         prevAction: {
-          type: action.type,
-          payload: action.payload,
+          ...actionRest,
         },
       },
-      meta: action.meta || {},
+      meta,
     };
   }
   // Thunk
@@ -36,7 +36,7 @@ export const fetchOfflineMode = (
     payload: {
       prevThunk: action,
     },
-    meta: action.meta || {},
+    meta,
   };
 };
 
