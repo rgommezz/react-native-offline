@@ -83,7 +83,13 @@ const withNetworkConnectivity = ({
       }
 
       setupConnectivityCheckInterval(() => {
-        if (this.state.isConnected && checkIntervalOfflineOnly) {
+        const { store } = this.context;
+        let isConnected = this.state.isConnected;
+        // When using redux integration, use store state for connection status
+        if (withRedux && store) {
+          isConnected = store.getState().network.isConnected;
+        }
+        if (isConnected && checkIntervalOfflineOnly) {
           return;
         }
         this.checkInternet();
