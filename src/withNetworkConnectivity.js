@@ -85,7 +85,7 @@ const withNetworkConnectivity = ({
       setupConnectivityCheckInterval(() => {
         const { store } = this.context;
         let isConnected = this.state.isConnected;
-        // When using redux integration, local state should match redux state.
+        // When using redux integration, use store state for connection status
         if (withRedux && store) {
           isConnected = store.getState().network.isConnected;
         }
