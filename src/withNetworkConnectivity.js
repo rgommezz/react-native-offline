@@ -22,6 +22,7 @@ type Arguments = {
   checkIntervalOfflineOnly?: boolean,
   checkInBackground?: boolean,
   httpMethod?: HTTPMethod,
+  nrAttempt?: number,
 };
 
 type State = {
@@ -37,6 +38,7 @@ const withNetworkConnectivity = ({
   checkIntervalOfflineOnly = false,
   checkInBackground = false,
   httpMethod = 'HEAD',
+  nrAttempt = 3,
 }: Arguments = {}) => (WrappedComponent: ReactClass<*>) => {
   if (typeof withRedux !== 'boolean') {
     throw new Error('you should pass a boolean as withRedux parameter');
@@ -106,6 +108,8 @@ const withNetworkConnectivity = ({
       clearConnectivityCheckInterval();
     }
 
+    attempt = nrAttempt;
+
     handleNetInfoChange = (isConnected: boolean) => {
       if (!isConnected) {
         this.handleConnectivityChange(isConnected);
@@ -120,15 +124,29 @@ const withNetworkConnectivity = ({
       }
       checkInternetAccess(timeout, pingServerUrl, httpMethod).then(
         (hasInternetAccess: boolean) => {
-          this.handleConnectivityChange(hasInternetAccess);
+          const hasNoAttempt: boolean = this.attempt === 0;
+          if (hasInternetAccess || hasNoAttempt) {
+            this.handleConnectivityChange(hasInternetAccess);
+          } else {
+            this.decrementAttempt();
+          }
         },
       );
+    };
+
+    resetAttempt = () => {
+      this.attempt = nrAttempt;
+    };
+
+    decrementAttempt = () => {
+      this.attempt = this.attempt - 1;
     };
 
     handleConnectivityChange = (isConnected: boolean) => {
       const { store } = this.context;
       reactConnectionStore.setConnection(isConnected);
 
+      this.resetAttempt();
       // Top most component, syncing with store
       if (
         typeof store === 'object' &&

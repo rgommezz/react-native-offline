@@ -31,19 +31,13 @@ export default function makeHttpRequest({
   return new Promise((resolve: any, reject: any) => {
     const xhr = new XMLHttpRequest();
 
-    const tOut = setTimeout(() => {
-      xhr.abort();
-      reject('timeout');
-    }, timeout);
-
     xhr.open(method, url);
+    xhr.timeout = timeout;
     xhr.onload = function onLoad() {
       // 3xx is a valid response for us, since the server was reachable
       if (this.status >= 200 && this.status < 400) {
-        clearTimeout(tOut);
         resolve(xhr.response);
       } else {
-        clearTimeout(tOut);
         reject({
           status: this.status,
           statusText: xhr.statusText,
@@ -51,12 +45,18 @@ export default function makeHttpRequest({
       }
     };
     xhr.onerror = function onError() {
-      clearTimeout(tOut);
       reject({
         status: this.status,
         statusText: xhr.statusText,
       });
     };
+
+    xhr.ontimeout = function onTimeOut() {
+      // XMLHttpRequest timed out. Do something here.
+      xhr.abort();
+      reject('timeout');
+    };
+
     if (headers) {
       Object.keys(headers).forEach((key: string) => {
         xhr.setRequestHeader(key, headers[key]);

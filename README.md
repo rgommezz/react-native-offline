@@ -110,6 +110,8 @@ type Config = {
 
 `httpMethod`: usage http method to check the internet-access. Supports HEAD or OPTIONS. Default is `HEAD`.
 
+`nrAttempt`: indicate number of retry to confirm the failure of internet connection. Default is `3`.
+
 ##### Usage
 ```js
 import React from 'react';
