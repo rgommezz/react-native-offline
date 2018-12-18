@@ -122,15 +122,22 @@ function* checkInternetAccessSaga(
 function* handleConnectivityChange(
   hasInternetAccess: boolean,
 ): Generator<*, *, *> {
-  yield put(connectionChange(hasInternetAccess));
-  const actionQueue = yield select(
-    (state: { network: NetworkState }) => state.network.actionQueue,
+  const previousConnectionStatus = yield select(
+    (state: { network: NetworkState }) => state.network.isConnected,
   );
+  
+  if (previousConnectionStatus !== hasInternetAccess) {
+    yield put(connectionChange(hasInternetAccess));
+    
+    const actionQueue = yield select(
+      (state: { network: NetworkState }) => state.network.actionQueue,
+    );
 
-  if (hasInternetAccess && actionQueue.length > 0) {
-    // eslint-disable-next-line
-    for (const action of actionQueue) {
-      yield put(action);
+    if (hasInternetAccess && actionQueue.length > 0) {
+      // eslint-disable-next-line
+      for (const action of actionQueue) {
+        yield put(action);
+      }
     }
   }
 }
