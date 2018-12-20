@@ -6,9 +6,9 @@ class OnDemand extends Component {
   checkInternetConnectivity = async () => {
     const isConnected = await checkInternetConnection(); //you can pass a timeout and a pingurl to it
     if (isConnected) {
-      Alert.alert(`You're connected to the internet`);
+      Alert.alert("Status", `You're connected to the internet`);
     } else {
-      Alert.alert(`You're not connected to the internet`);
+      Alert.alert("Status", `You're not connected to the internet`);
     }
   };
 

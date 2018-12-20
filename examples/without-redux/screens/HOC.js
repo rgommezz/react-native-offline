@@ -4,11 +4,11 @@ import { View, Text, Alert } from "react-native";
 import Item from "../components/Item";
 
 const buyIfOnline = () => {
-  Alert.alert("You are online. You can proceed");
+  Alert.alert("Status","You are online. You can proceed");
 };
 
 const buyIfOffline = () => {
-  Alert.alert("You are offline. You cannot proceed");
+  Alert.alert("Status","You are offline. You cannot proceed");
 };
 
 const WithHOC = ({ isConnected }) => (

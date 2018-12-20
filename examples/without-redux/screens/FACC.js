@@ -5,11 +5,11 @@ import Item from "../components/Item";
 
 class FunctionAsAChildComponent extends Component {
   buyIfOnline = () => {
-    Alert.alert("You are online. You can proceed");
+    Alert.alert("Status","You are online. You can proceed");
   };
 
   buyIfOffline = () => {
-    Alert.alert("You are offline. You cannot proceed");
+    Alert.alert("Status", "You are offline. You cannot proceed");
   };
 
   render() {
