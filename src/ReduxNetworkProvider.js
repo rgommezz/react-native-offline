@@ -1,19 +1,19 @@
 /* @flow */
-import React, { PureComponent } from 'react';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { AppState, NetInfo, Platform } from 'react-native';
-import NetworkContext from './NetworkContext';
-import type { HTTPMethod } from './types';
+import type { HTTPMethod, FluxAction } from './types';
 import {
   clearConnectivityCheckInterval,
   setupConnectivityCheckInterval,
 } from './checkConnectivityInterval';
 import checkInternetAccess from './checkInternetAccess';
-
-type State = {
-  isConnected: boolean,
-};
+import { connectionChange } from './actionCreators';
 
 type Props = {
+  dispatch: FluxAction => FluxAction,
+  isConnected: boolean,
+  actionQueue: Array<FluxAction>,
   timeout?: number,
   pingServerUrl?: string,
   shouldPing?: boolean,
@@ -47,7 +47,7 @@ function validateProps(props: Props) {
   }
 }
 
-class NetworkProvider extends PureComponent<void, Props, State> {
+class ReduxNetworkProvider extends Component<void, Props, void> {
   static defaultProps = {
     timeout: 3000,
     pingServerUrl: 'https://www.google.com/',
@@ -61,9 +61,6 @@ class NetworkProvider extends PureComponent<void, Props, State> {
   constructor(props: Props) {
     super(props);
     validateProps(props);
-    this.state = {
-      isConnected: true,
-    };
   }
 
   async componentDidMount() {
@@ -116,7 +113,7 @@ class NetworkProvider extends PureComponent<void, Props, State> {
   };
 
   intervalHandler = () => {
-    if (!(this.state.isConnected && this.props.pingOnlyIfOffline)) {
+    if (!(this.props.isConnected && this.props.pingOnlyIfOffline)) {
       this.checkInternet();
     }
   };
@@ -126,18 +123,25 @@ class NetworkProvider extends PureComponent<void, Props, State> {
    * @param isConnected
    */
   handleConnectivityChange = (isConnected: boolean) => {
-    this.setState({
-      isConnected,
-    });
+    const { isConnected: wasConnected, actionQueue, dispatch } = this.props;
+
+    if (isConnected !== wasConnected) {
+      dispatch(connectionChange(isConnected));
+    }
+    // dispatching queued actions in order of arrival (if we have any)
+    if (!wasConnected && isConnected && actionQueue.length > 0) {
+      actionQueue.forEach((action: *) => {
+        dispatch(action);
+      });
+    }
   };
 
   render() {
-    return (
-      <NetworkContext.Provider value={this.state}>
-        {this.props.children}
-      </NetworkContext.Provider>
-    );
+    return this.props.children;
   }
 }
 
-export default NetworkProvider;
+export default connect((state: *) => ({
+  isConnected: state.network.isConnected,
+  actionQueue: state.network.actionQueue,
+}))(ReduxNetworkProvider);

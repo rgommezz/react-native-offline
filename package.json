@@ -59,7 +59,7 @@
     "prop-types": "^15.5.10",
     "react": "^16.6.3",
     "react-native": "^0.57.8",
-    "redux": "^3.6.0",
+    "redux": "^4.0.1",
     "redux-mock-store": "^1.2.2",
     "redux-saga": "^0.16.0",
     "redux-thunk": "^2.2.0"
@@ -67,6 +67,7 @@
   "dependencies": {
     "hoist-non-react-statics": "^1.2.0",
     "lodash": "^4.17.4",
+    "react-redux": "^6.0.0",
     "redux-saga": "*"
   },
   "jest": {
