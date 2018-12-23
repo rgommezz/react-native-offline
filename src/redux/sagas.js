@@ -3,9 +3,9 @@
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { NetInfo } from 'react-native';
-import checkInternetAccess from './checkInternetAccess';
+import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
-import type { NetworkState } from './types';
+import type { NetworkState } from '../types';
 
 type Arguments = {
   timeout?: number,

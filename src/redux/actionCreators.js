@@ -6,7 +6,7 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   FluxActionForDismissal,
-} from './types';
+} from '../types';
 
 type EnqueuedAction = FluxAction | Function;
 

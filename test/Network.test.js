@@ -3,10 +3,10 @@ import React from 'react';
 import { View, Text, Platform, AppState } from 'react-native';
 import { shallow } from 'enzyme';
 import { render } from 'react-native-testing-library';
-import NetworkProvider from '../src/NetworkProvider';
-import NetworkConsumer from '../src/NetworkConsumer';
-import { setup, clear } from '../src/checkConnectivityInterval';
-import checkInternetAccess from '../src/checkInternetAccess';
+import NetworkProvider from '../src/components/NetworkProvider';
+import NetworkConsumer from '../src/components/NetworkConsumer';
+import { setup, clear } from '../src/utils/checkConnectivityInterval';
+import checkInternetAccess from '../src/utils/checkInternetAccess';
 
 type MethodsMap = {
   [string]: Function,
@@ -32,8 +32,8 @@ jest.mock('NetInfo', () => ({
   },
 }));
 
-jest.mock('../src/checkConnectivityInterval');
-jest.mock('../src/checkInternetAccess', () =>
+jest.mock('../src/utils/checkConnectivityInterval');
+jest.mock('../src/utils/checkInternetAccess', () =>
   jest.fn().mockResolvedValue(true),
 );
 

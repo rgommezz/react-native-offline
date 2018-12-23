@@ -7,7 +7,7 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   NetworkState,
-} from './types';
+} from '../types';
 
 export const initialState = {
   isConnected: true,

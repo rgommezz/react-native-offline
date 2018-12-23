@@ -1,8 +1,8 @@
 /* eslint flowtype/require-parameter-type: 0 */
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import createNetworkMiddleware from '../src/createNetworkMiddleware';
-import * as actionCreators from '../src/actionCreators';
+import createNetworkMiddleware from '../src/redux/createNetworkMiddleware';
+import * as actionCreators from '../src/redux/actionCreators';
 
 const getFetchAction = type => ({
   type,

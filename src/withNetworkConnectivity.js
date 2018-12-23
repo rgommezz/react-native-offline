@@ -4,13 +4,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { NetInfo, Platform, AppState } from 'react-native';
 import hoistStatics from 'hoist-non-react-statics';
-import { connectionChange } from './actionCreators';
-import reactConnectionStore from './reactConnectionStore';
-import checkInternetAccess from './checkInternetAccess';
+import { connectionChange } from './redux/actionCreators';
+import checkInternetAccess from './utils/checkInternetAccess';
 import {
   setupConnectivityCheckInterval,
   clearConnectivityCheckInterval,
-} from './checkConnectivityInterval';
+} from './utils/checkConnectivityInterval';
 import type { HTTPMethod } from './types';
 
 type Arguments = {
@@ -60,7 +59,7 @@ const withNetworkConnectivity = ({
     };
 
     state = {
-      isConnected: reactConnectionStore.getConnection(),
+      isConnected: true,
     };
 
     componentDidMount() {
@@ -127,7 +126,6 @@ const withNetworkConnectivity = ({
 
     handleConnectivityChange = (isConnected: boolean) => {
       const { store } = this.context;
-      reactConnectionStore.setConnection(isConnected);
 
       // Top most component, syncing with store
       if (

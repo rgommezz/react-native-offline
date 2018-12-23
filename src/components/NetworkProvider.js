@@ -1,19 +1,16 @@
 /* @flow */
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { PureComponent } from 'react';
 import { AppState, NetInfo, Platform } from 'react-native';
-import type { HTTPMethod, FluxAction } from './types';
-import {
-  clearConnectivityCheckInterval,
-  setupConnectivityCheckInterval,
-} from './checkConnectivityInterval';
-import checkInternetAccess from './checkInternetAccess';
-import { connectionChange } from './actionCreators';
+import NetworkContext from './NetworkContext';
+import type { HTTPMethod } from '../types';
+import * as connectivityInterval from '../utils/checkConnectivityInterval';
+import checkInternetAccess from '../utils/checkInternetAccess';
+
+type State = {
+  isConnected: boolean,
+};
 
 type Props = {
-  dispatch: FluxAction => FluxAction,
-  isConnected: boolean,
-  actionQueue: Array<FluxAction>,
   timeout?: number,
   pingServerUrl?: string,
   shouldPing?: boolean,
@@ -42,12 +39,12 @@ function validateProps(props: Props) {
   if (typeof props.pingInBackground !== 'boolean') {
     throw new Error('you should pass a string as pingServerUrl parameter');
   }
-  if (typeof !['HEAD', 'OPTIONS'].includes(props.httpMethod)) {
+  if (!['HEAD', 'OPTIONS'].includes(props.httpMethod)) {
     throw new Error('httpMethod parameter should be either HEAD or OPTIONS');
   }
 }
 
-class ReduxNetworkProvider extends Component<void, Props, void> {
+class NetworkProvider extends PureComponent<void, Props, State> {
   static defaultProps = {
     timeout: 3000,
     pingServerUrl: 'https://www.google.com/',
@@ -61,11 +58,14 @@ class ReduxNetworkProvider extends Component<void, Props, void> {
   constructor(props: Props) {
     super(props);
     validateProps(props);
+    this.state = {
+      isConnected: true,
+    };
   }
 
   async componentDidMount() {
     const { pingInterval } = this.props;
-    const handler = this.connectionChangeHandler;
+    const handler = this.getConnectionChangeHandler();
 
     NetInfo.isConnected.addEventListener('connectionChange', handler);
     // On Android the listener does not fire on startup
@@ -73,19 +73,18 @@ class ReduxNetworkProvider extends Component<void, Props, void> {
       const netConnected = await NetInfo.isConnected.fetch();
       handler(netConnected);
     }
-
     if (pingInterval > 0) {
-      setupConnectivityCheckInterval(this.intervalHandler, pingInterval);
+      connectivityInterval.setup(this.intervalHandler, pingInterval);
     }
   }
 
   componentWillUnmount() {
-    const handler = this.connectionChangeHandler;
+    const handler = this.getConnectionChangeHandler();
     NetInfo.isConnected.removeEventListener('connectionChange', handler);
-    clearConnectivityCheckInterval();
+    connectivityInterval.clear();
   }
 
-  get connectionChangeHandler() {
+  getConnectionChangeHandler() {
     return this.props.shouldPing
       ? this.handleNetInfoChange
       : this.handleConnectivityChange;
@@ -113,9 +112,10 @@ class ReduxNetworkProvider extends Component<void, Props, void> {
   };
 
   intervalHandler = () => {
-    if (!(this.props.isConnected && this.props.pingOnlyIfOffline)) {
-      this.checkInternet();
+    if (this.state.isConnected && this.props.pingOnlyIfOffline === true) {
+      return;
     }
+    this.checkInternet();
   };
 
   /**
@@ -123,25 +123,18 @@ class ReduxNetworkProvider extends Component<void, Props, void> {
    * @param isConnected
    */
   handleConnectivityChange = (isConnected: boolean) => {
-    const { isConnected: wasConnected, actionQueue, dispatch } = this.props;
-
-    if (isConnected !== wasConnected) {
-      dispatch(connectionChange(isConnected));
-    }
-    // dispatching queued actions in order of arrival (if we have any)
-    if (!wasConnected && isConnected && actionQueue.length > 0) {
-      actionQueue.forEach((action: *) => {
-        dispatch(action);
-      });
-    }
+    this.setState({
+      isConnected,
+    });
   };
 
   render() {
-    return this.props.children;
+    return (
+      <NetworkContext.Provider value={this.state}>
+        {this.props.children}
+      </NetworkContext.Provider>
+    );
   }
 }
 
-export default connect((state: *) => ({
-  isConnected: state.network.isConnected,
-  actionQueue: state.network.actionQueue,
-}))(ReduxNetworkProvider);
+export default NetworkProvider;

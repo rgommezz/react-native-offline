@@ -1,6 +1,6 @@
 /* @flow */
 import makeHttpRequest from './makeHttpRequest';
-import type { HTTPMethod } from './types';
+import type { HTTPMethod } from '../types';
 
 export default function checkInternetAccess(
   timeout: number = 3000,

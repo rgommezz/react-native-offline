@@ -1,6 +1,6 @@
 /* eslint flowtype/require-parameter-type: 0 */
-import reducer, { initialState } from '../src/reducer';
-import * as actionCreators from '../src/actionCreators';
+import reducer, { initialState } from '../src/redux/reducer';
+import * as actionCreators from '../src/redux/actionCreators';
 
 describe('reducer', () => {
   const getState = (isConnected = false, ...actionQueue) => ({

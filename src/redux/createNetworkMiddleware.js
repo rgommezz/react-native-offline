@@ -6,7 +6,7 @@ import {
   removeActionFromQueue,
   dismissActionsFromQueue,
 } from './actionCreators';
-import type { NetworkState } from './types';
+import type { NetworkState } from '../types';
 
 type MiddlewareAPI<S> = {
   dispatch: (action: any) => void,
