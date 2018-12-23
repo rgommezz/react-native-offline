@@ -2,7 +2,7 @@
 
 let interval = null;
 
-export const setupConnectivityCheckInterval = (
+export const setup = (
   connectivityCheck: Function,
   checkConnectionInterval: number,
 ) => {
@@ -11,7 +11,7 @@ export const setupConnectivityCheckInterval = (
   }
 };
 
-export const clearConnectivityCheckInterval = () => {
+export const clear = () => {
   if (interval) {
     clearInterval(interval);
     interval = null;

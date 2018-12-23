@@ -6,7 +6,7 @@ type TNetworkContext = ?{
   isConnected: boolean,
 };
 
-export default function NetworkConsumer() {
+export default function NetworkConsumer({ children }) {
   return (
     <NetworkContext.Consumer>
       {(context: TNetworkContext) => {
@@ -16,7 +16,7 @@ export default function NetworkConsumer() {
               'Make sure you are rendering a NetworkProvider at the top of your component hierarchy',
           );
         }
-        return this.props.children({ isConnected: context.isConnected });
+        return children({ isConnected: context.isConnected });
       }}
     </NetworkContext.Consumer>
   );

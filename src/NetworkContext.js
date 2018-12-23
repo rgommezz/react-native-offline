@@ -1,8 +1,6 @@
 /* @flow */
 import { createContext } from 'react';
 
-const NetworkContext = createContext({
-  isConnected: true,
-});
+const NetworkContext = createContext();
 
 export default NetworkContext;

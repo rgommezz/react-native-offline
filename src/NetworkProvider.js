@@ -3,10 +3,7 @@ import React, { PureComponent } from 'react';
 import { AppState, NetInfo, Platform } from 'react-native';
 import NetworkContext from './NetworkContext';
 import type { HTTPMethod } from './types';
-import {
-  clearConnectivityCheckInterval,
-  setupConnectivityCheckInterval,
-} from './checkConnectivityInterval';
+import * as connectivityInterval from './checkConnectivityInterval';
 import checkInternetAccess from './checkInternetAccess';
 
 type State = {
@@ -42,7 +39,7 @@ function validateProps(props: Props) {
   if (typeof props.pingInBackground !== 'boolean') {
     throw new Error('you should pass a string as pingServerUrl parameter');
   }
-  if (typeof !['HEAD', 'OPTIONS'].includes(props.httpMethod)) {
+  if (!['HEAD', 'OPTIONS'].includes(props.httpMethod)) {
     throw new Error('httpMethod parameter should be either HEAD or OPTIONS');
   }
 }
@@ -68,7 +65,7 @@ class NetworkProvider extends PureComponent<void, Props, State> {
 
   async componentDidMount() {
     const { pingInterval } = this.props;
-    const handler = this.connectionChangeHandler;
+    const handler = this.getConnectionChangeHandler();
 
     NetInfo.isConnected.addEventListener('connectionChange', handler);
     // On Android the listener does not fire on startup
@@ -76,19 +73,18 @@ class NetworkProvider extends PureComponent<void, Props, State> {
       const netConnected = await NetInfo.isConnected.fetch();
       handler(netConnected);
     }
-
     if (pingInterval > 0) {
-      setupConnectivityCheckInterval(this.intervalHandler, pingInterval);
+      connectivityInterval.setup(this.intervalHandler, pingInterval);
     }
   }
 
   componentWillUnmount() {
-    const handler = this.connectionChangeHandler;
+    const handler = this.getConnectionChangeHandler();
     NetInfo.isConnected.removeEventListener('connectionChange', handler);
-    clearConnectivityCheckInterval();
+    connectivityInterval.clear();
   }
 
-  get connectionChangeHandler() {
+  getConnectionChangeHandler() {
     return this.props.shouldPing
       ? this.handleNetInfoChange
       : this.handleConnectivityChange;
@@ -116,9 +112,10 @@ class NetworkProvider extends PureComponent<void, Props, State> {
   };
 
   intervalHandler = () => {
-    if (!(this.state.isConnected && this.props.pingOnlyIfOffline)) {
-      this.checkInternet();
+    if (this.state.isConnected && this.props.pingOnlyIfOffline === true) {
+      return;
     }
+    this.checkInternet();
   };
 
   /**
