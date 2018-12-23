@@ -1,10 +1,9 @@
 /* @flow */
 import React from 'react';
-import { View, Text, Platform, AppState } from 'react-native';
+import { View, Platform, AppState } from 'react-native';
 import { shallow } from 'enzyme';
 import { render } from 'react-native-testing-library';
-import NetworkProvider from '../src/components/NetworkProvider';
-import NetworkConsumer from '../src/components/NetworkConsumer';
+import NetworkConnectivity from '../src/components/NetworkConnectivity';
 import { setup, clear } from '../src/utils/checkConnectivityInterval';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 
@@ -37,25 +36,15 @@ jest.mock('../src/utils/checkInternetAccess', () =>
   jest.fn().mockResolvedValue(true),
 );
 
-function Consumer() {
-  return (
-    <NetworkConsumer>
-      {({ isConnected }) => (
-        <Text testID="connectionText">{`Connected: ${isConnected}`}</Text>
-      )}
-    </NetworkConsumer>
-  );
-}
-
 /**
- * Helper function that creates a class that extends NetworkProvider
+ * Helper function that creates a class that extends NetworkConnectivity
  * and mocks the specific methods on the prototype,
  * in order to not affect the rest of the tests
  * @param methodsMap
  * @returns {ClassWithMocks}
  */
 function mockPrototypeMethods(methodsMap: MethodsMap = {}) {
-  class ClassWithMocks extends NetworkProvider {}
+  class ClassWithMocks extends NetworkConnectivity {}
   Object.entries(methodsMap).forEach(([method, mockFn]: *) => {
     ClassWithMocks.prototype[method] = mockFn;
   });
@@ -64,11 +53,11 @@ function mockPrototypeMethods(methodsMap: MethodsMap = {}) {
 
 const getElement = ({
   props = {},
-  children = null,
-  Component = NetworkProvider,
-}) => <Component {...props}>{children}</Component>;
+  children = () => <View />,
+  Component = NetworkConnectivity,
+} = {}) => <Component {...props}>{children}</Component>;
 
-describe('NetworkProvider', () => {
+describe('NetworkConnectivity', () => {
   afterEach(() => {
     mockAddEventListener.mockClear();
     mockRemoveEventListener.mockClear();
@@ -80,9 +69,10 @@ describe('NetworkProvider', () => {
     mockHandleConnectivityChange.mockClear();
     mockCheckInternet.mockClear();
   });
-  it('renders the children as it is', () => {
-    const wrapper = shallow(getElement({ children: <View /> }));
-    expect(wrapper.props().children.type.displayName).toBe('View');
+  it('passes the connection state into the FACC', () => {
+    const children = jest.fn();
+    shallow(getElement({ children }));
+    expect(children).toHaveBeenCalledWith({ isConnected: true });
   });
 
   describe('componentDidMount', () => {
@@ -90,11 +80,13 @@ describe('NetworkProvider', () => {
       it(`sets up a NetInfo.isConnected listener for connectionChange 
       AND does NOT call setupConnectivityCheckInterval`, () => {
         Platform.OS = 'ios';
-        const MockedNetworkProvider = mockPrototypeMethods({
+        const MockedNetworkConnectivity = mockPrototypeMethods({
           getConnectionChangeHandler: mockGetConnectionChangeHandler,
         });
         shallow(
-          getElement({ children: <View />, Component: MockedNetworkProvider }),
+          getElement({
+            Component: MockedNetworkConnectivity,
+          }),
         );
         expect(mockAddEventListener).toHaveBeenCalledTimes(1);
         expect(mockAddEventListener).toHaveBeenCalledWith(
@@ -111,13 +103,12 @@ describe('NetworkProvider', () => {
       AND calls the handler
       AND does NOT call setupConnectivityCheckInterval`, done => {
         Platform.OS = 'android';
-        const MockedNetworkProvider = mockPrototypeMethods({
+        const MockedNetworkConnectivity = mockPrototypeMethods({
           getConnectionChangeHandler: mockGetConnectionChangeHandler,
         });
         shallow(
           getElement({
-            children: <View />,
-            Component: MockedNetworkProvider,
+            Component: MockedNetworkConnectivity,
           }),
         );
         expect(mockAddEventListener).toHaveBeenCalledTimes(1);
@@ -137,13 +128,12 @@ describe('NetworkProvider', () => {
     it(`calls setupConnectivityCheckInterval with the right arguments
      WHEN pingInterval is higher than 0`, () => {
       Platform.OS = 'ios';
-      const MockedNetworkProvider = mockPrototypeMethods({
+      const MockedNetworkConnectivity = mockPrototypeMethods({
         intervalHandler: mockIntervalHandler,
       });
       shallow(
         getElement({
-          children: <View />,
-          Component: MockedNetworkProvider,
+          Component: MockedNetworkConnectivity,
           props: {
             pingInterval: 1000,
           },
@@ -156,13 +146,12 @@ describe('NetworkProvider', () => {
   describe('componentWillUnmount', () => {
     it(`removes the NetInfo listener with the right parameters
       AND call connectivityInterval.clear`, () => {
-      const MockedNetworkProvider = mockPrototypeMethods({
+      const MockedNetworkConnectivity = mockPrototypeMethods({
         getConnectionChangeHandler: mockGetConnectionChangeHandler,
       });
       const wrapper = shallow(
         getElement({
-          children: <View />,
-          Component: MockedNetworkProvider,
+          Component: MockedNetworkConnectivity,
         }),
       );
       wrapper.unmount();
@@ -179,7 +168,6 @@ describe('NetworkProvider', () => {
     it('returns this.handleNetInfoChange when props.shouldPing = true', () => {
       const wrapper = shallow(
         getElement({
-          children: <View />,
           props: {
             shouldPing: true,
           },
@@ -194,7 +182,6 @@ describe('NetworkProvider', () => {
     it('returns this.handleConnectivityChange when props.shouldPing = false', () => {
       const wrapper = shallow(
         getElement({
-          children: <View />,
           props: {
             shouldPing: false,
           },
@@ -209,11 +196,7 @@ describe('NetworkProvider', () => {
 
   describe('handleNetInfoChange', () => {
     it('calls handleConnectivityChange if isConnected is false', () => {
-      const wrapper = shallow(
-        getElement({
-          children: <View />,
-        }),
-      );
+      const wrapper = shallow(getElement());
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       wrapper.instance().checkInternet = mockCheckInternet;
       wrapper.instance().handleNetInfoChange(false);
@@ -222,11 +205,7 @@ describe('NetworkProvider', () => {
     });
 
     it('calls checkInternet if isConnected is true', () => {
-      const wrapper = shallow(
-        getElement({
-          children: <View />,
-        }),
-      );
+      const wrapper = shallow(getElement());
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       wrapper.instance().checkInternet = mockCheckInternet;
       wrapper.instance().handleNetInfoChange(true);
@@ -240,7 +219,6 @@ describe('NetworkProvider', () => {
       AppState.currentState = 'background';
       const wrapper = shallow(
         getElement({
-          children: <View />,
           props: {
             pingInBackground: false,
           },
@@ -262,7 +240,6 @@ describe('NetworkProvider', () => {
       AppState.currentState = 'active';
       const wrapper = shallow(
         getElement({
-          children: <View />,
           props,
         }),
       );
@@ -281,7 +258,6 @@ describe('NetworkProvider', () => {
     it('returns early if there is connection AND pingOnlyIfOffline = true', () => {
       const wrapper = shallow(
         getElement({
-          children: <View />,
           props: {
             pingOnlyIfOffline: true,
           },
@@ -296,7 +272,6 @@ describe('NetworkProvider', () => {
     it(`calls checkInternet if it's not connected OR pingOnlyIfOffline = false`, () => {
       const wrapper = shallow(
         getElement({
-          children: <View />,
           props: {
             pingOnlyIfOffline: false,
           },
@@ -316,13 +291,12 @@ describe('NetworkProvider', () => {
   describe('handleConnectivityChange', () => {
     it('calls setState with the new connection value', () => {
       const mockSetState = jest.fn();
-      const MockedNetworkProvider = mockPrototypeMethods({
+      const MockedNetworkConnectivity = mockPrototypeMethods({
         setState: mockSetState,
       });
       const wrapper = shallow(
         getElement({
-          children: <View />,
-          Component: MockedNetworkProvider,
+          Component: MockedNetworkConnectivity,
         }),
       );
 
@@ -336,40 +310,32 @@ describe('NetworkProvider', () => {
 
   describe('props validation', () => {
     it('throws if prop timeout is not a number', () => {
-      expect(() =>
-        render(getElement({ children: <View />, props: { timeout: '4000' } })),
-      ).toThrow('you should pass a number as timeout parameter');
+      expect(() => render(getElement({ props: { timeout: '4000' } }))).toThrow(
+        'you should pass a number as timeout parameter',
+      );
     });
 
     it('throws if prop pingServerUrl is not a string', () => {
       expect(() =>
-        render(
-          getElement({ children: <View />, props: { pingServerUrl: 90 } }),
-        ),
+        render(getElement({ props: { pingServerUrl: 90 } })),
       ).toThrow('you should pass a string as pingServerUrl parameter');
     });
 
     it('throws if prop shouldPing is not a boolean', () => {
       expect(() =>
-        render(
-          getElement({ children: <View />, props: { shouldPing: () => null } }),
-        ),
+        render(getElement({ props: { shouldPing: () => null } })),
       ).toThrow('you should pass a boolean as shouldPing parameter');
     });
 
     it('throws if prop pingInterval is not a number', () => {
       expect(() =>
-        render(
-          getElement({ children: <View />, props: { pingInterval: false } }),
-        ),
+        render(getElement({ props: { pingInterval: false } })),
       ).toThrow('you should pass a number as pingInterval parameter');
     });
 
     it('throws if prop pingOnlyIfOffline is not a boolean', () => {
       expect(() =>
-        render(
-          getElement({ children: <View />, props: { pingOnlyIfOffline: 10 } }),
-        ),
+        render(getElement({ props: { pingOnlyIfOffline: 10 } })),
       ).toThrow('you should pass a boolean as pingOnlyIfOffline parameter');
     });
 
@@ -377,7 +343,6 @@ describe('NetworkProvider', () => {
       expect(() =>
         render(
           getElement({
-            children: <View />,
             props: { pingInBackground: '4000' },
           }),
         ),
@@ -386,25 +351,14 @@ describe('NetworkProvider', () => {
 
     it('throws if prop httpMethod is not either HEAD or OPTIONS', () => {
       expect(() =>
-        render(
-          getElement({ children: <View />, props: { httpMethod: 'POST' } }),
-        ),
+        render(getElement({ props: { httpMethod: 'POST' } })),
       ).toThrow('httpMethod parameter should be either HEAD or OPTIONS');
     });
-  });
-});
 
-describe('NetworkConsumer', () => {
-  it('receives isConnected prop from Provider using context', () => {
-    const { getByTestId } = render(getElement({ children: <Consumer /> }));
-    const textChild = getByTestId('connectionText');
-    expect(textChild.props.children).toBe('Connected: true');
-  });
-
-  it(`throws if it's not rendered within the Provider`, () => {
-    expect(() => render(<Consumer />)).toThrow(
-      'NetworkConsumer components should be rendered within NetworkProvider. ' +
-        'Make sure you are rendering a NetworkProvider at the top of your component hierarchy',
-    );
+    it('throws if prop onConnectivityChange is not a function', () => {
+      expect(() =>
+        render(getElement({ props: { onConnectivityChange: 'foo' } })),
+      ).toThrow('you should pass a function as onConnectivityChange parameter');
+    });
   });
 });

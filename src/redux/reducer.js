@@ -16,10 +16,7 @@ export const initialState = {
 
 function handleOfflineAction(
   state: NetworkState,
-  {
-    payload: { prevAction, prevThunk } = {},
-    meta,
-  }: FluxActionWithPreviousIntent,
+  { payload: { prevAction, prevThunk }, meta }: FluxActionWithPreviousIntent,
 ): NetworkState {
   const isActionToRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;

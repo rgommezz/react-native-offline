@@ -46,7 +46,9 @@ function createNetworkMiddleware({
 
     if (isObjectAndMatchCondition || isFunctionAndMatchCondition) {
       if (isConnected === false) {
-        return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
+        // Offline, preventing the original action from being dispatched.
+        // Dispatching an internal action instead.
+        return next(fetchOfflineMode(action));
       }
       const actionQueued =
         actionQueue.length > 0

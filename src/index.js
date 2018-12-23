@@ -3,7 +3,7 @@ module.exports = {
     return require('./redux/reducer').default;
   },
   get withNetworkConnectivity() {
-    return require('./withNetworkConnectivity').default;
+    return require('./components/NetworkConnectivity').default;
   },
   get createNetworkMiddleware() {
     return require('./redux/createNetworkMiddleware').default;
