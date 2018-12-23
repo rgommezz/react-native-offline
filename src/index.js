@@ -1,9 +1,15 @@
 module.exports = {
+  get NetworkProvider() {
+    return require('./components/NetworkProvider').default;
+  },
+  get ReduxNetworkProvider() {
+    return require('./components/ReduxNetworkProvider').default;
+  },
+  get NetworkConsumer() {
+    return require('./components/NetworkConsumer').default;
+  },
   get reducer() {
     return require('./redux/reducer').default;
-  },
-  get withNetworkConnectivity() {
-    return require('./components/NetworkConnectivity').default;
   },
   get createNetworkMiddleware() {
     return require('./redux/createNetworkMiddleware').default;

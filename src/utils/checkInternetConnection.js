@@ -2,7 +2,7 @@
 
 import { Platform, NetInfo } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
-import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from "./constants";
+import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants';
 
 /**
  * Utility that allows to query for internet connectivity on demand
