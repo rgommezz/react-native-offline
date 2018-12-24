@@ -6,12 +6,9 @@ export function getInterval() {
   return interval;
 }
 
-export function setup(
-  connectivityCheck: Function,
-  checkConnectionInterval: number,
-) {
-  if (checkConnectionInterval > 0 && !interval) {
-    interval = setInterval(connectivityCheck, checkConnectionInterval);
+export function setup(checkFn: Function, t: number) {
+  if (t > 0 && !interval) {
+    interval = setInterval(checkFn, t);
   }
 }
 

@@ -8,8 +8,8 @@ exports[`NetworkProvider has the correct structure 1`] = `
   pingInterval={0}
   pingOnlyIfOffline={false}
   pingServerUrl="https://www.google.com/"
+  pingTimeout={3000}
   shouldPing={true}
-  timeout={3000}
 >
   [Function]
 </NetworkConnectivity>

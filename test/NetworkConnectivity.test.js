@@ -233,7 +233,7 @@ describe('NetworkConnectivity', () => {
     it(`calls checkInternetAccess AND handleConnectivityChange 
     with the right arguments if app is in foreground`, async () => {
       const props = {
-        timeout: 2000,
+        pingTimeout: 2000,
         pingServerUrl: 'dummy.com',
         httpMethod: 'OPTIONS',
       };
@@ -246,7 +246,7 @@ describe('NetworkConnectivity', () => {
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       await wrapper.instance().checkInternet();
       expect(checkInternetAccess).toHaveBeenCalledWith(
-        props.timeout,
+        props.pingTimeout,
         props.pingServerUrl,
         props.httpMethod,
       );
@@ -309,9 +309,9 @@ describe('NetworkConnectivity', () => {
   });
 
   describe('props validation', () => {
-    it('throws if prop timeout is not a number', () => {
-      expect(() => render(getElement({ props: { timeout: '4000' } }))).toThrow(
-        'you should pass a number as timeout parameter',
+    it('throws if prop pingTimeout is not a number', () => {
+      expect(() => render(getElement({ props: { pingTimeout: '4000' } }))).toThrow(
+        'you should pass a number as pingTimeout parameter',
       );
     });
 

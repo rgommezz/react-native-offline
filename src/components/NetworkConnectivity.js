@@ -17,7 +17,7 @@ type State = {
 type Props = {
   onConnectivityChange?: (isConnected: boolean) => void,
   children: *, // TODO add proper type
-  timeout?: number,
+  pingTimeout?: number,
   pingServerUrl?: string,
   shouldPing?: boolean,
   pingInterval?: number,
@@ -32,8 +32,8 @@ function validateProps(props: Props) {
       'you should pass a function as onConnectivityChange parameter',
     );
   }
-  if (typeof props.timeout !== 'number') {
-    throw new Error('you should pass a number as timeout parameter');
+  if (typeof props.pingTimeout !== 'number') {
+    throw new Error('you should pass a number as pingTimeout parameter');
   }
   if (typeof props.pingServerUrl !== 'string') {
     throw new Error('you should pass a string as pingServerUrl parameter');
@@ -58,7 +58,7 @@ function validateProps(props: Props) {
 class NetworkConnectivity extends PureComponent<void, Props, State> {
   static defaultProps = {
     onConnectivityChange: () => ({}),
-    timeout: DEFAULT_TIMEOUT,
+    pingTimeout: DEFAULT_TIMEOUT,
     pingServerUrl: DEFAULT_PING_SERVER_URL,
     shouldPing: true,
     pingInterval: 0,
@@ -117,12 +117,17 @@ class NetworkConnectivity extends PureComponent<void, Props, State> {
   };
 
   checkInternet = async () => {
-    const { pingInBackground, timeout, pingServerUrl, httpMethod } = this.props;
+    const {
+      pingInBackground,
+      pingTimeout,
+      pingServerUrl,
+      httpMethod,
+    } = this.props;
     if (pingInBackground === false && AppState.currentState !== 'active') {
       return; // <-- Return early as we don't care about connectivity if app is not in foreground.
     }
     const hasInternetAccess = await checkInternetAccess(
-      timeout,
+      pingTimeout,
       pingServerUrl,
       httpMethod,
     );

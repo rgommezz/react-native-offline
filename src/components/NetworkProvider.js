@@ -14,7 +14,7 @@ type ConnectivityState = {
 };
 
 type Props = {
-  timeout?: number,
+  pingTimeout?: number,
   pingServerUrl?: string,
   shouldPing?: boolean,
   pingInterval?: number,
@@ -24,7 +24,7 @@ type Props = {
 };
 
 NetworkProvider.defaultProps = {
-  timeout: DEFAULT_TIMEOUT,
+  pingTimeout: DEFAULT_TIMEOUT,
   pingServerUrl: DEFAULT_PING_SERVER_URL,
   shouldPing: true,
   pingInterval: 0,
