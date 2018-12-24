@@ -13,7 +13,7 @@ type DefaultProps = {
 };
 
 type Props = DefaultProps & {
-  children: (isConnected: boolean) => React$Element<any>,
+  children: JSX.Element,
 };
 
 type State = {
@@ -22,8 +22,9 @@ type State = {
 
 class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   static propTypes = {
-    children: PropTypes.func.isRequired,
+    children: PropTypes.element.isRequired,
     timeout: PropTypes.number,
+    renderDisconnectedComponented: PropTypes.element.isRequired,
     pingServerUrl: PropTypes.string,
     withExtraHeadRequest: PropTypes.bool,
   };
@@ -39,8 +40,8 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   };
 
   componentWillMount() {
-    if (typeof this.props.children !== 'function') {
-      throw new Error('You should pass a function as a children');
+    if (!React.isValidElement(this.props.children)) {
+      throw new Error('You should pass a element as a children');
     }
     if (typeof this.props.timeout !== 'number') {
       throw new Error('you should pass a number as timeout prop');
@@ -100,7 +101,8 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   };
 
   render() {
-    return this.props.children(this.state.isConnected);
+    return this.state.isConnected && this.props.renderDisconnectedComponented ? 
+      this.props.renderDisconnectedComponented() : this.props.children();
   }
 }
 
