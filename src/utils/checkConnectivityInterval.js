@@ -2,11 +2,15 @@
 
 let interval = null;
 
+export function getInterval() {
+  return interval;
+}
+
 export function setup(
   connectivityCheck: Function,
   checkConnectionInterval: number,
 ) {
-  if (checkConnectionInterval && !interval) {
+  if (checkConnectionInterval > 0 && !interval) {
     interval = setInterval(connectivityCheck, checkConnectionInterval);
   }
 }
