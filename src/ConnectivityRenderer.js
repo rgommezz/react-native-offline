@@ -1,6 +1,6 @@
 /* @flow */
 
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NetInfo, Platform } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
@@ -8,12 +8,13 @@ import reactConnectionStore from './reactConnectionStore';
 
 type DefaultProps = {
   timeout?: number,
+  renderDisconnectedComponented?: element,
   pingServerUrl?: string,
   withExtraHeadRequest?: boolean,
 };
 
 type Props = DefaultProps & {
-  children: JSX.Element,
+  children: element,
 };
 
 type State = {
@@ -24,7 +25,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   static propTypes = {
     children: PropTypes.element.isRequired,
     timeout: PropTypes.number,
-    renderDisconnectedComponented: PropTypes.element.isRequired,
+    renderDisconnectedComponented: PropTypes.element,
     pingServerUrl: PropTypes.string,
     withExtraHeadRequest: PropTypes.bool,
   };
@@ -101,8 +102,7 @@ class ConnectivityRenderer extends Component<DefaultProps, Props, State> {
   };
 
   render() {
-    return this.state.isConnected && this.props.renderDisconnectedComponented ? 
-      this.props.renderDisconnectedComponented() : this.props.children();
+    return this.state.isConnected && this.props.renderDisconnectedComponented ? this.props.renderDisconnectedComponented() : this.props.children();
   }
 }
 
