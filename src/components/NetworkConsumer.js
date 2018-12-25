@@ -6,7 +6,7 @@ type TNetworkContext = ?{
   isConnected: boolean,
 };
 
-export default function NetworkConsumer({ children }) {
+export default function NetworkConsumer({ children }: Function) {
   return (
     <NetworkContext.Consumer>
       {(context: TNetworkContext) => {

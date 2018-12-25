@@ -1,11 +1,26 @@
 /* @flow */
 
-import { DEFAULT_HTTP_METHOD, DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from "./constants";
+import {
+  DEFAULT_HTTP_METHOD,
+  DEFAULT_PING_SERVER_URL,
+  DEFAULT_TIMEOUT,
+} from './constants';
 
 type Options = {
   method?: 'HEAD' | 'OPTIONS',
   url: string,
   timeout?: number,
+  testMethod?:
+    | 'onload/2xx'
+    | 'onload/3xx'
+    | 'onload/4xx'
+    | 'onload/5xx'
+    | 'onerror'
+    | 'ontimeout',
+};
+
+type ResolvedValue = {
+  status: number,
 };
 
 /**
@@ -22,32 +37,35 @@ export default function makeHttpRequest({
   timeout = DEFAULT_TIMEOUT,
   testMethod,
 }: Options = {}) {
-  return new Promise((resolve: Function, reject: Function) => {
-    const xhr = new XMLHttpRequest(testMethod);
-    xhr.open(method, url);
-    xhr.timeout = timeout;
-    xhr.onload = function onLoad() {
-      // 3xx is a valid response for us, since the server was reachable
-      if (this.status >= 200 && this.status < 400) {
-        resolve({
-          status: this.status,
-        });
-      } else {
+  return new Promise(
+    (resolve: ResolvedValue => void, reject: ResolvedValue => void) => {
+      // $FlowFixMe
+      const xhr = new XMLHttpRequest(testMethod);
+      xhr.open(method, url);
+      xhr.timeout = timeout;
+      xhr.onload = function onLoad() {
+        // 3xx is a valid response for us, since the server was reachable
+        if (this.status >= 200 && this.status < 400) {
+          resolve({
+            status: this.status,
+          });
+        } else {
+          reject({
+            status: this.status,
+          });
+        }
+      };
+      xhr.onerror = function onError() {
         reject({
           status: this.status,
         });
-      }
-    };
-    xhr.onerror = function onError() {
-      reject({
-        status: this.status,
-      });
-    };
-    xhr.ontimeout = function onTimeOut() {
-      reject({
-        status: this.status,
-      });
-    };
-    xhr.send(null);
-  });
+      };
+      xhr.ontimeout = function onTimeOut() {
+        reject({
+          status: this.status,
+        });
+      };
+      xhr.send(null);
+    },
+  );
 }

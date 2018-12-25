@@ -8,11 +8,11 @@
   "scripts": {
     "lint": "eslint src",
     "jest": "jest test",
-    "test": "concurrently \"npm run lint\" \"npm run jest:coverage\" \"npm run flow\"",
-    "flow": "flow",
+    "test": "yarn lint && yarn test:coverage",
+    "flow": "flow src",
     "format": "eslint --fix js/**/",
     "prettier": "prettier --single-quote --trailing-comma all --write \"src/**/*.js\"",
-    "jest:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "precommit": "yarn run lint",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
@@ -37,53 +37,48 @@
   "homepage": "https://github.com/rgommezz/react-native-offline#readme",
   "devDependencies": {
     "all-contributors-cli": "^5.4.0",
-    "babel-eslint": "^7.2.1",
+    "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-es2015": "^6.24.0",
     "babel-preset-react-native": "^4.0.1",
-    "babel-preset-stage-0": "^6.22.0",
-    "concurrently": "^3.4.0",
     "coveralls": "^2.13.1",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
-    "eslint": "^3.18.0",
-    "eslint-config-airbnb": "^14.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-flowtype": "^2.33.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-prettier": "^2.4.0",
-    "eslint-plugin-react": "^6.9.0",
-    "flow-bin": "0.42.0",
+    "eslint": "^5.11.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-react": "^7.11.1",
+    "flow-bin": "^0.89.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
     "jest-enzyme": "^7.0.1",
     "jsdom": "^13.1.0",
-    "prettier": "^1.9.2",
-    "prop-types": "^15.5.10",
+    "prettier": "^1.15.3",
+    "prop-types": "^15.6.2",
     "react": "^16.6.3",
-    "react-dom": "^16.7.0",
+    "react-dom": "^16.6.3",
     "react-native": "^0.57.8",
-    "react-native-testing-library": "^1.4.2",
-    "react-test-renderer": "^16.7.0",
+    "react-native-testing-library": "^1.5.0",
+    "react-test-renderer": "^16.6.3",
     "redux": "^4.0.1",
-    "redux-mock-store": "^1.2.2",
-    "redux-saga": "^0.16.0",
-    "redux-thunk": "^2.2.0"
+    "redux-mock-store": "^1.5.3",
+    "redux-thunk": "^2.3.0"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^1.2.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.11",
     "react-redux": "^6.0.0",
-    "redux-saga": "*"
+    "redux-saga": "^0.16.2"
   },
   "jest": {
     "collectCoverage": true,
     "preset": "react-native",
     "setupTestFrameworkScriptFile": "<rootDir>/test/setupTestEnv.js",
     "transform": {
-      "\\.js$": "babel-jest"
+      "^.+\\.jsx?$": "babel-jest"
     }
   }
 }

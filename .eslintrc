@@ -17,15 +17,14 @@
     "ecmaVersion": 6,
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true,
-      "experimentalObjectRestSpread": true
+      "jsx": true
     }
   },
   "env": {
     "es6": true,
     "node": true,
     "jest": true,
-    "browser": true // This is necessary for React Native fetch, see https://github.com/eslint/eslint/issues/4015
+    "browser": true // This is necessary for React Native XMLHttpRequest, see https://github.com/eslint/eslint/issues/4015
   },
   "rules": {
     "prettier/prettier": [
@@ -39,6 +38,7 @@
     "no-use-before-define": 0,
     "import/no-extraneous-dependencies": 0,
     "global-require": 0,
+    "prefer-promise-reject-errors": 0,
     "react/prop-types": 0,
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/require-default-props": 0,

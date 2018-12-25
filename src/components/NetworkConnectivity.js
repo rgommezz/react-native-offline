@@ -1,7 +1,7 @@
 /* @flow */
-import { PureComponent } from 'react';
+import * as React from 'react';
 import { AppState, NetInfo, Platform } from 'react-native';
-import type { HTTPMethod } from '../types';
+import type { HTTPMethod, State } from '../types';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import {
@@ -10,21 +10,22 @@ import {
   DEFAULT_PING_SERVER_URL,
 } from '../utils/constants';
 
-type State = {
-  isConnected: boolean,
+export type RequiredProps = {
+  children: (state: State) => React.Node,
 };
 
-type Props = {
-  onConnectivityChange?: (isConnected: boolean) => void,
-  children: *, // TODO add proper type
-  pingTimeout?: number,
-  pingServerUrl?: string,
-  shouldPing?: boolean,
-  pingInterval?: number,
-  pingOnlyIfOffline?: boolean,
-  pingInBackground?: boolean,
-  httpMethod?: HTTPMethod,
+export type DefaultProps = {
+  onConnectivityChange: (isConnected: boolean) => void,
+  pingTimeout: number,
+  pingServerUrl: string,
+  shouldPing: boolean,
+  pingInterval: number,
+  pingOnlyIfOffline: boolean,
+  pingInBackground: boolean,
+  httpMethod: HTTPMethod,
 };
+
+type Props = RequiredProps & DefaultProps;
 
 function validateProps(props: Props) {
   if (typeof props.onConnectivityChange !== 'function') {
@@ -55,9 +56,9 @@ function validateProps(props: Props) {
   }
 }
 
-class NetworkConnectivity extends PureComponent<void, Props, State> {
+class NetworkConnectivity extends React.PureComponent<Props, State> {
   static defaultProps = {
-    onConnectivityChange: () => ({}),
+    onConnectivityChange: () => undefined,
     pingTimeout: DEFAULT_TIMEOUT,
     pingServerUrl: DEFAULT_PING_SERVER_URL,
     shouldPing: true,
@@ -91,8 +92,10 @@ class NetworkConnectivity extends PureComponent<void, Props, State> {
   }
 
   componentDidUpdate(_: *, prevState: State) {
-    if (prevState.isConnected !== this.state.isConnected) {
-      this.props.onConnectivityChange(this.state.isConnected);
+    const { isConnected } = this.state;
+    const { onConnectivityChange } = this.props;
+    if (prevState.isConnected !== isConnected) {
+      onConnectivityChange(isConnected);
     }
   }
 
@@ -103,7 +106,8 @@ class NetworkConnectivity extends PureComponent<void, Props, State> {
   }
 
   getConnectionChangeHandler() {
-    return this.props.shouldPing
+    const { shouldPing } = this.props;
+    return shouldPing
       ? this.handleNetInfoChange
       : this.handleConnectivityChange;
   }
@@ -135,7 +139,9 @@ class NetworkConnectivity extends PureComponent<void, Props, State> {
   };
 
   intervalHandler = () => {
-    if (this.state.isConnected && this.props.pingOnlyIfOffline === true) {
+    const { isConnected } = this.state;
+    const { pingOnlyIfOffline } = this.props;
+    if (isConnected && pingOnlyIfOffline === true) {
       return;
     }
     this.checkInternet();
@@ -148,7 +154,8 @@ class NetworkConnectivity extends PureComponent<void, Props, State> {
   };
 
   render() {
-    return this.props.children(this.state);
+    const { children } = this.props;
+    return children(this.state);
   }
 }
 

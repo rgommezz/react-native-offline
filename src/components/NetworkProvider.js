@@ -1,5 +1,5 @@
 /* @flow */
-import React from 'react';
+import * as React from 'react';
 import NetworkConnectivity from './NetworkConnectivity';
 import NetworkContext from './NetworkContext';
 import type { HTTPMethod } from '../types';
@@ -21,6 +21,7 @@ type Props = {
   pingOnlyIfOffline?: boolean,
   pingInBackground?: boolean,
   httpMethod?: HTTPMethod,
+  children: React.Node,
 };
 
 NetworkProvider.defaultProps = {

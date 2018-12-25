@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import NetworkConnectivity from './NetworkConnectivity';
 import type { HTTPMethod, FluxAction, NetworkState } from '../types';
@@ -21,9 +21,10 @@ type Props = {
   pingOnlyIfOffline?: boolean,
   pingInBackground?: boolean,
   httpMethod?: HTTPMethod,
+  children: React.Node,
 };
 
-class ReduxNetworkProvider extends Component<void, Props, void> {
+class ReduxNetworkProvider extends React.Component<Props> {
   static defaultProps = {
     pingTimeout: DEFAULT_TIMEOUT,
     pingServerUrl: DEFAULT_PING_SERVER_URL,
@@ -49,12 +50,13 @@ class ReduxNetworkProvider extends Component<void, Props, void> {
   };
 
   render() {
+    const { children } = this.props;
     return (
       <NetworkConnectivity
         {...this.props}
         onConnectivityChange={this.handleConnectivityChange}
       >
-        {() => this.props.children}
+        {() => children}
       </NetworkConnectivity>
     );
   }

@@ -1,9 +1,11 @@
 /* @flow */
-import React from 'react';
+import * as React from 'react';
 import { View, Platform, AppState } from 'react-native';
 import { shallow } from 'enzyme';
 import { render } from 'react-native-testing-library';
-import NetworkConnectivity from '../src/components/NetworkConnectivity';
+import NetworkConnectivity, {
+  type RequiredProps,
+} from '../src/components/NetworkConnectivity';
 import { setup, clear } from '../src/utils/checkConnectivityInterval';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 
@@ -46,16 +48,30 @@ jest.mock('../src/utils/checkInternetAccess', () =>
 function mockPrototypeMethods(methodsMap: MethodsMap = {}) {
   class ClassWithMocks extends NetworkConnectivity {}
   Object.entries(methodsMap).forEach(([method, mockFn]: *) => {
+    // $FlowFixMe
     ClassWithMocks.prototype[method] = mockFn;
   });
   return ClassWithMocks;
 }
 
+const ChildrenComponent = () => <View />;
+
+const initialProps = {
+  children: ChildrenComponent,
+};
+
+type GetElementParams = {
+  props?: RequiredProps,
+  Component?: React.AbstractComponent<*>,
+};
+
 const getElement = ({
-  props = {},
-  children = () => <View />,
+  props = initialProps,
   Component = NetworkConnectivity,
-} = {}) => <Component {...props}>{children}</Component>;
+}: GetElementParams = {}) => {
+  const { children, ...rest } = props;
+  return <Component {...rest}>{children}</Component>;
+};
 
 describe('NetworkConnectivity', () => {
   afterEach(() => {
@@ -71,7 +87,7 @@ describe('NetworkConnectivity', () => {
   });
   it('passes the connection state into the FACC', () => {
     const children = jest.fn();
-    shallow(getElement({ children }));
+    shallow(getElement({ props: { children } }));
     expect(children).toHaveBeenCalledWith({ isConnected: true });
   });
 
@@ -101,7 +117,7 @@ describe('NetworkConnectivity', () => {
       it(`sets up a NetInfo.isConnected listener for connectionChange
       AND fetches initial connection
       AND calls the handler
-      AND does NOT call setupConnectivityCheckInterval`, done => {
+      AND does NOT call setupConnectivityCheckInterval`, (done: Function) => {
         Platform.OS = 'android';
         const MockedNetworkConnectivity = mockPrototypeMethods({
           getConnectionChangeHandler: mockGetConnectionChangeHandler,
@@ -135,6 +151,7 @@ describe('NetworkConnectivity', () => {
         getElement({
           Component: MockedNetworkConnectivity,
           props: {
+            children: ChildrenComponent,
             pingInterval: 1000,
           },
         }),
@@ -169,6 +186,7 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow(
         getElement({
           props: {
+            children: ChildrenComponent,
             shouldPing: true,
           },
         }),
@@ -183,6 +201,7 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow(
         getElement({
           props: {
+            children: ChildrenComponent,
             shouldPing: false,
           },
         }),
@@ -220,6 +239,7 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow(
         getElement({
           props: {
+            children: ChildrenComponent,
             pingInBackground: false,
           },
         }),
@@ -236,6 +256,7 @@ describe('NetworkConnectivity', () => {
         pingTimeout: 2000,
         pingServerUrl: 'dummy.com',
         httpMethod: 'OPTIONS',
+        children: ChildrenComponent,
       };
       AppState.currentState = 'active';
       const wrapper = shallow(
@@ -259,6 +280,7 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow(
         getElement({
           props: {
+            children: ChildrenComponent,
             pingOnlyIfOffline: true,
           },
         }),
@@ -273,6 +295,7 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow(
         getElement({
           props: {
+            children: ChildrenComponent,
             pingOnlyIfOffline: false,
           },
         }),
@@ -310,32 +333,57 @@ describe('NetworkConnectivity', () => {
 
   describe('props validation', () => {
     it('throws if prop pingTimeout is not a number', () => {
-      expect(() => render(getElement({ props: { pingTimeout: '4000' } }))).toThrow(
-        'you should pass a number as pingTimeout parameter',
-      );
+      expect(() =>
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { pingTimeout: '4000', children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a number as pingTimeout parameter');
     });
 
     it('throws if prop pingServerUrl is not a string', () => {
       expect(() =>
-        render(getElement({ props: { pingServerUrl: 90 } })),
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { pingServerUrl: 90, children: ChildrenComponent },
+          }),
+        ),
       ).toThrow('you should pass a string as pingServerUrl parameter');
     });
 
     it('throws if prop shouldPing is not a boolean', () => {
       expect(() =>
-        render(getElement({ props: { shouldPing: () => null } })),
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { shouldPing: () => null, children: ChildrenComponent },
+          }),
+        ),
       ).toThrow('you should pass a boolean as shouldPing parameter');
     });
 
     it('throws if prop pingInterval is not a number', () => {
       expect(() =>
-        render(getElement({ props: { pingInterval: false } })),
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { pingInterval: false, children: ChildrenComponent },
+          }),
+        ),
       ).toThrow('you should pass a number as pingInterval parameter');
     });
 
     it('throws if prop pingOnlyIfOffline is not a boolean', () => {
       expect(() =>
-        render(getElement({ props: { pingOnlyIfOffline: 10 } })),
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { pingOnlyIfOffline: 10, children: ChildrenComponent },
+          }),
+        ),
       ).toThrow('you should pass a boolean as pingOnlyIfOffline parameter');
     });
 
@@ -343,7 +391,8 @@ describe('NetworkConnectivity', () => {
       expect(() =>
         render(
           getElement({
-            props: { pingInBackground: '4000' },
+            // $FlowFixMe
+            props: { pingInBackground: '4000', children: ChildrenComponent },
           }),
         ),
       ).toThrow('you should pass a string as pingServerUrl parameter');
@@ -351,13 +400,23 @@ describe('NetworkConnectivity', () => {
 
     it('throws if prop httpMethod is not either HEAD or OPTIONS', () => {
       expect(() =>
-        render(getElement({ props: { httpMethod: 'POST' } })),
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { httpMethod: 'POST', children: ChildrenComponent },
+          }),
+        ),
       ).toThrow('httpMethod parameter should be either HEAD or OPTIONS');
     });
 
     it('throws if prop onConnectivityChange is not a function', () => {
       expect(() =>
-        render(getElement({ props: { onConnectivityChange: 'foo' } })),
+        // $FlowFixMe
+        render(
+          getElement({
+            props: { onConnectivityChange: 'foo', children: ChildrenComponent },
+          }),
+        ),
       ).toThrow('you should pass a function as onConnectivityChange parameter');
     });
   });
