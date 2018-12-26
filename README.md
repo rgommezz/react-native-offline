@@ -7,6 +7,9 @@ Handful of utilities you should keep in your toolbelt to handle offline/online c
 
 Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀
 
+## Important
+**This is the documentation for version 4.0.0-beta.0. If you want to use v3, go [here](./docs_3x.md)**
+
 ## Contents
 
 * [Motivation](#motivation)
@@ -40,7 +43,7 @@ Having an offline first class citizen app is very important for a successful use
 This library aims to gather a variety of modules that follow React and Redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
 
 ## Features
-- Offline/online conditional rendering through HOC or Render Callback techniques
+- Offline/online conditional rendering through **Provider/Consumer** components that leverage the **new React Context API**
 - Reducer to keep your connectivity state in the Redux store
 - **Redux middleware to intercept internet request actions in offline mode and apply DRY principle**
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
@@ -48,6 +51,7 @@ This library aims to gather a variety of modules that follow React and Redux bes
 - **A step further than `NetInfo` detecting internet access besides network connectivity**
 - Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
 - Ability to check connectivity regularly
+- **100% unit test coverage**
 
 ## Contributions
 PRs are more than welcome. If you're planning to contribute please make sure to read the contributing guide: [CONTRIBUTING.md](https://github.com/rgommezz/react-native-offline/blob/master/CONTRIBUTING.md)
@@ -62,9 +66,9 @@ This gives you the power to prioritize our work and support the project contribu
 [![issuehunt-image](https://github.com/BoostIO/issuehunt-materials/blob/master/issuehunt-badge@1x.png?raw=true)](https://issuehunt.io/repos/86369462)
 
 ## Installation
-This library supports React Native v0.48 or higher.
+This library supports React Native v0.55 or higher.
 ```
-$ yarn add react-native-offline
+$ yarn add react-native-offline@4.0.0-beta.0
 ```
 
 #### Android
