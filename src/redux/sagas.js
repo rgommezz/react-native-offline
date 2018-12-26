@@ -18,7 +18,6 @@ type Arguments = {
   pingServerUrl: string,
   shouldPing: boolean,
   pingInterval: number,
-  // TODO add below
   pingOnlyIfOffline: boolean,
   pingInBackground: boolean,
   httpMethod: HTTPMethod,
@@ -233,7 +232,7 @@ export function* handleConnectivityChange(
  * @param pingInBackground
  * @param httpMethod
  */
-export default function* networkEventsListenerSaga({
+export default function* networkSaga({
   pingTimeout = DEFAULT_TIMEOUT,
   pingServerUrl = DEFAULT_PING_SERVER_URL,
   shouldPing = true,

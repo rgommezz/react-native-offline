@@ -17,7 +17,7 @@ module.exports = {
   get offlineActionTypes() {
     return require('./redux/actionTypes').default;
   },
-  get networkEventsListenerSaga() {
+  get networkSaga() {
     return require('./redux/sagas').default;
   },
   get checkInternetConnection() {

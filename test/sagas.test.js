@@ -1,7 +1,7 @@
 /* @flow */
 import { testSaga } from 'redux-saga-test-plan';
 import { Platform, NetInfo, AppState } from 'react-native';
-import networkEventsListenerSaga, {
+import networkSaga, {
   netInfoChangeSaga,
   connectionIntervalSaga,
   createNetInfoConnectionChangeChannel,
@@ -32,10 +32,10 @@ const args = {
 };
 
 describe('sagas', () => {
-  describe('networkEventsListenerSaga', () => {
+  describe('networkSaga', () => {
     it('forks netInfoChangeSaga with the right params', () => {
       const { pingInterval, ...params } = args;
-      testSaga(networkEventsListenerSaga, params)
+      testSaga(networkSaga, params)
         .next()
         .fork(netInfoChangeSaga, params)
         .next()
@@ -45,7 +45,7 @@ describe('sagas', () => {
     it(`forks netInfoChangeSaga AND sets an interval 
     if pingInterval is higher than 0`, () => {
       const { shouldPing, pingInterval, ...params } = args;
-      testSaga(networkEventsListenerSaga, { ...args, pingInterval: 3000 })
+      testSaga(networkSaga, { ...args, pingInterval: 3000 })
         .next()
         .fork(netInfoChangeSaga, { ...params, shouldPing })
         .next()
@@ -56,7 +56,7 @@ describe('sagas', () => {
 
     it('default parameters', () => {
       const { shouldPing, pingInterval, ...params } = args;
-      testSaga(networkEventsListenerSaga)
+      testSaga(networkSaga)
         .next()
         .fork(netInfoChangeSaga, { ...params, shouldPing })
         .next()
