@@ -420,7 +420,7 @@ fetchData.meta = {
 Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type to inform the `network` reducer accordingly and keep it up to date. Check the example below.
 
 ```js
-checkInternetConnection(pingTimeout?: number = 3000, url?: string = 'https://www.google.com/'): Promise<boolean>
+checkInternetConnection(url?: string = 'https://www.google.com/', pingTimeout?: number = 3000): Promise<boolean>
 ```
 
 ##### Example

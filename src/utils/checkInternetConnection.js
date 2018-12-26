@@ -8,13 +8,13 @@ import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants';
  * Utility that allows to query for internet connectivity on demand
  * On iOS, the listener is fired immediately after registration
  * On Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
- * @param timeout
  * @param url
+ * @param timeout
  * @returns {Promise<boolean>}
  */
 export default function checkInternetConnection(
-  timeout: number = DEFAULT_TIMEOUT,
   url: string = DEFAULT_PING_SERVER_URL,
+  timeout: number = DEFAULT_TIMEOUT,
 ): Promise<boolean> {
   let connectionChecked: Promise<boolean>;
   if (Platform.OS === 'ios') {
