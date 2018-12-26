@@ -1,5 +1,5 @@
 /* @flow */
-
+/* eslint flowtype/require-parameter-type: 0 */
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { AppState, NetInfo, Platform } from 'react-native';
@@ -31,21 +31,21 @@ export function netInfoEventChannelFn(emit: (param: boolean) => mixed) {
   };
 }
 
-export const intervalChannelFn = (interval: number) => (
-  emit: (param: boolean) => mixed,
-) => {
-  const iv = setInterval(() => emit(true), interval);
-  return () => {
-    clearInterval(iv);
+export function intervalChannelFn(interval: number) {
+  return (emit: (param: boolean) => mixed) => {
+    const iv = setInterval(() => emit(true), interval);
+    return () => {
+      clearInterval(iv);
+    };
   };
-};
+}
 
 /**
  * Returns a factory function that creates a channel from network connection change events
  * @returns {Channel<T>}
  */
-export function createNetInfoConnectionChangeChannel() {
-  return eventChannel(netInfoEventChannelFn);
+export function createNetInfoConnectionChangeChannel(channelFn) {
+  return eventChannel(channelFn);
 }
 
 /**
@@ -53,8 +53,9 @@ export function createNetInfoConnectionChangeChannel() {
  * @param interval
  * @returns {Channel<T>}
  */
-export function createIntervalChannel(interval: number) {
-  return eventChannel(intervalChannelFn(interval));
+export function createIntervalChannel(interval: number, channelFn: Function) {
+  const handler = channelFn(interval);
+  return eventChannel(handler);
 }
 
 /**
@@ -83,7 +84,10 @@ export function* netInfoChangeSaga({
       httpMethod,
     });
   }
-  const chan = yield call(createNetInfoConnectionChangeChannel);
+  const chan = yield call(
+    createNetInfoConnectionChangeChannel,
+    netInfoEventChannelFn,
+  );
   try {
     while (true) {
       const isConnected = yield take(chan);
@@ -147,7 +151,11 @@ export function* connectionIntervalSaga({
   pingInBackground,
   httpMethod,
 }): Generator<*, *, *> {
-  const chan = yield call(createIntervalChannel, pingInterval);
+  const chan = yield call(
+    createIntervalChannel,
+    pingInterval,
+    intervalChannelFn,
+  );
   try {
     while (true) {
       yield take(chan);

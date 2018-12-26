@@ -14,8 +14,11 @@ describe('createNetInfoConnectionChangeChannel', () => {
   it('returns a redux-saga channel', () => {
     const eventChannelMock = jest.fn().mockReturnValue('channel');
     eventChannel.mockImplementation(eventChannelMock);
-    expect(createNetInfoConnectionChangeChannel()).toBe('channel');
-    expect(eventChannelMock).toHaveBeenCalledWith(netInfoEventChannelFn);
+    const mockNetInfoChannelFn = jest.fn().mockReturnValue('handlerFn');
+    expect(createNetInfoConnectionChangeChannel(mockNetInfoChannelFn)).toBe(
+      'channel',
+    );
+    expect(eventChannelMock).toHaveBeenCalledWith(mockNetInfoChannelFn);
   });
 
   it('netInfoEventChannelFn adheres to eventChannel cb interface', () => {
@@ -38,9 +41,12 @@ describe('createIntervalChannel', () => {
   it('returns a redux-saga channel', () => {
     const eventChannelMock = jest.fn().mockReturnValue('channel');
     eventChannel.mockImplementation(eventChannelMock);
-    expect(createIntervalChannel(interval)).toBe('channel');
-    // TODO fix
-    // expect(eventChannelMock).toHaveBeenCalledWith(intervalChannelFn(10000));
+    const mockIntervalChannelFn = jest.fn().mockReturnValue('handlerFn');
+    expect(createIntervalChannel(interval, mockIntervalChannelFn)).toBe(
+      'channel',
+    );
+    expect(mockIntervalChannelFn).toHaveBeenCalledWith(interval);
+    expect(eventChannel).toHaveBeenCalledWith('handlerFn');
   });
 
   it('intervalChannelFn adheres to eventChannel cb interface', done => {

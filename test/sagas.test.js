@@ -9,6 +9,8 @@ import networkEventsListenerSaga, {
   checkInternetAccessSaga,
   handleConnectivityChange,
   createIntervalChannel,
+  intervalChannelFn,
+  netInfoEventChannelFn,
 } from '../src/redux/sagas';
 import { connectionChange } from '../src/redux/actionCreators';
 import {
@@ -72,7 +74,7 @@ describe('sagas', () => {
     function channelLoop(saga) {
       return saga
         .next()
-        .call(createNetInfoConnectionChangeChannel)
+        .call(createNetInfoConnectionChangeChannel, netInfoEventChannelFn)
         .next('channel')
         .take('channel')
         .next(true)
@@ -179,7 +181,7 @@ describe('sagas', () => {
     function takeChannelAndGetConnection(saga, isConnected) {
       return saga
         .next()
-        .call(createIntervalChannel, 3000)
+        .call(createIntervalChannel, 3000, intervalChannelFn)
         .next('channel')
         .take('channel')
         .next()
