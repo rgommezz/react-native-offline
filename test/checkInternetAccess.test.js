@@ -27,34 +27,34 @@ describe('checkInternetAccess', () => {
 
   it('resolves to true if there is Internet access', async () => {
     const timeout = 2000;
-    const pingServerUrl = 'foo.com';
-    const httpMethod = 'HEAD';
-    const hasInternetAccess = await checkInternetAccess(
+    const url = 'foo.com';
+    const method = 'HEAD';
+    const hasInternetAccess = await checkInternetAccess({
+      url,
       timeout,
-      pingServerUrl,
-      httpMethod,
-    );
+      method,
+    });
     expect(makeHttpRequest).toHaveBeenCalledWith({
+      url,
       timeout,
-      url: pingServerUrl,
-      method: httpMethod,
+      method,
     });
     expect(hasInternetAccess).toBe(true);
   });
 
   it('resolves to false if there is NOT Internet access', async () => {
     const timeout = 2000;
-    const pingServerUrl = 'foo.com';
-    const httpMethod = 'FAIL';
-    const hasInternetAccess = await checkInternetAccess(
+    const url = 'foo.com';
+    const method = 'FAIL';
+    const hasInternetAccess = await checkInternetAccess({
       timeout,
-      pingServerUrl,
-      httpMethod,
-    );
+      url,
+      method,
+    });
     expect(makeHttpRequest).toHaveBeenCalledWith({
       timeout,
-      url: pingServerUrl,
-      method: httpMethod,
+      url,
+      method,
     });
     expect(hasInternetAccess).toBe(false);
   });

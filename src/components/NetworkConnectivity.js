@@ -63,7 +63,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     pingServerUrl: DEFAULT_PING_SERVER_URL,
     shouldPing: true,
     pingInterval: 0,
-    pingOnlyIfOffline: true,
+    pingOnlyIfOffline: false,
     pingInBackground: false,
     httpMethod: DEFAULT_HTTP_METHOD,
   };
@@ -130,11 +130,11 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     if (pingInBackground === false && AppState.currentState !== 'active') {
       return; // <-- Return early as we don't care about connectivity if app is not in foreground.
     }
-    const hasInternetAccess = await checkInternetAccess(
-      pingTimeout,
-      pingServerUrl,
-      httpMethod,
-    );
+    const hasInternetAccess = await checkInternetAccess({
+      url: pingServerUrl,
+      timeout: pingTimeout,
+      method: httpMethod,
+    });
     this.handleConnectivityChange(hasInternetAccess);
   };
 

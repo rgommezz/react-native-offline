@@ -97,3 +97,7 @@ export default function(
       return state;
   }
 }
+
+export function networkSelector(state: { network: NetworkState }) {
+  return state.network;
+}

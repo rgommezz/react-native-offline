@@ -37,7 +37,7 @@ export default function checkInternetConnection(
 
   return connectionChecked.then((isConnected: boolean) => {
     if (isConnected) {
-      return checkInternetAccess(timeout, url);
+      return checkInternetAccess({ timeout, url });
     }
     return Promise.resolve(false);
   });

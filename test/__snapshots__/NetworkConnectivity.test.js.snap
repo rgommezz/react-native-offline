@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NetworkConnectivity defaultProps 1`] = `
+Object {
+  "httpMethod": "HEAD",
+  "onConnectivityChange": [Function],
+  "pingInBackground": false,
+  "pingInterval": 0,
+  "pingOnlyIfOffline": false,
+  "pingServerUrl": "https://www.google.com/",
+  "pingTimeout": 3000,
+  "shouldPing": true,
+}
+`;

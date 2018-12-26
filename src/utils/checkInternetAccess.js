@@ -7,11 +7,17 @@ import {
   DEFAULT_TIMEOUT,
 } from './constants';
 
-export default function checkInternetAccess(
-  timeout: number = DEFAULT_TIMEOUT,
-  url: string = DEFAULT_PING_SERVER_URL,
-  method: HTTPMethod = DEFAULT_HTTP_METHOD,
-): Promise<boolean> {
+type Arguments = {
+  url: string,
+  timeout: number,
+  method: HTTPMethod,
+};
+
+export default function checkInternetAccess({
+  timeout = DEFAULT_TIMEOUT,
+  url = DEFAULT_PING_SERVER_URL,
+  method = DEFAULT_HTTP_METHOD,
+}: Arguments = {}): Promise<boolean> {
   return new Promise(async (resolve: (value: boolean) => void) => {
     try {
       await makeHttpRequest({

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NetworkProvider has the correct structure 1`] = `
+exports[`NetworkProvider has the correct structure and default props 1`] = `
 <NetworkConnectivity
   httpMethod="HEAD"
   onConnectivityChange={[Function]}

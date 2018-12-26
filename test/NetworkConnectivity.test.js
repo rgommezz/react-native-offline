@@ -85,6 +85,11 @@ describe('NetworkConnectivity', () => {
     mockHandleConnectivityChange.mockClear();
     mockCheckInternet.mockClear();
   });
+
+  it('defaultProps', () => {
+    expect(NetworkConnectivity.defaultProps).toMatchSnapshot();
+  });
+
   it('passes the connection state into the FACC', () => {
     const children = jest.fn();
     shallow(getElement({ props: { children } }));
@@ -266,11 +271,11 @@ describe('NetworkConnectivity', () => {
       );
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       await wrapper.instance().checkInternet();
-      expect(checkInternetAccess).toHaveBeenCalledWith(
-        props.pingTimeout,
-        props.pingServerUrl,
-        props.httpMethod,
-      );
+      expect(checkInternetAccess).toHaveBeenCalledWith({
+        url: props.pingServerUrl,
+        timeout: props.pingTimeout,
+        method: props.httpMethod,
+      });
       expect(mockHandleConnectivityChange).toHaveBeenCalledWith(true);
     });
   });
