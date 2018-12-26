@@ -75,10 +75,10 @@ This library uses the `NetInfo` module from React Native underneath the hood. To
 ## API
 
 ### Component Utilities
-In order to render stuff conditionally with ease. They internally listen to connection changes and also provide an extra layer of reliability by ensuring there is internet access when reporting online. For that, a extra request is made to a remote server.
+In order to render stuff conditionally with ease. They internally listen to connection changes and also provide an extra layer of reliability by ensuring there is internet access when reporting online. For that, an extra request is made to a remote server.
 
 #### `NetworkProvider`
-Provider component that injects the network state to children components via [React Context](https://reactjs.org/docs/context.html). It should be used on top of your components hierarchy, ideally in (or close to) the entry point.
+Provider component that injects the network state to children components via [React Context](https://reactjs.org/docs/context.html). Only children prop is required, the rest are optional. It should be used on top of your components hierarchy, ideally in (or close to) the entry point.
 
 ```js
 
@@ -95,21 +95,21 @@ type Props = {
 ```
 
 ##### Config
-`children`:  a React Element
+`children`:  a React Element. This is the only required prop.
 
-[`pingTimeout`]: amount of time (in ms) that the component should wait for the ping response. Defaults to 3s.
+`pingTimeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to `3000` ms.
 
-[`pingServerUrl`]: remote server to ping to. It defaults to https://www.google.com/ since it's probably one the most stable servers out there, but you can provide your own if needed.
+`pingServerUrl`: remote server to ping to. Defaults to `https://www.google.com/` since it's probably one the most stable servers out there, but you can provide your own if needed.
 
-[`shouldPing`]: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
+`shouldPing`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
-[`pingInterval`]: the interval (in ms) you want to ping the server at. The default is 0, and that means it is not going to regularly check connectivity.
+`pingInterval`: the interval (in ms) you want to ping the server at. Defaults to `0`, and that means it is not going to check connectivity regularly.
 
-[`pingOnlyIfOffline`]: boolean who trigger the interval function only if there is no connection when set to `true`. Defaults to `false`.
+`pingOnlyIfOffline`: when set to `true` and `pingInterval` > 0, it will ping the remote server regularly only if offline. Defaults to `false`.
 
-[`pingInBackground`]: whether or not to check connectivity when app isn't active. Default is `false`.
+`pingInBackground`: whether or not to check connectivity when app isn't in the foreground. Defaults to `false`.
 
-[`httpMethod`]: usage http method to check the internet-access. Supports HEAD or OPTIONS. Default is `HEAD`.
+`httpMethod`: http method used to ping the server. Supports HEAD or OPTIONS. Defaults to `HEAD`.
 
 ##### Usage
 ```js
