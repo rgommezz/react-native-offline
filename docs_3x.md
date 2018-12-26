@@ -25,7 +25,7 @@ Docs for v3.x.x
 ## Installation
 This library supports React Native v0.48 or higher.
   ```
-$ yarn add react-native-offline
+$ yarn add react-native-offline@3.15.2
 ```
 
 #### Android
