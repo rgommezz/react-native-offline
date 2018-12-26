@@ -7,8 +7,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint src",
-    "jest": "jest test",
-    "test": "yarn lint && yarn test:coverage",
+    "test": "jest test",
     "flow": "flow src",
     "format": "eslint --fix js/**/",
     "prettier": "prettier --single-quote --trailing-comma all --write \"src/**/*.js\"",
