@@ -8,7 +8,11 @@ Handful of utilities you should keep in your toolbelt to handle offline/online c
 Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀
 
 ## Important
-**This is the documentation for version 4.0.0-beta.0. If you want to use v3, go [here](./docs_3x.md)**
+**This is the documentation for version 4.0.0-beta.0. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0-beta.0)**
+
+Please try to use v4. Some of the core has been rewritten from scratch using TDD approach and it fixes some of the outstanding [issues](https://github.com/rgommezz/react-native-offline/pull/141) that v3 presented. If you are using RN v0.56 or higher v3 won't work. Don't be misled by the word *beta*, it's a precaution measure that I've set myself because I am human and I may have made some unwitting mistake :robot:. It'd be appreciated to gather feedback early on to draft the final *stable* release. Also, an example application is coming soon to better illustrate real case scenarios of usage of the library.
+
+That being said, if you still want to use v3, go [here](./docs_3x.md)
 
 ## Contents
 
@@ -47,9 +51,9 @@ This library aims to gather a variety of modules that follow React and Redux bes
 - Reducer to keep your connectivity state in the Redux store
 - **Redux middleware to intercept internet request actions in offline mode and apply DRY principle**
 - Compatibility with async middleware libraries like redux-thunk, redux-saga and redux-observable
-- A saga to place the network event subscriptions outside of your components
-- **A step further than `NetInfo` detecting internet access besides network connectivity**
-- Offline queue support to automatically re-dispatch actions when connection is back online or **dismiss actions based on other actions dispatched (i.e navigation related)**
+- A **saga** to place the network event subscriptions **outside of your components**
+- A step further than `NetInfo` **detecting internet access besides network connectivity**
+- **Offline queue support to automatically re-dispatch actions when connection is back online** or dismiss actions based on other actions dispatched (i.e navigation related)
 - Ability to check connectivity regularly
 - **100% unit test coverage**
 
