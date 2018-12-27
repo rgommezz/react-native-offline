@@ -5,8 +5,6 @@
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
-Check out [this medium article](https://blog.callstack.io/your-react-native-offline-tool-belt-795abd5f0183) to see the power of the library with real world examples! 🚀
-
 ## Important (Please read)
 **This is the documentation for version 4.0.0-beta.0. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0-beta.0)**
 
