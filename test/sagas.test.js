@@ -282,9 +282,9 @@ describe('sagas', () => {
       saga
         .next()
         .call(checkInternetAccess, {
-          pingServerUrl: params.pingServerUrl,
-          pingTimeout: params.pingTimeout,
-          httpMethod: params.httpMethod,
+          url: params.pingServerUrl,
+          timout: params.pingTimeout,
+          method: params.httpMethod,
         })
         .next(true)
         .call(handleConnectivityChange, true)
