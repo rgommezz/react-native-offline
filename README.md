@@ -10,9 +10,9 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
 ## Important (Please read)
 **This is the documentation for version 4.0.0-beta.0. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0-beta.0)**
 
-Please try to use v4. Some of the core has been rewritten from scratch using TDD approach and it fixes some of the outstanding [issues](https://github.com/rgommezz/react-native-offline/pull/141) that v3 presented. If you are using RN v0.56 or higher v3 won't work. Don't be misled by the word *beta*, it's a precaution measure that I've set myself because I am human and I may have made some unwitting mistake :robot:. It'd be appreciated to gather feedback early on to draft the final *stable* release. Also, an example application is coming soon to better illustrate real case scenarios of usage of the library.
+Please try to use v4. Some of the core has been rewritten from scratch using TDD approach and it fixes some of the outstanding [issues](https://github.com/rgommezz/react-native-offline/pull/141) that v3 presented. If you are using RN v0.56 or higher v3 won't work. Don't be misled by the word *beta*, it's a precaution measure that I've set myself because I am human and I may have made some unwitting mistake :robot:. It'd be appreciated to gather feedback early on to draft the final *stable* release. Also, an example application is coming soon to better illustrate real case scenarios of usage of the library. **Check out the [installation details](#installation).**
 
-That being said, if you still want to use v3, go [here](./docs_3x.md)
+That being said, if you still want to use v3, go [here](./docs_3x.md).
 
 ## Contents
 
