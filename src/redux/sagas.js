@@ -192,9 +192,9 @@ export function* checkInternetAccessSaga({
     return; // <-- Return early as we don't care about connectivity if app is not in foreground.
   }
   const hasInternetAccess = yield call(checkInternetAccess, {
-    pingServerUrl,
-    pingTimeout,
-    httpMethod,
+    url: pingServerUrl,
+    timeout: pingTimeout,
+    method: httpMethod,
   });
   yield call(handleConnectivityChange, hasInternetAccess);
 }
