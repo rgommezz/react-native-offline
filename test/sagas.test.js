@@ -283,7 +283,7 @@ describe('sagas', () => {
         .next()
         .call(checkInternetAccess, {
           url: params.pingServerUrl,
-          timout: params.pingTimeout,
+          timeout: params.pingTimeout,
           method: params.httpMethod,
         })
         .next(true)
