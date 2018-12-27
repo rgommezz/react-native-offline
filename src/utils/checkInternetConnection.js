@@ -2,18 +2,19 @@
 
 import { Platform, NetInfo } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
+import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants';
 
 /**
  * Utility that allows to query for internet connectivity on demand
  * On iOS, the listener is fired immediately after registration
  * On Android, we need to use `isConnected.fetch`, that returns a promise which resolves with a boolean
- * @param timeout
  * @param url
+ * @param timeout
  * @returns {Promise<boolean>}
  */
 export default function checkInternetConnection(
-  timeout: number = 3000,
-  url: string = 'https://www.google.com/',
+  url: string = DEFAULT_PING_SERVER_URL,
+  timeout: number = DEFAULT_TIMEOUT,
 ): Promise<boolean> {
   let connectionChecked: Promise<boolean>;
   if (Platform.OS === 'ios') {
@@ -36,7 +37,7 @@ export default function checkInternetConnection(
 
   return connectionChecked.then((isConnected: boolean) => {
     if (isConnected) {
-      return checkInternetAccess(timeout, url);
+      return checkInternetAccess({ timeout, url });
     }
     return Promise.resolve(false);
   });

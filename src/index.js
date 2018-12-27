@@ -1,23 +1,26 @@
 module.exports = {
+  get NetworkProvider() {
+    return require('./components/NetworkProvider').default;
+  },
+  get ReduxNetworkProvider() {
+    return require('./components/ReduxNetworkProvider').default;
+  },
+  get NetworkConsumer() {
+    return require('./components/NetworkConsumer').default;
+  },
   get reducer() {
-    return require('./reducer').default;
-  },
-  get withNetworkConnectivity() {
-    return require('./withNetworkConnectivity').default;
-  },
-  get ConnectivityRenderer() {
-    return require('./ConnectivityRenderer').default;
+    return require('./redux/reducer').default;
   },
   get createNetworkMiddleware() {
-    return require('./createNetworkMiddleware').default;
+    return require('./redux/createNetworkMiddleware').default;
   },
   get offlineActionTypes() {
-    return require('./actionTypes').default;
+    return require('./redux/actionTypes').default;
   },
-  get networkEventsListenerSaga() {
-    return require('./sagas').default;
+  get networkSaga() {
+    return require('./redux/sagas').default;
   },
   get checkInternetConnection() {
-    return require('./checkInternetConnection').default;
+    return require('./utils/checkInternetConnection').default;
   },
 };

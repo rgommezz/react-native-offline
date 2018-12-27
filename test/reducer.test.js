@@ -1,6 +1,6 @@
 /* eslint flowtype/require-parameter-type: 0 */
-import reducer, { initialState } from '../reducer';
-import * as actionCreators from '../actionCreators';
+import reducer, { initialState, networkSelector } from '../src/redux/reducer';
+import * as actionCreators from '../src/redux/actionCreators';
 
 describe('reducer', () => {
   const getState = (isConnected = false, ...actionQueue) => ({
@@ -260,6 +260,21 @@ describe('reducer', () => {
       expect(reducer(prevState, action)).toEqual(
         getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3),
       );
+    });
+  });
+});
+
+describe('networkSelector', () => {
+  it('returns the correct shape', () => {
+    const state = {
+      network: {
+        isConnected: true,
+        actionQueue: ['foo'],
+      },
+    };
+    expect(networkSelector(state)).toEqual({
+      isConnected: true,
+      actionQueue: ['foo'],
     });
   });
 });

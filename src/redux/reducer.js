@@ -7,7 +7,7 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   NetworkState,
-} from './types';
+} from '../types';
 
 export const initialState = {
   isConnected: true,
@@ -16,10 +16,7 @@ export const initialState = {
 
 function handleOfflineAction(
   state: NetworkState,
-  {
-    payload: { prevAction, prevThunk } = {},
-    meta,
-  }: FluxActionWithPreviousIntent,
+  { payload: { prevAction, prevThunk }, meta }: FluxActionWithPreviousIntent,
 ): NetworkState {
   const isActionToRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;
@@ -99,4 +96,8 @@ export default function(
     default:
       return state;
   }
+}
+
+export function networkSelector(state: { network: NetworkState }) {
+  return state.network;
 }

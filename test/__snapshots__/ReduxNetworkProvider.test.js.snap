@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReduxNetworkProvider render has the correct structure 1`] = `
+<NetworkConnectivity
+  httpMethod="HEAD"
+  onConnectivityChange={[Function]}
+  pingInBackground={false}
+  pingInterval={0}
+  pingOnlyIfOffline={false}
+  pingServerUrl="https://www.google.com/"
+  pingTimeout={3000}
+  shouldPing={true}
+>
+  [Function]
+</NetworkConnectivity>
+`;

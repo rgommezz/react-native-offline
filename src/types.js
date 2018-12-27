@@ -1,5 +1,9 @@
 /* @flow */
 
+export type State = {
+  isConnected: boolean,
+};
+
 export type FluxAction = {
   type: string,
   payload: any,
