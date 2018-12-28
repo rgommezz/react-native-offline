@@ -33,6 +33,11 @@ That being said, if you still want to use v3, go [here](./docs_3x.md).
     + [`checkInternetConnection`](#checkinternetconnection)
 * [Miscellanea](#miscellanea)
   * [FAQ](#faq)
+    + [Testing offline behaviour](#how-to-test-offline-behavior-while-actually-being-online)
+    + [Dispatching CONNECTION_CHANGE as 1st action on app startup](#how-to-orchestrate-redux-to-dispatch-connection_change-as-the-first-action-when-the-app-starts-up)
+    + [Intercept and queue actions based off server errors](#how-to-intercept-and-queue-actions-when-the-server-responds-with-client-4xx-or-server-5xx-errors)
+    + [Persist and rehydrate thunks in the offline queue](#how-to-persist-and-rehydrate-thunks-in-the-offline-queue-with-redux-persist)
+    + [Using redux-saga 1.0.0-beta.x](#using-redux-saga-1.0.0-beta.x)
   * [Inspiration](#inspiration)
   * [License](#license)
   * [Contributors](#contributors)
@@ -647,6 +652,15 @@ const persistConfig = {
   storage,
   transforms: [networkTransform], // Add the transform into the persist config
 };
+```
+
+#### Using redux-saga 1.0.0-beta.x
+If you are using a `1.0.0-beta.x` version for redux-saga in your application, you may have some conflicts when yarn install dependencies, since this library relies on the latest stable version `0.16.2` and that could take precedence on your `node_modules`. In order to fix it, you can use [yarn resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions) by adding the next lines of code to your `package.json`, where `x` is the beta version number:
+
+```json
+  "resolutions": {
+    "react-native-offline/redux-saga": "^1.0.0-beta.x"
+  },
 ```
 
 ### Inspiration
