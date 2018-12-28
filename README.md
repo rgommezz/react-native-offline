@@ -37,7 +37,7 @@ That being said, if you still want to use v3, go [here](./docs_3x.md).
     + [Dispatching CONNECTION_CHANGE as 1st action on app startup](#how-to-orchestrate-redux-to-dispatch-connection_change-as-the-first-action-when-the-app-starts-up)
     + [Intercept and queue actions based off server errors](#how-to-intercept-and-queue-actions-when-the-server-responds-with-client-4xx-or-server-5xx-errors)
     + [Persist and rehydrate thunks in the offline queue](#how-to-persist-and-rehydrate-thunks-in-the-offline-queue-with-redux-persist)
-    + [Using redux-saga 1.0.0-beta.x](#using-redux-saga-1.0.0-beta.x)
+    + [Using redux-saga 1.0.0-beta.x](#using-redux-saga-100-betax)
   * [Inspiration](#inspiration)
   * [License](#license)
   * [Contributors](#contributors)
