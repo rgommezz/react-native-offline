@@ -6,7 +6,7 @@
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
 ## Important (Please read)
-**This is the documentation for version 4.0.0-beta.1. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0-beta.0)**
+**This is the documentation for version 4.0.0-beta.2. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0-beta.0)**
 
 Please try to use v4. Some of the core has been rewritten from scratch using TDD approach and it fixes some of the outstanding [issues](https://github.com/rgommezz/react-native-offline/pull/141) that v3 presented. If you are using RN v0.56 or higher v3 won't work. Don't be misled by the word *beta*, it's a precaution measure that I've set myself because I am human and I may have made some unwitting mistake :robot:. It'd be appreciated to gather feedback early on to draft the final *stable* release. Also, an example application is coming soon to better illustrate real case scenarios of usage of the library. **Check out the [installation details](#installation).**
 
@@ -75,7 +75,7 @@ This gives you the power to prioritize our work and support the project contribu
 ## Installation
 This library supports React Native v0.55 or higher.
 ```
-$ yarn add react-native-offline@4.0.0-beta.1
+$ yarn add react-native-offline@4.0.0-beta.2
 ```
 
 #### Android
