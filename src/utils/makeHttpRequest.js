@@ -23,6 +23,12 @@ type ResolvedValue = {
   status: number,
 };
 
+export const headers = {
+  'Cache-Control': 'no-cache, no-store, must-revalidate',
+  Pragma: 'no-cache',
+  Expires: 0,
+};
+
 /**
  * Utility that promisifies XMLHttpRequest in order to have a nice API that supports cancellation.
  * @param method
@@ -65,6 +71,9 @@ export default function makeHttpRequest({
           status: this.status,
         });
       };
+      Object.keys(headers).forEach((key: string) => {
+        xhr.setRequestHeader(key, headers[key]);
+      });
       xhr.send(null);
     },
   );

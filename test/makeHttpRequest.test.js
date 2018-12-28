@@ -1,4 +1,4 @@
-import makeHttpRequest from '../src/utils/makeHttpRequest';
+import makeHttpRequest, { headers } from '../src/utils/makeHttpRequest';
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
@@ -6,6 +6,7 @@ import {
 } from '../src/utils/constants';
 
 const mockOpen = jest.fn();
+const mockSetRequestHeader = jest.fn();
 const mockSend = jest.fn();
 const mockSetTimeout = jest.fn();
 const mockOnLoad = jest.fn();
@@ -34,22 +35,26 @@ global.XMLHttpRequest = class MockXMLHttpRequest {
         break;
     }
   }
+
   set timeout(t) {
     mockSetTimeout(t);
     this.t = t;
   }
+
   set onload(fn) {
     mockOnLoad();
     if (this.callbackToFire.includes('onload')) {
       fn.call(this);
     }
   }
+
   set onerror(fn) {
     mockOnError();
     if (this.callbackToFire === 'onerror') {
       fn.call(this);
     }
   }
+
   set ontimeout(fn) {
     mockOnTimeout();
     if (this.callbackToFire === 'ontimeout') {
@@ -58,6 +63,7 @@ global.XMLHttpRequest = class MockXMLHttpRequest {
   }
 };
 global.XMLHttpRequest.prototype.open = mockOpen;
+global.XMLHttpRequest.prototype.setRequestHeader = mockSetRequestHeader;
 global.XMLHttpRequest.prototype.send = mockSend;
 
 describe('makeHttpRequest', () => {
@@ -75,12 +81,21 @@ describe('makeHttpRequest', () => {
     timeout: 5000,
   };
   it('sets up the XMLHttpRequest configuration properly', async () => {
+    const headerKeys = Object.keys(headers);
     makeHttpRequest(params);
     expect(mockOpen).toHaveBeenCalledWith(params.method, params.url);
     expect(mockSetTimeout).toHaveBeenCalledWith(params.timeout);
     expect(mockOnLoad).toHaveBeenCalledTimes(1);
     expect(mockOnError).toHaveBeenCalledTimes(1);
     expect(mockOnTimeout).toHaveBeenCalledTimes(1);
+    expect(mockSetRequestHeader).toHaveBeenCalledTimes(3);
+    headerKeys.forEach((key, index) => {
+      expect(mockSetRequestHeader).toHaveBeenNthCalledWith(
+        index + 1,
+        key,
+        headers[key],
+      );
+    });
     expect(mockSend).toHaveBeenCalledWith(null);
   });
 
