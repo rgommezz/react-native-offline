@@ -23,7 +23,7 @@ Handful of utilities you should keep in your toolbelt to handle offline/online c
     + [`Network reducer`](#network-reducer)
     + [`ReduxNetworkProvider`](#reduxnetworkprovider)
     + [`networkSaga`](#networksaga)
-    + [`createNetworkMiddleware()`](#createnetworkmiddleware)
+    + [`createNetworkMiddleware`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
   * [Other Utilities](#other-utilities)
     + [`checkInternetConnection`](#checkinternetconnection)
