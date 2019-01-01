@@ -6,7 +6,7 @@
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
 ## Important (Please read)
-**This is the documentation for version 4.0.0. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0).**
+**This is the documentation for version 4.x.x. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0).**
 
 ## Contents
 
@@ -23,7 +23,7 @@ Handful of utilities you should keep in your toolbelt to handle offline/online c
     + [`Network reducer`](#network-reducer)
     + [`ReduxNetworkProvider`](#reduxnetworkprovider)
     + [`networkSaga`](#networksaga)
-    + [`createNetworkMiddleware()`](#createnetworkmiddleware)
+    + [`createNetworkMiddleware`](#createnetworkmiddleware)
     + [`Offline Queue`](#offline-queue)
   * [Other Utilities](#other-utilities)
     + [`checkInternetConnection`](#checkinternetconnection)
@@ -426,8 +426,13 @@ fetchData.meta = {
 #### `checkInternetConnection()`
 Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type to inform the `network` reducer accordingly and keep it up to date. Check the example below.
 
+**Note**: It's recommended to always set `shouldPing` to `true` (the default behaviour), in order to prevent inconsistent behaviour on iOS for RN < 0.57.
 ```js
-checkInternetConnection(url?: string = 'https://www.google.com/', pingTimeout?: number = 3000): Promise<boolean>
+checkInternetConnection(
+  url?: string = 'https://www.google.com/',
+  pingTimeout?: number = 3000,
+  shouldPing?: boolean = true
+): Promise<boolean>
 ```
 
 ##### Example
