@@ -71,7 +71,7 @@ This gives you the power to prioritize our work and support the project contribu
 ## Installation
 This library supports React Native v0.55 or higher.
 ```
-$ yarn add react-native-offline@4.0.0
+$ yarn add react-native-offline
 ```
 
 #### Android
