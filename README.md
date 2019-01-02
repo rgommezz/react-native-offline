@@ -91,7 +91,7 @@ Provider component that injects the network state to children components via [Re
 
 type Props = {
     children: React.Node,
-    pingTimeout?: number = 3000,
+    pingTimeout?: number = 10000,
     pingServerUrl?: string = 'https://www.google.com/',
     shouldPing?: boolean = true,
     pingInterval?: number = 0,
@@ -104,13 +104,13 @@ type Props = {
 ##### Config
 `children`:  a React Element. This is the only required prop.
 
-`pingTimeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to `3000` ms.
+`pingTimeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to `10000` ms. If you want to use a different value, it's recommended to use a higher one.
 
 `pingServerUrl`: remote server to ping to. Defaults to `https://www.google.com/` since it's probably one the most stable servers out there, but you can provide your own if needed.
 
 `shouldPing`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
-`pingInterval`: the interval (in ms) you want to ping the server at. Defaults to `0`, and that means it is not going to check connectivity regularly.
+`pingInterval`: the interval (in ms) you want to ping the server at. Defaults to `0`, and that means it is not going to check connectivity regularly. If opted in, it's advised not to choose a very small value, because that may drain your battery. Choose wisely. Something around 30000 ms should be fine.
 
 `pingOnlyIfOffline`: when set to `true` and `pingInterval` > 0, it will ping the remote server regularly only if offline. Defaults to `false`.
 
@@ -243,7 +243,7 @@ export default function* rootSaga(): Generator<*, *, *> {
   yield all([
     fork(saga1),
     fork(saga2),
-    fork(networkSaga, { pingTimeout: 2000, checkConnectionInterval: 20000 }),
+    fork(networkSaga, { checkConnectionInterval: 20000 }),
   ]);
 }
 ```
@@ -430,7 +430,7 @@ Utility function that allows you to query for internet connectivity on demand. I
 ```js
 checkInternetConnection(
   url?: string = 'https://www.google.com/',
-  pingTimeout?: number = 3000,
+  pingTimeout?: number = 10000,
   shouldPing?: boolean = true
 ): Promise<boolean>
 ```
