@@ -1,7 +1,8 @@
 /* @flow */
 
-import { get, isEqual, find, without } from 'lodash';
+import { get, without } from 'lodash';
 import actionTypes from './actionTypes';
+import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import type {
   FluxAction,
   FluxActionWithPreviousIntent,
@@ -31,8 +32,9 @@ function handleOfflineAction(
       typeof actionToLookUp === 'object'
         ? { ...actionToLookUp, meta }
         : actionToLookUp;
-    const similarActionQueued = find(state.actionQueue, (action: *) =>
-      isEqual(action, actionWithMetaData),
+    const similarActionQueued = getSimilarActionInQueue(
+      actionWithMetaData,
+      state.actionQueue,
     );
 
     return {
@@ -52,8 +54,9 @@ function handleRemoveActionFromQueue(
   state: NetworkState,
   action: FluxActionForRemoval,
 ): NetworkState {
-  const similarActionQueued = find(state.actionQueue, (a: *) =>
-    isEqual(action, a),
+  const similarActionQueued = getSimilarActionInQueue(
+    action,
+    state.actionQueue,
   );
 
   return {
