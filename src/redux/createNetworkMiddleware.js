@@ -1,11 +1,12 @@
 /* @flow */
 
-import { find, get, isEqual } from 'lodash';
+import { find, get } from 'lodash';
 import {
   fetchOfflineMode,
   removeActionFromQueue,
   dismissActionsFromQueue,
 } from './actionCreators';
+import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import type { NetworkState } from '../types';
 
 type MiddlewareAPI<S> = {
@@ -52,7 +53,7 @@ function createNetworkMiddleware({
       }
       const actionQueued =
         actionQueue.length > 0
-          ? find(actionQueue, (a: *) => isEqual(a, action))
+          ? getSimilarActionInQueue(action, actionQueue)
           : null;
       if (actionQueued) {
         // Back online and the action that was queued is about to be dispatched.
