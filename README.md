@@ -478,32 +478,18 @@ import rootReducer from '../reducers';
 const networkMiddleware = createNetworkMiddleware();
 
 export default function configureStore(callback) {
-  const store = createStore(
-    rootReducer,
-    undefined,
-    compose(
-      applyMiddleware(networkMiddleware),
-      autoRehydrate(),
-    ),
-  );
+  const store = createStore(rootReducer, undefined, applyMiddleware(networkMiddleware));
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
-  persistStore(
-    store,
-    {
-      storage: AsyncStorage,
-      debounce: 500,
-    },
-    () => {
-      // After rehydration completes, we detect initial connection
-      checkInternetConnection().then(isConnected => {
-        store.dispatch({
-          type: offlineActionTypes.CONNECTION_CHANGE,
-          payload: isConnected,
-        });
-        callback(); // Notify our root component we are good to go, so that we can render our app
+  persistStore(store, undefined, () => {
+    // After rehydration completes, we detect initial connection
+    checkInternetConnection().then(isConnected => {
+      store.dispatch({
+        type: offlineActionTypes.CONNECTION_CHANGE,
+        payload: isConnected,
       });
-    },
-  );
+      callback(); // Notify our root component we are good to go, so that we can render our app
+    });
+  });
 
   return store;
 }
