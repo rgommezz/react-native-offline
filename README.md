@@ -469,9 +469,8 @@ As you can see in the snippets below, we create the `store` instance as usual an
 
 ```js
 // configureStore.js
-import { AsyncStorage, Platform, NetInfo } from 'react-native';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { createStore, applyMiddleware } from 'redux';
+import { persistStore } from 'redux-persist';
 import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
