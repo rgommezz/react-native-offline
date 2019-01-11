@@ -69,7 +69,7 @@ This gives you the power to prioritize our work and support the project contribu
 [![issuehunt-image](https://github.com/BoostIO/issuehunt-materials/blob/master/issuehunt-badge@1x.png?raw=true)](https://issuehunt.io/repos/86369462)
 
 ## Installation
-This library supports React Native v0.55 or higher.
+This library supports React Native v0.55 or higher. You also need to have `react-redux` version 6.x.x installed.
 ```
 $ yarn add react-native-offline
 ```
