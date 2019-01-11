@@ -461,7 +461,7 @@ You can use `pingServerUrl` and set it to a non existing url or point to some se
 Don't rely too much on iOS simulators and switching on/off the internet connection on your computer, they are quite buggy and report inconsistent connectivity information. On the other hand, testing on real devices should be fine.
 
 #### How to orchestrate Redux to dispatch `CONNECTION_CHANGE` as the first action when the app starts up
-The solution involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root React component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
+The solution assumes you are using Redux Persist v5.x and involves using some local state in your top most component and tweaking the `configureStore` function a bit, so that it can notify your root React component to render the whole application when the required initialisation has taken place. In this case, by initialisation, we are talking about rehydrating the store from disk and detecting initial internet connection.
 
 As you can see in the snippets below, we create the `store` instance as usual and return it in our `configureStore` function. The only difference is that the function is still _alive_ and will invoke the callback as soon as 2 actions are dispatched into the store (in order):
 - `REHYDRATE` from `redux-persist`
@@ -469,41 +469,26 @@ As you can see in the snippets below, we create the `store` instance as usual an
 
 ```js
 // configureStore.js
-import { AsyncStorage, Platform, NetInfo } from 'react-native';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { createStore, applyMiddleware } from 'redux';
+import { persistStore } from 'redux-persist';
 import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
 const networkMiddleware = createNetworkMiddleware();
 
 export default function configureStore(callback) {
-  const store = createStore(
-    rootReducer,
-    undefined,
-    compose(
-      applyMiddleware(networkMiddleware),
-      autoRehydrate(),
-    ),
-  );
+  const store = createStore(rootReducer, applyMiddleware(networkMiddleware));
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
-  persistStore(
-    store,
-    {
-      storage: AsyncStorage,
-      debounce: 500,
-    },
-    () => {
-      // After rehydration completes, we detect initial connection
-      checkInternetConnection().then(isConnected => {
-        store.dispatch({
-          type: offlineActionTypes.CONNECTION_CHANGE,
-          payload: isConnected,
-        });
-        callback(); // Notify our root component we are good to go, so that we can render our app
+  persistStore(store, null, () => {
+    // After rehydration completes, we detect initial connection
+    checkInternetConnection().then(isConnected => {
+      store.dispatch({
+        type: offlineActionTypes.CONNECTION_CHANGE,
+        payload: isConnected,
       });
-    },
-  );
+      callback(); // Notify our root component we are good to go, so that we can render our app
+    });
+  });
 
   return store;
 }
