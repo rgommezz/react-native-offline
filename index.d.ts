@@ -16,11 +16,11 @@ export type CheckInternetConnectionConfig = {
   shouldPing?: boolean;
 };
 
-interface Connectivity {
+type Connectivity = {
   isConnected: boolean;
 }
 
-export interface NetworkProviderProps {
+export type NetworkProviderProps = {
   children: React.ReactNode;
   pingTimeout?: number;
   pingServerUrl?: string;
@@ -31,19 +31,14 @@ export interface NetworkProviderProps {
   httpMethod?: HTTPMethod;
 }
 
-interface NetworkConsumerProps {
+export type NetworkConsumerProps = {
   children: ({ isConnected }: Connectivity) => JSX.Element;
-}
-
-interface ReduxNetworkProviderProps extends NetworkProviderProps, Connectivity {
-  dispatch: (action: AnyAction) => AnyAction;
-  actionQueue: Array<AnyAction>;
 }
 
 export const NetworkProvider: (props: NetworkProviderProps) => JSX.Element;
 export const NetworkConsumer: (props: NetworkConsumerProps) => JSX.Element;
 export const ReduxNetworkProvider: (
-  props: ReduxNetworkProviderProps
+  props: NetworkProviderProps
 ) => JSX.Element;
 export const reducer: Reducer<NetworkState, AnyAction>;
 export const createNetworkMiddleware: (config: MiddlewareConfig) => Middleware;
