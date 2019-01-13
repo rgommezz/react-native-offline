@@ -51,3 +51,4 @@ export enum OfflineActionTypes {
 export const checkInternetConnection: (
   config: CheckInternetConnectionConfig
 ) => Promise<boolean>;
+export const networkSaga: (config: NetworkProviderProps) => IterableIterator<any>
