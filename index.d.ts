@@ -1,3 +1,9 @@
+// Type definitions for react-native-offline 4.1.2
+// Project: https://github.com/rgommezz/react-native-offline
+// Definitions by: Farzad YZ <https://github.com/farskid/>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 3.2
+
 import { Middleware, Reducer, AnyAction } from "redux";
 
 type HTTPMethod = "HEAD" | "OPTIONS";
