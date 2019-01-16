@@ -30,6 +30,7 @@
   "files": [
     "src"
   ],
+  "types": "./index.d.ts",
   "bugs": {
     "url": "https://github.com/rgommezz/react-native-offline/issues"
   },
