@@ -47,6 +47,9 @@ function createNetworkMiddleware({
 
     if (isObjectAndMatchCondition || isFunctionAndMatchCondition) {
       if (isConnected === false) {
+        if (action && action.mode === 'proxy') {
+          next(action);
+        }
         // Offline, preventing the original action from being dispatched.
         // Dispatching an internal action instead.
         return next(fetchOfflineMode(action));

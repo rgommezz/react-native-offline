@@ -63,6 +63,24 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     expect(actions).toEqual([actionCreators.fetchOfflineMode(action)]);
   });
 
+  it('action MATCHES criteria through REGEX, status OFFLINE, mode PROXY', () => {
+    const initialState = {
+      network: {
+        isConnected: false,
+        actionQueue: [],
+      },
+    };
+    const store = mockStore(initialState);
+    const action = {
+      ...getFetchAction('FETCH_SOME_DATA_REQUEST'),
+      ...{ mode: 'proxy' },
+    };
+    store.dispatch(action);
+
+    const actions = store.getActions();
+    expect(actions).toEqual([action, actionCreators.fetchOfflineMode(action)]);
+  });
+
   it('action MATCHES criteria through ARRAY of ACTION TYPES, status OFFLINE', () => {
     const initialState = {
       network: {
