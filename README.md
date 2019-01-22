@@ -371,6 +371,7 @@ type ActionToBeQueued = {
   meta: {
     retry?: boolean, // By passing true, your action will be enqueued on offline mode
     dismiss?: Array<string> // Array of actions which, once dispatched, will trigger a dismissal from the queue
+    mode?: string // Tells the middleware how to handle intercepted actions.
   }
 }
 ```
@@ -403,6 +404,37 @@ const action = {
     dismiss: ['NAVIGATE_BACK']
   }
 };
+```
+
+- Action that will be added to the queue on offline mode and that will be re-dispatched as soon as the connection is back online again. Additionally, when _mode_ is set to **proxy** the original action will continue to be dispatched. This allows your application to handle visual updates on the screen and sync when it comes back online.
+
+```js
+const action = {
+  type: 'UPDATE_TASK_REQUEST',
+  payload: {
+    task: {
+      status: 'completed'
+    }
+  },
+  meta: {
+    retry: true,
+    mode: 'proxy'
+  }
+};
+
+// saga (or thunk)
+export function* watchUpdateTask({ type, payload }) {
+    try {
+        const isConnected = yield select(offlineSelector);
+
+        if (isConnected) {
+            // Make api call only when connected. This action will get replayed when connection is restored
+        }
+        yield put(updateTaskSuccess(payload.task))
+    } catch (e) {
+        yield put(updateTaskFailure())
+    }
+}
 ```
 
 #### Thunks

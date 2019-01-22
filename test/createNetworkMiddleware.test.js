@@ -71,10 +71,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
       },
     };
     const store = mockStore(initialState);
-    const action = {
-      ...getFetchAction('FETCH_SOME_DATA_REQUEST'),
-      ...{ mode: 'proxy' },
-    };
+    const action = getFetchAction('FETCH_SOME_DATA_REQUEST');
+    action.meta = { mode: 'proxy' };
     store.dispatch(action);
 
     const actions = store.getActions();

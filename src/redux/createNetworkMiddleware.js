@@ -46,10 +46,14 @@ function createNetworkMiddleware({
       typeof action === 'function' && action.interceptInOffline === true;
 
     if (isObjectAndMatchCondition || isFunctionAndMatchCondition) {
+      const mode = get(action, 'meta.mode', 'intercept');
+
       if (isConnected === false) {
-        if (action && action.mode === 'proxy') {
+        // In proxy mode let action continue to be dispatched
+        if (mode === 'proxy') {
           next(action);
         }
+
         // Offline, preventing the original action from being dispatched.
         // Dispatching an internal action instead.
         return next(fetchOfflineMode(action));
