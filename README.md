@@ -243,7 +243,7 @@ export default function* rootSaga(): Generator<*, *, *> {
   yield all([
     fork(saga1),
     fork(saga2),
-    fork(networkSaga, { checkConnectionInterval: 20000 }),
+    fork(networkSaga, { pingInterval: 20000 }),
   ]);
 }
 ```
