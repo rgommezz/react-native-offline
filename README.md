@@ -66,7 +66,7 @@ This gives you the power to prioritize our work and support the project contribu
 
 > Sponsors will be listed in the contributors section at the bottom. If you want to be removed please contact me at: rauliyohmc@gmail.com
 
-[![issuehunt-image](https://github.com/BoostIO/issuehunt-materials/blob/master/issuehunt-badge@1x.png?raw=true)](https://issuehunt.io/repos/86369462)
+[![issuehunt-image](https://camo.githubusercontent.com/f5f88939f6c627454b7c5d0eaef9f7cc40cc9586/68747470733a2f2f697373756568756e742e696f2f7374617469632f656d6265642f697373756568756e742d627574746f6e2d76312e737667)](https://issuehunt.io/repos/86369462)
 
 ## Installation
 This library supports React Native v0.55 or higher. You also need to have `react-redux` version 6.x.x installed.
