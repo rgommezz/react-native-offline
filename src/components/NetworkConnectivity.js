@@ -91,9 +91,12 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(_: *, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { pingServerUrl, onConnectivityChange } = this.props;
     const { isConnected } = this.state;
-    const { onConnectivityChange } = this.props;
+    if (prevProps.pingServerUrl !== pingServerUrl) {
+      this.checkInternet();
+    }
     if (prevState.isConnected !== isConnected) {
       onConnectivityChange(isConnected);
     }

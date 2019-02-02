@@ -336,6 +336,16 @@ describe('NetworkConnectivity', () => {
     });
   });
 
+  describe('pingUrlChange', () => {
+    it('calls checkInternet if pingServerUrl changes', () => {
+      const wrapper = shallow(getElement());
+      wrapper.instance().checkInternet = mockCheckInternet;
+      expect(mockCheckInternet).not.toHaveBeenCalled();
+      wrapper.setProps({ pingServerUrl: 'https://newServerToPing.com' });
+      expect(mockCheckInternet).toHaveBeenCalled();
+    });
+  })
+
   describe('props validation', () => {
     it('throws if prop pingTimeout is not a number', () => {
       expect(() =>
