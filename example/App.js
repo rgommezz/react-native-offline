@@ -1,7 +1,6 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Font, Icon } from 'expo';
-import { NetworkProvider } from 'react-native-offline';
 import AppNavigator from './navigation/AppNavigator';
 import DummyNetworkContext from './DummyNetworkContext';
 
@@ -55,9 +54,7 @@ export default class App extends React.Component {
       <DummyNetworkContext.Provider value={network}>
         <View style={styles.container}>
           {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <NetworkProvider pingServerUrl={network.pingUrl}>
-            <AppNavigator />
-          </NetworkProvider>
+          <AppNavigator />
         </View>
       </DummyNetworkContext.Provider>
     );

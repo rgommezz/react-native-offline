@@ -6,16 +6,16 @@ import {
 } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import ComponentsScreen from '../screens/ComponentsScreen';
+import ReduxScreen from '../screens/ReduxScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
+const ComponentsStack = createStackNavigator({
+  Components: ComponentsScreen,
 });
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+ComponentsStack.navigationOptions = {
+  tabBarLabel: 'Components',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -28,12 +28,12 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const ReduxStack = createStackNavigator({
+  Redux: ReduxScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+ReduxStack.navigationOptions = {
+  tabBarLabel: 'Redux',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -57,7 +57,7 @@ SettingsStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
+  ComponentsStack,
+  ReduxStack,
   SettingsStack,
 });
