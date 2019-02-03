@@ -8,6 +8,9 @@ Handful of utilities you should keep in your toolbelt to handle offline/online c
 ## Important (Please read)
 **This is the documentation for version 4.x.x. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0).**
 
+## Example app
+A comprehensive [example app](/example) is available within Expo to play with the library and better understand its different modules. [Go and check it out!](https://expo.io/@rgommezz/example)
+
 ## Contents
 
 * [Motivation](#motivation)
