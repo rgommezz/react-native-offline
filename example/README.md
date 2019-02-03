@@ -1,6 +1,6 @@
 ## Example app
 
-This application showcases the component utilities, as well as redux and sagas integration. You can try it out in Expo by using [this link](https://expo.io/@rgommezz/example).
+This application showcases component utilities, redux, sagas integration and the offline queue with different configurations. You can try it out in Expo by using [this link](https://expo.io/@rgommezz/example).
 
 ### Runing it locally
 You need to have `expo-cli` installed.
@@ -12,8 +12,8 @@ expo start
 ```
 
 ### Snapshots
-![Components](https://user-images.githubusercontent.com/4982414/52171945-cca02580-275d-11e9-8c67-cc0879ba5396.png)
+<div>
+   <img align="left" src="https://user-images.githubusercontent.com/4982414/52172165-f3605b00-2761-11e9-87f3-bca71b0d3918.png" width="400">
 
-
-
-![Redux](https://user-images.githubusercontent.com/4982414/52171946-cf9b1600-275d-11e9-83af-33f3dabcde9b.png)
+  <img align="right" src="https://user-images.githubusercontent.com/4982414/52172166-f52a1e80-2761-11e9-8d9b-aa5a7caa24e2.png" width="400"> 
+</div>
