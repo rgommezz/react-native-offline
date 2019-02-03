@@ -22,6 +22,7 @@ type State = {
 type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
+  queueReleaseThrottle: number,
 |};
 
 function validateParams(regexActionType, actionTypes) {
@@ -87,7 +88,7 @@ export const createReleaseQueue = (getState, next, delay) => async queue => {
 function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
-  queueReleaseThrottle = 0,
+  queueReleaseThrottle = 50,
 }: Arguments = {}) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
