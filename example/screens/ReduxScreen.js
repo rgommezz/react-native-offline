@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, StyleSheet, Image } from 'react-native';
+import { Platform, View, StyleSheet, Image, Text } from "react-native";
 import { ReduxNetworkProvider } from 'react-native-offline';
 import { Provider } from 'react-redux';
 
@@ -11,7 +11,7 @@ import Counter from '../components/Counter';
 import OfflineQueue from '../components/OfflineQueue';
 import ActionButtons from '../components/ActionButtons';
 
-const store = createStore();
+const store = createStore({ queueReleaseThrottle: 1000 });
 
 export default class ReduxScreen extends React.Component {
   static navigationOptions = {
@@ -42,7 +42,7 @@ export default class ReduxScreen extends React.Component {
                 <View style={styles.secondSection}>
                   <ActionButtons />
                   <View style={styles.offlineQueue}>
-                    <OfflineQueue />
+                    <OfflineQueue title="Offline Queue (FIFO), throttle = 1s" />
                   </View>
                 </View>
               </View>

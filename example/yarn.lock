@@ -5592,10 +5592,10 @@ react-native-maps@expo/react-native-maps#v0.22.1-exp.0:
   version "0.22.1"
   resolved "https://codeload.github.com/expo/react-native-maps/tar.gz/e6f98ff7272e5d0a7fe974a41f28593af2d77bb2"
 
-react-native-offline@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-offline/-/react-native-offline-4.2.0.tgz#baf2337a8126b93e1b9241c6b328bbe1c26a19c0"
-  integrity sha512-gFEs5oDEcSeUybnGQ/MlOI3Q9K8rH+cXcMWbyAoLDYnY8K6MCRXwOwfhFuTfKaRrcfMsywjTLcYetfNMMVN1ng==
+react-native-offline@4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-offline/-/react-native-offline-4.3.0.tgz#6877e4a4b961e230e0a198bce2d0611ca8af9d89"
+  integrity sha512-hM+rNGHKpmagseFuhnok/c7uCrMqs70fHRzaqGBCKnTsio6ff3/wb7jomsuRjsR1Iy+DwBws+VUovcfpQAtuBQ==
   dependencies:
     lodash "^4.17.11"
     react-redux "^6.0.0"

@@ -7,10 +7,14 @@ import createSagaMiddleware from 'redux-saga';
 import counter from './reducer';
 import rootSaga from './sagas';
 
-export default function createReduxStore({ withSaga = false } = {}) {
+export default function createReduxStore({
+  withSaga = false,
+  queueReleaseThrottle = 1000,
+} = {}) {
   const networkMiddleware = createNetworkMiddleware({
     regexActionType: /^OTHER/,
     actionTypes: ['ADD_ONE', 'SUB_ONE'],
+    queueReleaseThrottle,
   });
 
   const sagaMiddleware = createSagaMiddleware();
