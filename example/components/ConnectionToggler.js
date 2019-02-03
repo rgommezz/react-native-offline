@@ -6,7 +6,7 @@ function ConnectionToggler() {
   return (
     <DummyNetworkContext.Consumer>
       {({ toggleConnection }) => (
-        <View style={{ marginBottom: 30 }}>
+        <View style={{ marginBottom: 20 }}>
           <Button
             onPress={toggleConnection}
             title="Toggle Internet connection"

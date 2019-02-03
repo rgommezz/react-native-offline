@@ -269,7 +269,8 @@ createNetworkMiddleware(config: MiddlewareConfig): ReduxMiddleware
 
 type MiddlewareConfig = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
-  actionTypes?: Array<string> = []
+  actionTypes?: Array<string> = [],
+  queueReleaseThrottle?: number = 50,
 }
 ```
 
@@ -280,6 +281,8 @@ This is the setup you need to put in place for libraries such as `redux-saga` or
 By default it's configured to intercept actions for fetching data following the Redux [convention](https://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
+
+`queueReleaseThrottle`: waiting time in ms between dispatches when flushing the offline queue. Useful to reduce the server pressure when coming back online. Defaults to 50ms.
 
 ##### Thunks Config
 For `redux-thunk` library, the async flow is wrapped inside functions that will be lazily evaluated when dispatched, so our store is able to dispatch functions as well. Therefore, the configuration differs:
@@ -316,7 +319,9 @@ import { createNetworkMiddleware } from 'react-native-offline';
 import createSagaMiddleware from 'redux-saga';
 
 const sagaMiddleware = createSagaMiddleware();
-const networkMiddleware = createNetworkMiddleware();
+const networkMiddleware = createNetworkMiddleware({
+  queueReleaseThrottle: 200,
+});
 
 const store = createStore(
   rootReducer,

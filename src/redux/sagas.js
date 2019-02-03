@@ -208,15 +208,9 @@ export function* checkInternetAccessSaga({
 export function* handleConnectivityChange(
   hasInternetAccess: boolean,
 ): Generator<*, *, *> {
-  const { actionQueue, isConnected } = yield select(networkSelector);
+  const { isConnected } = yield select(networkSelector);
   if (isConnected !== hasInternetAccess) {
     yield put(connectionChange(hasInternetAccess));
-  }
-  if (hasInternetAccess && actionQueue.length > 0) {
-    // eslint-disable-next-line
-    for (const action of actionQueue) {
-      yield put(action);
-    }
   }
 }
 

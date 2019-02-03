@@ -2,10 +2,10 @@ import React from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
-function OfflineQueue({ queue }) {
+function OfflineQueue({ queue, title }) {
   return (
     <View style={{ height: 90, marginVertical: 8 }}>
-      <Text style={styles.title}>Offline Queue (FIFO)</Text>
+      <Text style={styles.title}>{title}</Text>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.queue}

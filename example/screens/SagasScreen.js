@@ -7,7 +7,7 @@ import ActionButtons from '../components/ActionButtons';
 import OfflineQueue from '../components/OfflineQueue';
 import createStore from '../redux/createStore';
 
-const store = createStore({ withSaga: true });
+const store = createStore({ withSaga: true, queueReleaseThrottle: 250 });
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
@@ -42,7 +42,7 @@ export default class SettingsScreen extends React.Component {
           <View style={styles.secondSection}>
             <ActionButtons />
             <View style={styles.offlineQueue}>
-              <OfflineQueue />
+              <OfflineQueue title="Offline Queue (FIFO), throttle = 250ms" />
             </View>
           </View>
         </View>

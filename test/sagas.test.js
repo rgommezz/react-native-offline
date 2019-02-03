@@ -294,24 +294,7 @@ describe('sagas', () => {
   });
 
   describe('handleConnectivityChange', () => {
-    it(`dispatches a CONNECTION_CHANGE action AND the actions hanging in the queue
-    if disconnected => connected`, () => {
-      const actionQueue = ['foo', 'bar'];
-      const saga = testSaga(handleConnectivityChange, true);
-      saga
-        .next()
-        .select(networkSelector)
-        .next({ actionQueue, isConnected: false })
-        .put(connectionChange(true))
-        .next()
-        .put(actionQueue[0])
-        .next()
-        .put(actionQueue[1])
-        .next()
-        .isDone();
-    });
-
-    it('only dispatches a CONNECTION_CHANGE action if connected => disconnected ', () => {
+    it('dispatches a CONNECTION_CHANGE action if the connection changed ', () => {
       const actionQueue = ['foo', 'bar'];
       const saga = testSaga(handleConnectivityChange, false);
       saga

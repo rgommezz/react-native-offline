@@ -13,7 +13,6 @@ import {
 type Props = {
   dispatch: FluxAction => FluxAction,
   isConnected: boolean,
-  actionQueue: Array<FluxAction>,
   pingTimeout?: number,
   pingServerUrl?: string,
   shouldPing?: boolean,
@@ -36,16 +35,9 @@ class ReduxNetworkProvider extends React.Component<Props> {
   };
 
   handleConnectivityChange = (isConnected: boolean) => {
-    const { isConnected: wasConnected, actionQueue, dispatch } = this.props;
-
+    const { isConnected: wasConnected, dispatch } = this.props;
     if (isConnected !== wasConnected) {
       dispatch(connectionChange(isConnected));
-    }
-    // dispatching queued actions in order of arrival (if we have any)
-    if (!wasConnected && isConnected && actionQueue.length > 0) {
-      actionQueue.forEach((action: *) => {
-        dispatch(action);
-      });
     }
   };
 
@@ -65,7 +57,6 @@ class ReduxNetworkProvider extends React.Component<Props> {
 function mapStateToProps(state: { network: NetworkState }) {
   return {
     isConnected: state.network.isConnected,
-    actionQueue: state.network.actionQueue,
   };
 }
 
