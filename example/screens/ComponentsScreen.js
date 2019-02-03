@@ -17,25 +17,22 @@ export default class ComponentsScreen extends React.Component {
         {({ pingUrl }) => (
           <NetworkProvider pingServerUrl={pingUrl}>
             <View style={styles.container}>
-              <View style={styles.welcomeContainer}>
+              <View style={styles.imageContainer}>
                 <Image
                   source={require('../assets/images/robot-dev.png')}
-                  style={styles.welcomeImage}
+                  style={styles.image}
                 />
               </View>
               <ConnectionToggler />
-              <View style={styles.getStartedContainer}>
-                <Text style={styles.getStartedText}>
+              <View style={styles.firstSectionContainer}>
+                <Text style={styles.firstSectionText}>
                   Connected to Internet:
                 </Text>
 
                 <NetworkConsumer>
                   {({ isConnected }) => (
                     <View
-                      style={[
-                        styles.codeHighlightContainer,
-                        styles.homeScreenFilename,
-                      ]}
+                      style={[styles.codeHighlightContainer, styles.filename]}
                     >
                       <MonoText
                         style={[
@@ -87,24 +84,24 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: 'center',
   },
-  welcomeContainer: {
+  imageContainer: {
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
   },
-  welcomeImage: {
+  image: {
     width: 100,
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
     marginLeft: -10,
   },
-  getStartedContainer: {
+  firstSectionContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  homeScreenFilename: {
+  filename: {
     marginVertical: 7,
   },
   codeHighlightText: {
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     paddingHorizontal: 4,
   },
-  getStartedText: {
+  firstSectionText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
     lineHeight: 24,
