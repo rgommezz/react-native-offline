@@ -8,7 +8,7 @@ import {
 import TabBarIcon from '../components/TabBarIcon';
 import ComponentsScreen from '../screens/ComponentsScreen';
 import ReduxScreen from '../screens/ReduxScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SagasScreen from '../screens/SagasScreen';
 
 const ComponentsStack = createStackNavigator({
   Components: ComponentsScreen,
@@ -42,12 +42,12 @@ ReduxStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const SagasStack = createStackNavigator({
+  Sagas: SagasScreen,
 });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+SagasStack.navigationOptions = {
+  tabBarLabel: 'Sagas',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -59,5 +59,5 @@ SettingsStack.navigationOptions = {
 export default createBottomTabNavigator({
   ComponentsStack,
   ReduxStack,
-  SettingsStack,
+  SagasStack,
 });
