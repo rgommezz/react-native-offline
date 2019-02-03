@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 import { networkSaga } from 'react-native-offline';
 
 function* doSideEffect({ type }) {
-  // yield call(Alert.alert(type, 'This is a side effect running on online mode'));
   yield call(
     [Alert, Alert.alert],
     type,
