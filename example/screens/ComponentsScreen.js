@@ -23,7 +23,7 @@ export default class ComponentsScreen extends React.Component {
                   style={styles.welcomeImage}
                 />
               </View>
-
+              <ConnectionToggler />
               <View style={styles.getStartedContainer}>
                 <Text style={styles.getStartedText}>
                   Connected to Internet:
@@ -37,13 +37,17 @@ export default class ComponentsScreen extends React.Component {
                         styles.homeScreenFilename,
                       ]}
                     >
-                      <MonoText style={styles.codeHighlightText}>
+                      <MonoText
+                        style={[
+                          styles.highlightText,
+                          { color: isConnected ? 'green' : 'red' },
+                        ]}
+                      >
                         {isConnected ? 'YES' : 'NO'}
                       </MonoText>
                     </View>
                   )}
                 </NetworkConsumer>
-                <ConnectionToggler />
               </View>
 
               <View style={styles.tabBarInfoContainer}>
@@ -97,7 +101,8 @@ const styles = StyleSheet.create({
   },
   getStartedContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   homeScreenFilename: {
     marginVertical: 7,
@@ -115,6 +120,8 @@ const styles = StyleSheet.create({
     color: 'rgba(96,100,109, 1)',
     lineHeight: 24,
     textAlign: 'center',
+    fontWeight: 'bold',
+    marginRight: 8,
   },
   tabBarInfoContainer: {
     position: 'absolute',

@@ -1,16 +1,15 @@
 import React from 'react';
-import { Platform, View, StyleSheet, Image, Text, Button } from 'react-native';
+import { Platform, View, StyleSheet, Image } from 'react-native';
 import { ReduxNetworkProvider } from 'react-native-offline';
 import { Provider } from 'react-redux';
 
-import { MonoText } from '../components/StyledText';
 import ConnectionToggler from '../components/ConnectionToggler';
 import DummyNetworkContext from '../DummyNetworkContext';
 import createStore from '../redux/createStore';
 import ReduxNetworkReader from '../components/ReduxNetworkReader';
 import Counter from '../components/Counter';
 import OfflineQueue from '../components/OfflineQueue';
-import ActionButtons from "../components/ActionButtons";
+import ActionButtons from '../components/ActionButtons';
 
 const store = createStore();
 
@@ -34,9 +33,9 @@ export default class ReduxScreen extends React.Component {
                 </View>
 
                 <View style={styles.getStartedContainer}>
+                  <ConnectionToggler />
                   <ReduxNetworkReader />
                   <Counter />
-                  <ConnectionToggler />
                   <ActionButtons />
                 </View>
                 <View style={styles.tabBarInfoContainer}>
@@ -77,6 +76,7 @@ const styles = StyleSheet.create({
     marginLeft: -10,
   },
   getStartedContainer: {
+    flex: 1,
     alignItems: 'center',
     marginHorizontal: 50,
   },
@@ -114,9 +114,8 @@ const styles = StyleSheet.create({
         elevation: 20,
       },
     }),
-    alignItems: 'center',
     backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
+    paddingTop: 10,
   },
   tabBarInfoText: {
     fontSize: 17,

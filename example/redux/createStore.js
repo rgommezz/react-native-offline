@@ -6,7 +6,7 @@ import {
 import counter from './reducer';
 
 const networkMiddleware = createNetworkMiddleware({
-  actionTypes: ['ADD_ONE', 'SUB_ONE', 'NO_UI'],
+  actionTypes: ['ADD_ONE', 'SUB_ONE', 'OTHER'],
 });
 
 const rootReducer = combineReducers({

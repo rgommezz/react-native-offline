@@ -1,17 +1,22 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
 function OfflineQueue({ queue }) {
-  console.log(queue);
   return (
-    <View>
-      <Text style={styles.tabBarInfoText}>Offline Queue</Text>
-      <View style={styles.queue}>
+    <View style={{ flexGrow: 1 }}>
+      <Text style={styles.title}>Offline Queue</Text>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.queue}
+        horizontal
+      >
         {queue.map((item, i) => (
-          <Text key={`${item}-${i}`}>{item}</Text>
+          <Text style={styles.queueItem} key={`${item}-${i}`}>
+            {item}
+          </Text>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -23,11 +28,23 @@ const mapStateToProps = ({ network }) => ({
 export default connect(mapStateToProps)(OfflineQueue);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  title: {
+    fontSize: 17,
+    color: 'rgba(96,100,109, 1)',
+    textAlign: 'center',
+    paddingBottom: 10,
   },
   queue: {
-    height: 40,
-    width: '100%',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 60,
+  },
+  queueItem: {
+    padding: 8,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: 'orange',
+    marginHorizontal: 4,
   },
 });

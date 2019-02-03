@@ -1,16 +1,18 @@
 import React from 'react';
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
 import DummyNetworkContext from '../DummyNetworkContext';
 
 function ConnectionToggler() {
   return (
     <DummyNetworkContext.Consumer>
       {({ toggleConnection }) => (
-        <Button
-          onPress={toggleConnection}
-          title="Toggle Internet connection"
-          color="#841584"
-        />
+        <View style={{ marginBottom: 30 }}>
+          <Button
+            onPress={toggleConnection}
+            title="Toggle Internet connection"
+            color="#841584"
+          />
+        </View>
       )}
     </DummyNetworkContext.Consumer>
   );

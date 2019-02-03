@@ -16,9 +16,14 @@ export const subOne = () => ({
   },
 });
 
-export const noUI = () => ({
-  type: 'NO_UI',
+export const other = () => ({
+  type: 'OTHER',
   meta: {
     retry: true,
+    dismiss: ['CANCEL_OTHER'],
   },
+});
+
+export const cancelOther = () => ({
+  type: 'CANCEL_OTHER',
 });
