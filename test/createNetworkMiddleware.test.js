@@ -78,22 +78,29 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     expect(actions).toEqual([actionCreators.fetchOfflineMode(action)]);
   });
 
-  it('action ENQUEUED, status back ONLINE -> action gets redispatched by HoC', () => {
-    const prevActionQueue = { ...getFetchAction('FETCH_SOME_DATA_REQUEST') };
+  it('action ENQUEUED, status back ONLINE', () => {
+    const action1 = getFetchAction('FETCH_SOME_DATA_REQUEST');
+    const action2 = getFetchAction('FETCH_SOMETHING_ELSE_REQUEST');
+    const action3 = getFetchAction('FETCH_USER_REQUEST');
+    const prevActionQueue = [action1, action2, action3];
     const initialState = {
       network: {
-        isConnected: true,
-        actionQueue: [prevActionQueue], // different object references
+        isConnected: false,
+        actionQueue: prevActionQueue,
       },
     };
     const store = mockStore(initialState);
-    const action = getFetchAction('FETCH_SOME_DATA_REQUEST');
-    store.dispatch(action);
+    store.dispatch(actionCreators.connectionChange(true));
 
     const actions = store.getActions();
     expect(actions).toEqual([
-      actionCreators.removeActionFromQueue(action),
-      getFetchAction('FETCH_SOME_DATA_REQUEST'),
+      actionCreators.connectionChange(true),
+      actionCreators.removeActionFromQueue(action1),
+      action1,
+      actionCreators.removeActionFromQueue(action2),
+      action2,
+      actionCreators.removeActionFromQueue(action3),
+      action3,
     ]);
   });
 });
