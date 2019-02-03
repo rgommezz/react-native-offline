@@ -36,7 +36,10 @@ const showInfo = actionType => () => {
           "It's also dismissable, so that if an action with type CANCEL_OTHER is dispatched, it will be removed from the queue."
         );
       case 'CANCEL_OTHER':
-        return 'This action does not change the UI state. If dispatched, it will dismiss actions from the queue with type OTHER.';
+        return (
+          "This action does not change the UI state and it's NOT configured to be added to the offline queue." +
+          ' If dispatched, it will dismiss actions from the queue with type OTHER.'
+        );
       default:
         return '';
     }
