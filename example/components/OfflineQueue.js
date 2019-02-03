@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 function OfflineQueue({ queue }) {
   return (
     <View style={{ height: 90, marginVertical: 8 }}>
-      <Text style={styles.title}>Offline Queue</Text>
+      <Text style={styles.title}>Offline Queue (FIFO)</Text>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.queue}
