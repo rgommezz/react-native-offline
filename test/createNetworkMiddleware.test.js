@@ -1,8 +1,12 @@
 /* eslint flowtype/require-parameter-type: 0 */
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import createNetworkMiddleware from '../src/redux/createNetworkMiddleware';
+import createNetworkMiddleware, {
+  createReleaseQueue,
+} from '../src/redux/createNetworkMiddleware';
 import * as actionCreators from '../src/redux/actionCreators';
+import { removeActionFromQueue } from '../src/redux/actionCreators';
+import wait from '../src/utils/wait';
 
 const getFetchAction = type => ({
   type,
@@ -78,7 +82,7 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     expect(actions).toEqual([actionCreators.fetchOfflineMode(action)]);
   });
 
-  it('action ENQUEUED, status back ONLINE', () => {
+  it('action ENQUEUED, status back ONLINE', async () => {
     const action1 = getFetchAction('FETCH_SOME_DATA_REQUEST');
     const action2 = getFetchAction('FETCH_SOMETHING_ELSE_REQUEST');
     const action3 = getFetchAction('FETCH_USER_REQUEST');
@@ -91,17 +95,8 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     };
     const store = mockStore(initialState);
     store.dispatch(actionCreators.connectionChange(true));
-
     const actions = store.getActions();
-    expect(actions).toEqual([
-      actionCreators.connectionChange(true),
-      actionCreators.removeActionFromQueue(action1),
-      action1,
-      actionCreators.removeActionFromQueue(action2),
-      action2,
-      actionCreators.removeActionFromQueue(action3),
-      action3,
-    ]);
+    expect(actions).toEqual([actionCreators.connectionChange(true)]);
   });
 });
 
@@ -375,6 +370,66 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
         { type: 'NAVIGATE_TO_LOGIN' },
       ]);
     });
+  });
+});
+
+describe('createReleaseQueue', () => {
+  const mockDispatch = jest.fn();
+  const mockGetState = jest.fn().mockImplementation(() => ({
+    network: {
+      isConnected: true,
+    },
+  }));
+  const mockDelay = 50;
+  afterEach(() => {
+    mockDispatch.mockClear();
+    mockGetState.mockClear();
+  });
+  it('empties the queue if we are online', async () => {
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+    );
+    const actionQueue = ['foo', 'bar'];
+    await releaseQueue(actionQueue);
+    expect(mockDispatch).toHaveBeenCalledTimes(4);
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      1,
+      removeActionFromQueue('foo'),
+    );
+    expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      3,
+      removeActionFromQueue('bar'),
+    );
+    expect(mockDispatch).toHaveBeenNthCalledWith(4, 'bar');
+  });
+
+  it('dispatches only during the online window', async () => {
+    const switchToOffline = () =>
+      new Promise(async resolve => {
+        await wait(30);
+        mockGetState.mockImplementation(() => ({
+          network: {
+            isConnected: false,
+          },
+        }));
+        resolve();
+      });
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+    );
+    const actionQueue = ['foo', 'bar'];
+    await Promise.all([releaseQueue(actionQueue), switchToOffline()]);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      1,
+      removeActionFromQueue('foo'),
+    );
+    expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
   });
 });
 

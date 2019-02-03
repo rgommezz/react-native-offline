@@ -69,7 +69,7 @@ function didComeBackOnline(action, wasConnected) {
   );
 }
 
-const createReleaseQueue = (getState, next, delay) => async queue => {
+export const createReleaseQueue = (getState, next, delay) => async queue => {
   // eslint-disable-next-line
   for (const action of queue) {
     const { isConnected } = getState().network;
