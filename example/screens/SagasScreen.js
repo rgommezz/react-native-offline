@@ -18,13 +18,13 @@ export default class SettingsScreen extends React.Component {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          <View style={styles.welcomeContainer}>
+          <View style={styles.imageContainer}>
             <Image
               source={require('../assets/images/redux-saga.png')}
-              style={styles.welcomeImage}
+              style={styles.image}
             />
           </View>
-          <View style={styles.getStartedContainer}>
+          <View style={styles.firstSection}>
             <Text
               style={{
                 marginTop: 10,
@@ -37,10 +37,12 @@ export default class SettingsScreen extends React.Component {
             </Text>
             <ReduxNetworkReader />
             <Counter />
-            <ActionButtons />
           </View>
-          <View style={styles.tabBarInfoContainer}>
-            <OfflineQueue />
+          <View style={styles.secondSection}>
+            <ActionButtons />
+            <View style={styles.offlineQueue}>
+              <OfflineQueue />
+            </View>
           </View>
         </View>
       </Provider>
@@ -54,53 +56,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: 30,
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  welcomeContainer: {
+  imageContainer: {
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
   },
-  welcomeImage: {
+  image: {
     width: 100,
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
     marginLeft: -10,
   },
-  getStartedContainer: {
-    flex: 1,
+  firstSection: {
     alignItems: 'center',
     marginHorizontal: 50,
   },
-  homeScreenFilename: {
-    marginVertical: 7,
+  secondSection: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+  offlineQueue: {
     ...Platform.select({
       ios: {
         shadowColor: 'black',
@@ -114,24 +90,5 @@ const styles = StyleSheet.create({
     }),
     backgroundColor: '#fbfbfb',
     paddingTop: 10,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
 });

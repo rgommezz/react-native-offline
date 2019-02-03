@@ -52,7 +52,7 @@ export default class ComponentsScreen extends React.Component {
 
               <View style={styles.tabBarInfoContainer}>
                 <Text style={styles.tabBarInfoText}>
-                  This is an example using merely components
+                  An example using merely components from
                 </Text>
 
                 <View
