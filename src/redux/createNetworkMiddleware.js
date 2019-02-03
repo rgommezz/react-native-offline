@@ -8,6 +8,7 @@ import {
 } from './actionCreators';
 import type { NetworkState } from '../types';
 import networkActionTypes from './actionTypes';
+import wait from '../utils/wait';
 
 type MiddlewareAPI<S> = {
   dispatch: (action: any) => void,
@@ -68,15 +69,35 @@ function didComeBackOnline(action, wasConnected) {
   );
 }
 
+const createReleaseQueue = (getState, next, delay) => async queue => {
+  // eslint-disable-next-line
+  for (const action of queue) {
+    const { isConnected } = getState().network;
+    if (isConnected) {
+      next(removeActionFromQueue(action));
+      next(action);
+      // eslint-disable-next-line
+      await wait(delay);
+    } else {
+      break;
+    }
+  }
+};
+
 function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
+  queueReleaseThrottle = 0,
 }: Arguments = {}) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {
     const { isConnected, actionQueue } = getState().network;
-
+    const releaseQueue = createReleaseQueue(
+      getState,
+      next,
+      queueReleaseThrottle,
+    );
     validateParams(regexActionType, actionTypes);
 
     const shouldInterceptAction = checkIfActionShouldBeIntercepted(
@@ -95,10 +116,7 @@ function createNetworkMiddleware({
     if (isBackOnline) {
       // Dispatching queued actions in order of arrival (if we have any)
       next(action);
-      return actionQueue.forEach((a: *) => {
-        next(removeActionFromQueue(a));
-        next(a);
-      });
+      return releaseQueue(actionQueue);
     }
 
     // Checking if we have a dismissal case
