@@ -32,8 +32,10 @@ export default class ReduxScreen extends React.Component {
                   />
                 </View>
 
-                <View style={styles.firstSection}>
+                <View style={{ marginHorizontal: 50 }}>
                   <ConnectionToggler />
+                </View>
+                <View style={styles.firstSection}>
                   <ReduxNetworkReader />
                   <Counter />
                 </View>

@@ -23,7 +23,9 @@ export default class ComponentsScreen extends React.Component {
                   style={styles.image}
                 />
               </View>
-              <ConnectionToggler />
+              <View style={{ marginHorizontal: 50 }}>
+                <ConnectionToggler />
+              </View>
               <View style={styles.firstSectionContainer}>
                 <Text style={styles.firstSectionText}>
                   Connected to Internet:

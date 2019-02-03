@@ -31,6 +31,7 @@ export default class SettingsScreen extends React.Component {
                 fontSize: 17,
                 color: 'purple',
                 marginBottom: 30,
+                textAlign: 'center',
               }}
             >
               For sagas example, you have to disconnect your Internet manually

@@ -63,14 +63,14 @@ function ActionButtons({
         <Touchable
           onPress={addOneAction}
           onLongPress={showInfo('ADD_1')}
-          style={{ justifyContent: 'center', marginHorizontal: 8 }}
+          style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>ADD_1</Text>
         </Touchable>
         <Touchable
           onPress={subOneAction}
           onLongPress={showInfo('SUB_1')}
-          style={{ justifyContent: 'center', marginHorizontal: 8 }}
+          style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>SUB_1</Text>
         </Touchable>
@@ -79,14 +79,14 @@ function ActionButtons({
         <Touchable
           onPress={otherAction}
           onLongPress={showInfo('OTHER')}
-          style={{ justifyContent: 'center', marginHorizontal: 8 }}
+          style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>OTHER</Text>
         </Touchable>
         <Touchable
           onPress={cancelOtherAction}
           onLongPress={showInfo('CANCEL_OTHER')}
-          style={{ justifyContent: 'center', marginHorizontal: 8 }}
+          style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>CANCEL_OTHER</Text>
         </Touchable>
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
   },
   button: {
     color: '#388E3C',
+    marginHorizontal: 8,
     fontSize: 18,
   },
 });
