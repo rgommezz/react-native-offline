@@ -1,6 +1,6 @@
 ## Example app
 
-This application showcases component utilities, redux, sagas integration and the offline queue with different configurations. You can try it out in Expo by using [this link](https://expo.io/@rgommezz/example).
+This application showcases component utilities, redux, sagas integration and the offline queue with different configurations. You can try it out in Expo by using [this link](https://exp.host/@rgommezz/react-native-offline-example).
 
 ### Runing it locally
 You need to have `expo-cli` installed.
