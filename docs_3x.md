@@ -41,7 +41,7 @@ In order to render stuff conditionally with ease. They internally listen to conn
   #### `withNetworkConnectivity()`
 Higher order function that returns a higher order component (HOC).
 
-  ```js
+```js
 withNetworkConnectivity(config: Config): (WrappedComponent) => EnhancedComponent
 
 type Config = {
@@ -90,7 +90,7 @@ export default withNetworkConnectivity()(YourComponent);
 React component that accepts a function as children. It allows you to decouple your parent component and your child component, managing connectivity state on behalf of the components it is composed with, without making demands on how that state is leveraged by its children. Useful for conditionally render different children based on connectivity status. `timeout`, `pingServerUrl` and `withExtraHeadRequest` can be provided through props in this case.
 
 ##### Props
-  ```js
+```js
 type Props = {
   children: (isConnected: boolean) => React$Element<any>
   timeout?: number = 3000,
@@ -100,7 +100,7 @@ type Props = {
 ```
 
 ##### Usage
-  ```js
+```js
 ...
 import { ConnectivityRenderer } from 'react-native-offline';
 
@@ -142,7 +142,7 @@ Note: since this component will re-render its children every time its parent's p
 A network reducer to be provided to the store.
 
   #### State
-  ```js
+```js
 type NetworkState = {
   isConnected: boolean,
   actionQueue: Array<*>
@@ -152,7 +152,7 @@ type NetworkState = {
 #### Usage
 
 ##### 1.- Give the network reducer to Redux
-  ```js
+```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
 import { reducer as network } from 'react-native-offline';
@@ -171,7 +171,7 @@ export default store;
   ##### 2a.- Wrap your top most React component into `withNetworkConnectivity` and configure it with `withRedux = true`.
   The other [config](#config) parameters, `timeout` and `pingServerUrl` can be provided to the store as well. Make sure your component is a descendant of the react-redux `<Provider>` component, so that `withNetworkConnectivity` has access to the store.
 
-  ```js
+```js
 // Root.js
 import store from './configureStore';
 import React from 'react';
@@ -199,7 +199,7 @@ const Root = () => (
 ##### 2b.- Fork `networkEventsListenerSaga` from your root saga.
   If you are using redux-saga, I highly encourage you this option since it's a very elegant way to deal with global connectivity changes, without having to wrap your components with extra functionality. It receives the same [config](#config) options as `withNetworkConnectivity` HOC, with the exception of `withRedux`, which is not needed in this case.
 
-  ```js
+```js
 // rootSaga.js
 import { all } from 'redux-saga/effects';
 import saga1 from './saga1';
@@ -228,7 +228,7 @@ if(action.type === offlineActionTypes.CONNECTION_CHANGE) // do something in your
 #### `createNetworkMiddleware()`
 Function that returns a Redux middleware which listens to specific actions targetting API calls in online/offline mode.
 
-  ```js
+```js
 createNetworkMiddleware(config: Config): ReduxMiddleware
 
 type Config = {
@@ -253,7 +253,7 @@ For `redux-thunk` library, the async flow is wrapped inside functions that will 
 
   Example:
 
-```javascript
+```js
 export const fetchUser = (url) => {
   function thunk(dispatch) {
     fetch(url)
@@ -304,7 +304,7 @@ type FetchOfflineModeActionForPO = {
 
 And for thunks it attaches it under `prevThunk` property:
 
-  ```js
+```js
 type FetchOfflineModeActionForThunks = {
   type: '@@network-connectivity/FETCH_OFFLINE_MODE',
   payload: {
@@ -314,7 +314,8 @@ type FetchOfflineModeActionForThunks = {
 ```
 
 That allows you to react conveniently and update your state in the way you desire, based on your previous intent. Just reference `FETCH_OFFLINE_MODE` action type in your reducer:
-  ```js
+
+```js
 import { offlineActionTypes } from 'react-native-offline';
 ...
 if(action.type === offlineActionTypes.FETCH_OFFLINE_MODE) // do something in your reducer
@@ -331,7 +332,7 @@ A queue system to store actions that failed due to lack of connectivity. It work
 #### Plain Objects
 In order to configure your PO actions to interact with the offline queue you need to use the `meta` property in your actions, following [flux standard actions convention](https://github.com/acdlite/flux-standard-action#meta). They need to adhere to the below API:
 
-  ```js
+```js
 type ActionToBeQueued = {
   type: string,
   payload?: any,
@@ -345,7 +346,7 @@ type ActionToBeQueued = {
 ##### Examples
 - Action that will be added to the queue on offline mode and that will be re-dispatched as soon as the connection is back online again
 
-  ```js
+```js
 const action = {
   type: 'FETCH_USER_ID',
   payload: {
@@ -359,7 +360,7 @@ const action = {
 
 - Action that will be added to the queue on offline mode and that will be re-dispatched as soon as the connection is back online again, as long as a `NAVIGATE_BACK` action type hasn't been dispatched in between, in which case the action would be removed from the queue.
 
-  ```js
+```js
 const action = {
   type: 'FETCH_USER_ID',
   payload: {
@@ -375,7 +376,7 @@ const action = {
 #### Thunks
 - For thunks, append `interceptInOffline` and `meta` properties to the function returned by the action creator, where `meta` has the same shape as for Flux actions:
 
-  ```js
+```js
 function fetchData(dispatch, getState) {
   dispatch({ type: FETCH_USER_ID_REQUEST, payload: { id: '3' } });
   ...
@@ -393,13 +394,13 @@ fetchData.meta = {
 #### `checkInternetConnection()`
 Utility function that allows you to query for internet connectivity on demand. If you have integrated this library with redux, you can then dispatch a `CONNECTION_CHANGE` action type to inform the `network` reducer accordingly and keep it up to date. Check the example below.
 
-  ```js
+```js
 checkInternetConnection(timeout?: number = 3000, url?: string = 'https://www.google.com/'): Promise<boolean>
 ```
 
 ##### Example
 
-  ```js
+```js
 import { checkInternetConnection, offlineActionTypes } from 'react-native-offline';
 
 async function internetChecker(dispatch) {
@@ -427,7 +428,7 @@ The solution involves using some local state in your top most component and twea
 - `REHYDRATE` from `redux-persist`
 - `CONNECTION_CHANGE ` from `react-native-offline`
 
-  ```js
+```js
 // configureStore.js
 import { AsyncStorage, Platform, NetInfo } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -471,7 +472,7 @@ export default function configureStore(callback) {
 
 Then, our root React component will have some local state, that initially will impose the component to return `null`, waiting until the async operations complete. Then, we trigger a `setState` to render the application.
 
-  ```js
+```js
 // App.js
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
@@ -508,7 +509,7 @@ You can do that by dispatching yourself an action of type `@@network-connectivit
 
   Unfortunately, the action creators are not exposed yet, so I'll release soon a new version with that fixed. In the meantime, you can check that specific action creator in  [here](https://github.com/rauliyohmc/react-native-offline/blob/master/src/actionCreators.js#L18), so that you can emulate its payload. That should queue up your action properly.
 
-  ```js
+```js
 import { offlineActionTypes } from 'react-native-offline';
 ...
 fetch('someurl/data').catch(error => {
@@ -530,7 +531,8 @@ fetch('someurl/data').catch(error => {
 Due to the way Redux Persist serializes the store, persisting and rehydrating thunks will return an invalid action. Fortunately, there is a workaround.
 
   In your action creator, make sure to format it as specified from the [thunks config](https://github.com/rauliyohmc/react-native-offline#thunks-config) with a couple of additions.
-  ```javascript
+  
+```js
 // actions.js
 
 export const fetchUser = (url) => {
@@ -558,7 +560,7 @@ export const fetchUser = (url) => {
 ```
 Add the following into your redux store. Refer to the [transforms](https://github.com/rt2zz/redux-persist#transforms) section for more information on how Redux Persist transforms data.
 
-```javascript
+```js
 // store.js
 
 import { fetchUser } from './actions.js';
