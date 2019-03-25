@@ -77,6 +77,11 @@ This library supports React Native v0.55 or higher. You also need to have `react
 $ yarn add react-native-offline
 ```
 
+Once installed you need to link the `NetInfo` library and recompile
+```
+$ react-native link @react-native-community/netinfo
+```
+
 #### Android
 This library uses the `NetInfo` module from React Native Community underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
