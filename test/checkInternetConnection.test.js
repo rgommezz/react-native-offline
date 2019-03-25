@@ -1,4 +1,4 @@
-import { NetInfo } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import checkInternetConnection from '../src/utils/checkInternetConnection';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 import {

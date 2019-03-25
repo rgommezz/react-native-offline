@@ -1,6 +1,7 @@
 /* @flow */
 import { testSaga } from 'redux-saga-test-plan';
-import { Platform, NetInfo, AppState } from 'react-native';
+import { Platform, AppState } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import networkSaga, {
   netInfoChangeSaga,
   connectionIntervalSaga,

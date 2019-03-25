@@ -44,7 +44,7 @@ A comprehensive [example app](/example) is available within Expo to play with th
 ## Motivation
 When you are building your React Native app, you have to expect that some users may use your application in offline mode, for instance when travelling on a Plane (airplane mode) or the underground (no signal). How does your app behave in that situation? Does it show an infinite loader? Can the user still use it seamlessly?
 
-Having an offline first class citizen app is very important for a successful user experience. React Native ships with the `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
+Having an offline first class citizen app is very important for a successful user experience. React Native Community provides a `NetInfo` module in order to detect internet connectivity. The API is pretty basic and it may be sufficient for small apps but its usage gets cumbersome as your app grows. Besides that, it only detects network connectivity and does not guarantee internet access so it can provide false positives.
 
 This library aims to gather a variety of modules that follow React and Redux best practises, in order to make your life easier when it comes to deal with internet connectivity in your React Native application.
 
@@ -78,7 +78,7 @@ $ yarn add react-native-offline
 ```
 
 #### Android
-This library uses the `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
+This library uses the `NetInfo` module from React Native Community underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
 `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
 

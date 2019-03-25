@@ -1,5 +1,5 @@
 import { eventChannel } from 'redux-saga';
-import { NetInfo } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import {
   createNetInfoConnectionChangeChannel,
   netInfoEventChannelFn,
