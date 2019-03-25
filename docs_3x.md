@@ -28,13 +28,8 @@ This library supports React Native v0.48 or higher.
 $ yarn add react-native-offline@3.15.2
 ```
 
-Once installed you need to link the `NetInfo` library and recompile
-```
-$ react-native link @react-native-community/netinfo
-```
-
 #### Android
-This library uses the `NetInfo` module from React Native Community underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
+This library uses the `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
   `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
 
@@ -435,8 +430,7 @@ The solution involves using some local state in your top most component and twea
 
 ```js
 // configureStore.js
-import { AsyncStorage, Platform } from 'react-native';
-import NetInfo from "@react-native-community/netinfo";
+import { AsyncStorage, Platform, NetInfo } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
