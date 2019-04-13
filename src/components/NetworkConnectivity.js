@@ -1,6 +1,7 @@
 /* @flow */
 import * as React from 'react';
-import { AppState, NetInfo, Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import type { HTTPMethod, State } from '../types';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
