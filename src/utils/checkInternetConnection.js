@@ -1,6 +1,6 @@
 /* @flow */
 
-import { NetInfo } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import checkInternetAccess from './checkInternetAccess';
 import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants';
 
