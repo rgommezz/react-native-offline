@@ -30,12 +30,25 @@ function handleOfflineAction(
     const actionToLookUp = prevAction || prevThunk;
     const actionWithMetaData =
       typeof actionToLookUp === 'object'
-        ? { ...actionToLookUp, meta }
+        ? {
+            ...actionToLookUp,
+            meta,
+          }
         : actionToLookUp;
-    const similarActionQueued = getSimilarActionInQueue(
-      actionWithMetaData,
-      state.actionQueue,
-    );
+
+    const isActionUnique =
+      typeof prevAction === 'object' && get(meta, 'unique') === true;
+
+    const isThunkUnique =
+      typeof prevThunk === 'function' && get(prevThunk, 'meta.unique') === true;
+
+    let similarActionQueued;
+    if (isActionUnique || isThunkUnique) {
+      similarActionQueued = getSimilarActionInQueue(
+        actionWithMetaData,
+        state.actionQueue,
+      );
+    }
 
     return {
       ...state,
