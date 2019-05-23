@@ -1,5 +1,5 @@
 // @flow
-import { isEqual } from 'lodash';
+import _ from "lodash";
 
 /**
  * Finds and returns a similar thunk or action in the actionQueue.
@@ -9,15 +9,18 @@ import { isEqual } from 'lodash';
  */
 export default function getSimilarActionInQueue(
   action: *,
-  actionQueue: Array<*>,
+  actionQueue: Array<*>
 ) {
-  if (typeof action === 'object') {
-    return actionQueue.find((queued: *) => isEqual(queued, action));
+  if (typeof action === "object") {
+    return actionQueue.find((queued: *) => _.isEqual(queued, action));
   }
-  if (typeof action === 'function') {
-    return actionQueue.find(
-      (queued: *) => action.toString() === queued.toString(),
-    );
+  if (typeof action === "function") {
+    return actionQueue.find((queued: *) => {
+      const isArgsEqual = _(action.meta.args)
+        .xorWith(queued.meta.args, _.isEqual)
+        .isEmpty();
+      return action.toString() === queued.toString() && isArgsEqual;
+    });
   }
   return undefined;
 }
