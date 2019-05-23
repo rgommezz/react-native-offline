@@ -9,7 +9,7 @@ import _ from 'lodash';
  */
 export default function getSimilarActionInQueue(
   action: *,
-  actionQueue: Array<*>
+  actionQueue: Array<*>,
 ) {
   if (typeof action === 'object') {
     return actionQueue.find((queued: *) => _.isEqual(queued, action));
