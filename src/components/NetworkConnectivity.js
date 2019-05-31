@@ -1,6 +1,7 @@
 /* @flow */
 import * as React from 'react';
-import { AppState, NetInfo, Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import type { HTTPMethod, State } from '../types';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
@@ -81,6 +82,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     const handler = this.getConnectionChangeHandler();
 
     NetInfo.isConnected.addEventListener('connectionChange', handler);
+
     // On Android the listener does not fire on startup
     if (Platform.OS === 'android') {
       const netConnected = await NetInfo.isConnected.fetch();

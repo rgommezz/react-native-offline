@@ -2,7 +2,8 @@
 /* eslint flowtype/require-parameter-type: 0 */
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
-import { AppState, NetInfo, Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import { networkSelector } from './reducer';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
