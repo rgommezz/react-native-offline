@@ -71,7 +71,7 @@
   "dependencies": {
     "@react-native-community/netinfo": "^3.2.0",
     "lodash": "^4.17.11",
-    "react-redux": "^7.0.3",
+    "react-redux": "^7.1.0",
     "redux": "4.x",
     "redux-saga": "^1.0.2"
   },
