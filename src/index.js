@@ -23,4 +23,7 @@ module.exports = {
   get checkInternetConnection() {
     return require('./utils/checkInternetConnection').default;
   },
+  get withNetworkConnectivity() {
+    return require('./withNetworkConnectivity').default;
+  },
 };
