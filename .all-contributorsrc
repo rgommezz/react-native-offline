@@ -289,6 +289,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "umbrella-kirill-karpov",
+      "name": "Kirill Karpov",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/16078455?v=4",
+      "profile": "http://umbrellait.com",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
