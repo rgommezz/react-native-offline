@@ -5,9 +5,6 @@
 
 Handful of utilities you should keep in your toolbelt to handle offline/online connectivity in React Native. It supports iOS, Android and Windows platforms. You can leverage all the functionalities provided or just the ones that suits your needs, the modules are conveniently decoupled.
 
-## Important (Please read)
-**This is the documentation for version 4.x.x. If you are migrating from v3 to v4, check the [release notes](https://github.com/rgommezz/react-native-offline/releases/tag/v4.0.0).**
-
 ## Example app
 A comprehensive [example app](/example) is available within Expo to play with the library and better understand its different modules. [Go and check it out!](https://exp.host/@rgommezz/react-native-offline-example)
 
@@ -72,13 +69,87 @@ This gives you the power to prioritize our work and support the project contribu
 [![issuehunt-image](https://camo.githubusercontent.com/f5f88939f6c627454b7c5d0eaef9f7cc40cc9586/68747470733a2f2f697373756568756e742e696f2f7374617469632f656d6265642f697373756568756e742d627574746f6e2d76312e737667)](https://issuehunt.io/repos/86369462)
 
 ## Installation
-This library supports React Native v0.55 or higher. You also need to have `react-redux` version 6.x.x installed.
+
+### RN >= 0.59x
+Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
 ```
 $ yarn add react-native-offline
+
+# Or if you use npm
+$ npm i --save react-native-offline
+```
+
+This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using. If you are on React Native v0.60, you don't need to do anything else, since it supports autolinking. For iOS, just go to the `ios` folder and run `pod install`.
+
+Otherwise, the easiest way to link the library is using the CLI tool by running this command from the root of your project:
+
+```
+react-native link @react-native-community/netinfo
+```
+
+If you can't or don't want to use the CLI tool, you can also manually link the library using the instructions below (click on the arrow to show them):
+
+<details>
+<summary>Manually link the library on iOS</summary>
+
+Either follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
+
+```ruby
+pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+```
+
+</details>
+
+<details>
+<summary>Manually link the library on Android</summary>
+
+Make the following changes:
+
+#### `android/settings.gradle`
+```groovy
+include ':react-native-community-netinfo'
+project(':react-native-community-netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')
+```
+
+#### `android/app/build.gradle`
+```groovy
+dependencies {
+   ...
+   implementation project(':react-native-community-netinfo')
+}
+```
+
+#### `android/app/src/main/.../MainApplication.java`
+On top, where imports are:
+
+```java
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+```
+
+Add the `NetInfoPackage` class to your list of exported packages.
+
+```java
+@Override
+protected List<ReactPackage> getPackages() {
+    return Arrays.asList(
+            new MainReactPackage(),
+            new NetInfoPackage()
+    );
+}
+```
+</details>                                                                    |
+
+### RN >= 0.55 && RN <= 0.58
+Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
+```
+$ yarn add react-native-offline@4.3.2
+
+# Or if you use npm
+$ npm i --save react-native-offline@4.3.2
 ```
 
 #### Android
-This library uses the `NetInfo` module from React Native underneath the hood. To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
+To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
 `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
 
