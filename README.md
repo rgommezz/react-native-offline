@@ -70,7 +70,7 @@ This gives you the power to prioritize our work and support the project contribu
 
 ## Installation
 
-### RN >= 0.59x
+### RN >= 0.59.x
 Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
 ```
 $ yarn add react-native-offline
@@ -140,7 +140,7 @@ protected List<ReactPackage> getPackages() {
 
 </details>                                                                    
 
-### RN >= 0.55 && RN <= 0.58
+### RN >= 0.55.x && RN <= 0.58.x
 Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
 ```
 $ yarn add react-native-offline@4.3.2
