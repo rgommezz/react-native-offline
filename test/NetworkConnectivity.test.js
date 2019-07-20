@@ -1,5 +1,6 @@
 /* @flow */
 import * as React from 'react';
+import NetInfo from '@react-native-community/netinfo';
 import { View, Platform, AppState } from 'react-native';
 import { shallow } from 'enzyme';
 import { render } from 'react-native-testing-library';
@@ -13,9 +14,6 @@ type MethodsMap = {
   [string]: Function,
 };
 
-const mockAddEventListener = jest.fn();
-const mockRemoveEventListener = jest.fn();
-const mockFetch = jest.fn(() => false);
 const mockConnectionChangeHandler = jest.fn();
 const mockGetConnectionChangeHandler = jest.fn(
   () => mockConnectionChangeHandler,
@@ -24,14 +22,6 @@ const mockIntervalHandler = jest.fn();
 const mockHandleNetInfoChange = jest.fn();
 const mockHandleConnectivityChange = jest.fn();
 const mockCheckInternet = jest.fn();
-
-jest.mock('NetInfo', () => ({
-  isConnected: {
-    addEventListener: mockAddEventListener,
-    removeEventListener: mockRemoveEventListener,
-    fetch: mockFetch,
-  },
-}));
 
 jest.mock('../src/utils/checkConnectivityInterval');
 jest.mock('../src/utils/checkInternetAccess', () =>
@@ -75,9 +65,9 @@ const getElement = ({
 
 describe('NetworkConnectivity', () => {
   afterEach(() => {
-    mockAddEventListener.mockClear();
-    mockRemoveEventListener.mockClear();
-    mockFetch.mockClear();
+    NetInfo.isConnected.addEventListener.mockClear();
+    NetInfo.isConnected.removeEventListener.mockClear();
+    NetInfo.isConnected.fetch.mockClear();
     mockConnectionChangeHandler.mockClear();
     mockGetConnectionChangeHandler.mockClear();
     mockIntervalHandler.mockClear();
@@ -109,8 +99,8 @@ describe('NetworkConnectivity', () => {
             Component: MockedNetworkConnectivity,
           }),
         );
-        expect(mockAddEventListener).toHaveBeenCalledTimes(1);
-        expect(mockAddEventListener).toHaveBeenCalledWith(
+        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledTimes(1);
+        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
           'connectionChange',
           mockConnectionChangeHandler,
         );
@@ -123,6 +113,9 @@ describe('NetworkConnectivity', () => {
       AND fetches initial connection
       AND calls the handler
       AND does NOT call setupConnectivityCheckInterval`, (done: Function) => {
+        NetInfo.isConnected.fetch.mockImplementationOnce(() =>
+          Promise.resolve(false),
+        );
         Platform.OS = 'android';
         const MockedNetworkConnectivity = mockPrototypeMethods({
           getConnectionChangeHandler: mockGetConnectionChangeHandler,
@@ -132,12 +125,12 @@ describe('NetworkConnectivity', () => {
             Component: MockedNetworkConnectivity,
           }),
         );
-        expect(mockAddEventListener).toHaveBeenCalledTimes(1);
-        expect(mockAddEventListener).toHaveBeenCalledWith(
+        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledTimes(1);
+        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
           'connectionChange',
           mockConnectionChangeHandler,
         );
-        expect(mockFetch).toHaveBeenCalledTimes(1);
+        expect(NetInfo.isConnected.fetch).toHaveBeenCalledTimes(1);
         process.nextTick(() => {
           expect(mockConnectionChangeHandler).toHaveBeenCalledWith(false);
           expect(setup).not.toHaveBeenCalled();
@@ -177,8 +170,8 @@ describe('NetworkConnectivity', () => {
         }),
       );
       wrapper.unmount();
-      expect(mockRemoveEventListener).toHaveBeenCalledTimes(1);
-      expect(mockRemoveEventListener).toHaveBeenCalledWith(
+      expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledTimes(1);
+      expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledWith(
         'connectionChange',
         mockConnectionChangeHandler,
       );
@@ -344,7 +337,7 @@ describe('NetworkConnectivity', () => {
       wrapper.setProps({ pingServerUrl: 'https://newServerToPing.com' });
       expect(mockCheckInternet).toHaveBeenCalled();
     });
-  })
+  });
 
   describe('props validation', () => {
     it('throws if prop pingTimeout is not a number', () => {

@@ -1,5 +1,5 @@
 import { eventChannel } from 'redux-saga';
-import { NetInfo } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import {
   createNetInfoConnectionChangeChannel,
   netInfoEventChannelFn,
@@ -8,7 +8,7 @@ import {
 } from '../src/redux/sagas';
 
 jest.mock('redux-saga');
-jest.mock('NetInfo');
+jest.mock('@react-native-community/netinfo');
 
 describe('createNetInfoConnectionChangeChannel', () => {
   it('returns a redux-saga channel', () => {
