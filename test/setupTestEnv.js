@@ -1,8 +1,15 @@
 import React from 'react';
-import 'react-native';
+import { NativeModules } from 'react-native';
 import 'jest-enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import Enzyme from 'enzyme';
+
+// Mocking the NetInfo native module
+NativeModules.RNCNetInfo = {
+  getCurrentState: jest.fn(),
+  addListener: jest.fn(),
+  removeListeners: jest.fn(),
+};
 
 /**
  * Set up DOM in node.js environment for Enzyme to mount to

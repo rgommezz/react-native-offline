@@ -1,4 +1,4 @@
-import { NetInfo } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import checkInternetConnection from '../src/utils/checkInternetConnection';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 import {
@@ -16,9 +16,6 @@ describe('checkInternetConnection', () => {
   });
   describe('shouldPing = true', () => {
     it(`calls checkInternetAccess and resolves the promise with its returned value`, async () => {
-      NetInfo.isConnected.fetch.mockImplementationOnce(() =>
-        Promise.resolve(true),
-      );
       const isConnected = await checkInternetConnection('foo.com', 3000, true);
       expect(checkInternetAccess).toHaveBeenCalledWith({
         timeout: 3000,
