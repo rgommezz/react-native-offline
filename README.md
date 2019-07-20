@@ -137,7 +137,8 @@ protected List<ReactPackage> getPackages() {
     );
 }
 ```
-</details>                                                                    |
+
+</details>                                                                    
 
 ### RN >= 0.55 && RN <= 0.58
 Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
