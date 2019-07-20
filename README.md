@@ -138,7 +138,9 @@ protected List<ReactPackage> getPackages() {
 }
 ```
 
-</details>                                                                    
+</details>
+
+Last but not list, you need to use [jetifier](https://github.com/mikehardy/jetifier) to convert the native dependency to AndroidX.
 
 ### RN >= 0.55.x && RN <= 0.58.x
 Make sure to have `react-redux` version 6.x.x or 7.x.x installed.
