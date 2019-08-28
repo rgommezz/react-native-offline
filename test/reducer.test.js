@@ -1,10 +1,9 @@
 /* eslint flowtype/require-parameter-type: 0 */
 import { isEqual } from 'lodash';
-import {
-  createReducer,
+import createReducer, {
   initialState,
   networkSelector,
-} from '../src/redux/reducer';
+} from '../src/redux/createReducer';
 import * as actionCreators from '../src/redux/actionCreators';
 import getSimilarActionInQueue from '../src/utils/getSimilarActionInQueue';
 
