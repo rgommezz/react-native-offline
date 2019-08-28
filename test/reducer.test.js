@@ -6,6 +6,9 @@ import {
   networkSelector,
 } from '../src/redux/reducer';
 import * as actionCreators from '../src/redux/actionCreators';
+import getSimilarActionInQueue from '../src/utils/getSimilarActionInQueue';
+
+const networkReducer = createReducer();
 
 const getState = (isConnected = false, ...actionQueue) => ({
   isConnected,
@@ -58,14 +61,14 @@ const prevActionToRetry1WithDifferentPayload = {
 
 describe('unknown action type', () => {
   it('returns prevState on initialization', () => {
-    expect(createReducer()(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(
+    expect(networkReducer(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(
       initialState,
     );
   });
 
   it('returns prevState if the action is not handled', () => {
     expect(
-      createReducer()(initialState, { type: 'ANOTHER_ACTION_I_DONT_CARE' }),
+      networkReducer(initialState, { type: 'ANOTHER_ACTION_I_DONT_CARE' }),
     ).toEqual(initialState);
   });
 });
@@ -73,7 +76,7 @@ describe('unknown action type', () => {
 describe('CONNECTION_CHANGE action type', () => {
   it('changes isConnected state properly', () => {
     const mockAction = actionCreators.connectionChange(false);
-    expect(createReducer()(initialState, mockAction)).toEqual({
+    expect(networkReducer(initialState, mockAction)).toEqual({
       isConnected: false,
       actionQueue: [],
     });
@@ -102,10 +105,8 @@ describe('OFFLINE_ACTION action type', () => {
       const action = actionCreators.fetchOfflineMode(prevAction);
       const anotherAction = actionCreators.fetchOfflineMode(anotherPrevAction);
 
-      expect(createReducer()(initialState, action)).toEqual(initialState);
-      expect(createReducer()(initialState, anotherAction)).toEqual(
-        initialState,
-      );
+      expect(networkReducer(initialState, action)).toEqual(initialState);
+      expect(networkReducer(initialState, anotherAction)).toEqual(initialState);
     });
   });
 
@@ -114,9 +115,9 @@ describe('OFFLINE_ACTION action type', () => {
       it('actions are pushed into the queue in order of arrival', () => {
         const preAction = actionCreators.connectionChange(false);
         const action1 = actionCreators.fetchOfflineMode(prevActionToRetry1);
-        const prevState = createReducer()(initialState, preAction);
+        const prevState = networkReducer(initialState, preAction);
 
-        let nextState = createReducer()(prevState, action1);
+        let nextState = networkReducer(prevState, action1);
 
         expect(nextState).toEqual({
           isConnected: false,
@@ -124,7 +125,7 @@ describe('OFFLINE_ACTION action type', () => {
         });
 
         const action2 = actionCreators.fetchOfflineMode(prevActionToRetry2);
-        nextState = createReducer()(nextState, action2);
+        nextState = networkReducer(nextState, action2);
 
         expect(nextState).toEqual(
           getState(false, prevActionToRetry1, prevActionToRetry2),
@@ -139,6 +140,7 @@ describe('OFFLINE_ACTION action type', () => {
         }
         thunk.meta = {
           args: { id, name, age },
+          retry: true,
         };
         return thunk;
       };
@@ -148,11 +150,14 @@ describe('OFFLINE_ACTION action type', () => {
         const thunk = actionCreators.fetchOfflineMode(
           thunkFactory(2, 'Link', 54),
         );
+
+        expect(getSimilarActionInQueue(thunk, prevState.actionQueue)).toEqual(
+          prevState.actionQueue[0].action,
+        );
+
         const nextState = createReducer(comparisonFn)(prevState, thunk);
 
-        expect(nextState).not.toEqual(
-          getState(false, thunkFactory(1, 'Bilbo', 55)),
-        );
+        expect(nextState.actionQueue).toHaveLength(2);
       });
 
       it(`should replace a thunk if thunk already exists to modify same item`, () => {
@@ -160,11 +165,14 @@ describe('OFFLINE_ACTION action type', () => {
         const thunk = actionCreators.fetchOfflineMode(
           thunkFactory(1, 'Bilbo', 65),
         );
+
+        expect(getSimilarActionInQueue(thunk, prevState.actionQueue)).toEqual(
+          prevState.actionQueue[0].action,
+        );
+
         const nextState = createReducer(comparisonFn)(prevState, thunk);
 
-        expect(nextState).not.toEqual(
-          getState(false, thunkFactory(1, 'Bilbo', 55)),
-        );
+        expect(nextState.actionQueue).toHaveLength(1);
       });
     });
 
@@ -178,7 +186,7 @@ describe('OFFLINE_ACTION action type', () => {
         );
         const action = actionCreators.fetchOfflineMode(prevActionToRetry1);
 
-        const nextState = createReducer()(prevState, action);
+        const nextState = networkReducer(prevState, action);
         expect(nextState).toEqual(
           getState(false, prevActionToRetry2, prevActionToRetry1),
         );
@@ -194,7 +202,7 @@ describe('OFFLINE_ACTION action type', () => {
           prevActionToRetry1WithDifferentPayload,
         );
 
-        expect(createReducer()(prevState, action)).toEqual(
+        expect(networkReducer(prevState, action)).toEqual(
           getState(
             false,
             prevActionToRetry2,
@@ -220,7 +228,7 @@ describe('REMOVE_ACTION_FROM_QUEUE action type', () => {
       ...prevActionToRetry2,
     });
 
-    expect(createReducer()(prevState, action)).toEqual(
+    expect(networkReducer(prevState, action)).toEqual(
       getState(
         false,
         prevActionToRetry1,
@@ -239,7 +247,7 @@ describe('thunks', () => {
     describe('action with meta.retry !== true', () => {
       it('should NOT add the action to the queue', () => {
         const action = actionCreators.fetchOfflineMode(fetchThunk);
-        expect(createReducer()(initialState, action)).toEqual(initialState);
+        expect(networkReducer(initialState, action)).toEqual(initialState);
       });
     });
 
@@ -251,7 +259,7 @@ describe('thunks', () => {
         };
         const action = actionCreators.fetchOfflineMode(fetchThunk);
 
-        expect(createReducer()(prevState, action)).toEqual(
+        expect(networkReducer(prevState, action)).toEqual(
           getState(false, fetchThunk),
         );
       });
@@ -272,7 +280,7 @@ describe('thunks', () => {
           retry: true,
         };
         const action = actionCreators.fetchOfflineMode(similarThunk);
-        const nextState = createReducer()(prevState, action);
+        const nextState = networkReducer(prevState, action);
 
         expect(nextState).toEqual(getState(false, similarThunk));
       });
@@ -284,7 +292,7 @@ describe('thunks', () => {
       const prevState = getState(false, fetchThunk);
       const action = actionCreators.removeActionFromQueue(fetchThunk);
 
-      expect(createReducer()(prevState, action)).toEqual(getState(false));
+      expect(networkReducer(prevState, action)).toEqual(getState(false));
     });
   });
 });
@@ -329,7 +337,7 @@ describe('dismiss feature', () => {
     );
     const action = actionCreators.dismissActionsFromQueue('NAVIGATE_BACK');
 
-    expect(createReducer()(prevState, action)).toEqual(
+    expect(networkReducer(prevState, action)).toEqual(
       getState(false, actionEnqueued2, actionEnqueued3),
     );
   });
@@ -343,7 +351,7 @@ describe('dismiss feature', () => {
     );
     const action = actionCreators.dismissActionsFromQueue('NAVIGATE_TO_LOGIN');
 
-    expect(createReducer()(prevState, action)).toEqual(
+    expect(networkReducer(prevState, action)).toEqual(
       getState(false, actionEnqueued3),
     );
   });
@@ -357,7 +365,7 @@ describe('dismiss feature', () => {
     );
     const action = actionCreators.dismissActionsFromQueue('NAVIGATE_AWAY');
 
-    expect(createReducer()(prevState, action)).toEqual(
+    expect(networkReducer(prevState, action)).toEqual(
       getState(false, actionEnqueued1, actionEnqueued2, actionEnqueued3),
     );
   });

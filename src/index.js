@@ -9,7 +9,7 @@ module.exports = {
     return require('./components/NetworkConsumer').default;
   },
   get reducer() {
-    return require('./redux/reducer').default;
+    return require('./redux/reducer').createReducer;
   },
   get createNetworkMiddleware() {
     return require('./redux/createNetworkMiddleware').default;
