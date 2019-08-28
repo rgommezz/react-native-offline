@@ -12,7 +12,7 @@
     "format": "eslint --fix js/**/",
     "prettier": "prettier --single-quote --trailing-comma all --write \"src/**/*.js\"",
     "test:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "precommit": "yarn run lint",
+    "precommit": "npm run lint",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },
