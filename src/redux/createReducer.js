@@ -81,9 +81,10 @@ function handleDismissActionsFromQueue(
   };
 }
 
-export const createReducer = (
-  comparisonFn: Function = getSimilarActionInQueue,
-) => (state: NetworkState = initialState, action: *) => {
+export default (comparisonFn: Function = getSimilarActionInQueue) => (
+  state: NetworkState = initialState,
+  action: *,
+) => {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:
       return {
