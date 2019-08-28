@@ -139,7 +139,13 @@ Note: since this component will re-render its children every time its parent's p
   There are 3 features that this library provides in order to leverage offline capabilities in your Redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
 
   ### Network reducer
-A network reducer to be provided to the store.
+A network reducer to be provided to the store. The reducer can take an optional comparisonFn. If no function is provided default comparison function will be used.
+```js
+export default (
+  comparisonFn: Function = getSimilarActionInQueue,
+) => (state: NetworkState = initialState, action: *) {
+}
+```
 
   #### State
 ```js
@@ -165,6 +171,31 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer);
 export default store;
 ```
+
+##### OR
+```js
+// configureStore.js
+import { createStore, combineReducers } from 'redux'
+import { reducer as network } from 'react-native-offline';
+import { comparisonFn } from './utils';
+
+const rootReducer = combineReducers({
+  // ... your other reducers here ...
+  network(comparisonFn),
+});
+
+const store = createStore(rootReducer);
+export default store;
+```
+
+  ##### 1a. Comparison Function needs to accept an `action` and the `actionQueue`. The result of the function will be either `undefined` meaning no match found or the `action` that matches the passed in action.
+```js
+function  comparisonFn(
+  action: *,
+  actionQueue: Array<*>,
+) { }
+```
+
 
 ##### 2.- Here you have 2 options:
 
