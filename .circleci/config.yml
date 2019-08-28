@@ -9,7 +9,6 @@ jobs:
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     docker:
     - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
-      command: /sbin/init
     steps:
     - checkout
     - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
@@ -25,10 +24,6 @@ jobs:
         - v1-dep-master-
         # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
         - v1-dep-
-    - run: curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-    - run: echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    - run: sudo apt-get update && sudo apt-get install yarn
-    - run: yarn install
     # Save dependency cache
     - save_cache:
         key: v1-dep-{{ .Branch }}-{{ epoch }}
@@ -45,8 +40,8 @@ jobs:
         - ~/.cache/bower
         - ./node_modules
     # Test
-    - run: yarn run lint
-    - run: yarn run test:coverage
+    - run: npm run lint
+    - run: npm run test:coverage
     # Teardown
     # Save test results
     - store_test_results:
