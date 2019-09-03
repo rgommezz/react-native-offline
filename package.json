@@ -35,8 +35,10 @@
   },
   "homepage": "https://github.com/rgommezz/react-native-offline#readme",
   "devDependencies": {
+    "@types/jest": "^24.0.18",
     "@types/react": "^16.9.2",
     "@types/react-native": "^0.60.11",
+    "@types/react-test-renderer": "^16.9.0",
     "all-contributors-cli": "^5.4.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
@@ -67,6 +69,7 @@
     "redux-mock-store": "^1.5.3",
     "redux-saga-test-plan": "4.0.0-beta.2",
     "redux-thunk": "^2.3.0",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.6.2"
   },
   "dependencies": {
@@ -78,11 +81,8 @@
   },
   "jest": {
     "collectCoverage": true,
-    "preset": "react-native",
+    "preset": "ts-jest",
     "setupTestFrameworkScriptFile": "<rootDir>/test/setupTestEnv.js",
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    },
     "modulePathIgnorePatterns": [
       "<rootDir>/example/"
     ]
