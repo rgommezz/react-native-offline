@@ -66,7 +66,8 @@
     "redux": "^4.0.1",
     "redux-mock-store": "^1.5.3",
     "redux-saga-test-plan": "4.0.0-beta.2",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "typescript": "^3.6.2"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^4.1.2",
