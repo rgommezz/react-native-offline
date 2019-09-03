@@ -1,4 +1,5 @@
-// @flow
+
+// TODO import directly to reduce bundle-size?
 import { isEqual } from 'lodash';
 
 /**
@@ -8,15 +9,15 @@ import { isEqual } from 'lodash';
  * @param actionQueue
  */
 export default function getSimilarActionInQueue(
-  action: *,
-  actionQueue: Array<*>,
+  action: any,
+  actionQueue: Array<any>,
 ) {
   if (typeof action === 'object') {
-    return actionQueue.find((queued: *) => isEqual(queued, action));
+    return actionQueue.find((queued) => isEqual(queued, action));
   }
   if (typeof action === 'function') {
     return actionQueue.find(
-      (queued: *) => action.toString() === queued.toString(),
+      (queued) => action.toString() === queued.toString(),
     );
   }
   return undefined;

@@ -1,5 +1,3 @@
-/* @flow */
-
 export type State = {
   isConnected: boolean,
 };
@@ -37,7 +35,7 @@ export type FluxActionForDismissal = {
 
 export type NetworkState = {
   isConnected: boolean,
-  actionQueue: Array<*>,
+  actionQueue: Array<any>,
 };
 
 export type HTTPMethod = 'HEAD' | 'OPTIONS';

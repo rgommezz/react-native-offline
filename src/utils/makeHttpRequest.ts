@@ -1,5 +1,3 @@
-/* @flow */
-
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
@@ -23,10 +21,11 @@ type ResolvedValue = {
   status: number,
 };
 
+const CACHE_HEADER_VALUE = 'no-cache, no-store, must-revalidate';
 export const headers = {
-  'Cache-Control': 'no-cache, no-store, must-revalidate',
-  Pragma: 'no-cache',
-  Expires: 0,
+  'Cache-Control': CACHE_HEADER_VALUE, 
+  Pragma: 'no-cache' as 'no-cache',
+  Expires: '0',
 };
 
 /**
@@ -37,16 +36,16 @@ export const headers = {
  * @param testMethod: for testing purposes
  * @returns {Promise}
  */
+
+type PromiseHandler = (args: ResolvedValue) => void;
 export default function makeHttpRequest({
   method = DEFAULT_HTTP_METHOD,
   url = DEFAULT_PING_SERVER_URL,
   timeout = DEFAULT_TIMEOUT,
-  testMethod,
-}: Options = {}) {
+}: Options) {
   return new Promise(
-    (resolve: ResolvedValue => void, reject: ResolvedValue => void) => {
-      // $FlowFixMe
-      const xhr = new XMLHttpRequest(testMethod);
+    (resolve: PromiseHandler, reject: PromiseHandler) => {
+      const xhr = new XMLHttpRequest();
       xhr.open(method, url);
       xhr.timeout = timeout;
       xhr.onload = function onLoad() {
@@ -71,8 +70,11 @@ export default function makeHttpRequest({
           status: this.status,
         });
       };
-      Object.keys(headers).forEach((key: string) => {
-        xhr.setRequestHeader(key, headers[key]);
+      
+      
+      Object.keys(headers).forEach(key => {
+        const k = key as keyof typeof headers;
+        xhr.setRequestHeader(k, headers[k]);
       });
       xhr.send(null);
     },

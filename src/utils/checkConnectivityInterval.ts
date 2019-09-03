@@ -1,6 +1,5 @@
-// @flow
+let interval: number | null = null;
 
-let interval = null;
 
 export function getInterval() {
   return interval;
