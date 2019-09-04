@@ -6,9 +6,9 @@ import {
   removeActionFromQueue,
   dismissActionsFromQueue,
 } from './actionCreators';
-import type { NetworkState } from '../types';
-import networkActionTypes from './actionTypes';
+import * as networkActionTypes from './actionTypes';
 import wait from '../utils/wait';
+import { NetworkState } from '../types';
 
 type MiddlewareAPI<S> = {
   dispatch: (action: any) => void,
@@ -19,13 +19,13 @@ type State = {
   network: NetworkState,
 };
 
-type Arguments = {|
+type Arguments = {
   regexActionType: RegExp,
   actionTypes: Array<string>,
   queueReleaseThrottle: number,
-|};
+};
 
-function validateParams(regexActionType, actionTypes) {
+function validateParams(regexActionType: RegExp, actionTypes: Array<string>) {
   if ({}.toString.call(regexActionType) !== '[object RegExp]')
     throw new Error('You should pass a regex as regexActionType param');
 
@@ -33,28 +33,28 @@ function validateParams(regexActionType, actionTypes) {
     throw new Error('You should pass an array as actionTypes param');
 }
 
-function findActionToBeDismissed(action, actionQueue) {
-  return find(actionQueue, (a: *) => {
+function findActionToBeDismissed(action: any, actionQueue: Array<any) {
+  return find(actionQueue, (a: unknown) => {
     const actionsToDismiss = get(a, 'meta.dismiss', []);
     return actionsToDismiss.includes(action.type);
   });
 }
 
-function isObjectAndShouldBeIntercepted(action, regexActionType, actionTypes) {
+function isObjectAndShouldBeIntercepted(action: any, regexActionType: RegExp, actionTypes: Array<string>) {
   return (
     typeof action === 'object' &&
     (regexActionType.test(action.type) || actionTypes.includes(action.type))
   );
 }
 
-function isThunkAndShouldBeIntercepted(action) {
+function isThunkAndShouldBeIntercepted(action: any) {
   return typeof action === 'function' && action.interceptInOffline === true;
 }
 
 function checkIfActionShouldBeIntercepted(
-  action,
-  regexActionType,
-  actionTypes,
+  action: any,
+  regexActionType: RegExp,
+  actionTypes: Array<string>,
 ) {
   return (
     isObjectAndShouldBeIntercepted(action, regexActionType, actionTypes) ||
@@ -62,7 +62,7 @@ function checkIfActionShouldBeIntercepted(
   );
 }
 
-function didComeBackOnline(action, wasConnected) {
+function didComeBackOnline(action: any, wasConnected: boolean) {
   return (
     action.type === networkActionTypes.CONNECTION_CHANGE &&
     !wasConnected &&
@@ -89,7 +89,7 @@ function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
   queueReleaseThrottle = 50,
-}: Arguments = {}) {
+}: Arguments) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {

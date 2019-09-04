@@ -1,5 +1,3 @@
-/* @flow */
-/* eslint flowtype/require-parameter-type: 0 */
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import { AppState, Platform } from 'react-native';
@@ -7,12 +5,14 @@ import NetInfo from '@react-native-community/netinfo';
 import { networkSelector } from './reducer';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
-import type { HTTPMethod } from '../types';
+
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../utils/constants';
+
+import { HTTPMethod } from '../types';
 
 type Arguments = {
   pingTimeout: number,
@@ -24,7 +24,7 @@ type Arguments = {
   httpMethod: HTTPMethod,
 };
 
-export function netInfoEventChannelFn(emit: (param: boolean) => mixed) {
+export function netInfoEventChannelFn(emit: (param: boolean) => unknown) {
   NetInfo.isConnected.addEventListener('connectionChange', emit);
   return () => {
     NetInfo.isConnected.removeEventListener('connectionChange', emit);
@@ -32,7 +32,7 @@ export function netInfoEventChannelFn(emit: (param: boolean) => mixed) {
 }
 
 export function intervalChannelFn(interval: number) {
-  return (emit: (param: boolean) => mixed) => {
+  return (emit: (param: boolean) => unknown) => {
     const iv = setInterval(() => emit(true), interval);
     return () => {
       clearInterval(iv);

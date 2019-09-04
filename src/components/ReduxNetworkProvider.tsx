@@ -1,17 +1,16 @@
-/* @flow */
 import * as React from 'react';
 import { connect } from 'react-redux';
 import NetworkConnectivity from './NetworkConnectivity';
-import type { HTTPMethod, FluxAction, NetworkState } from '../types';
 import { connectionChange } from '../redux/actionCreators';
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../utils/constants';
+import { FluxAction, HTTPMethod, NetworkState } from '../types';
 
 type Props = {
-  dispatch: FluxAction => FluxAction,
+  dispatch: (args: FluxAction) => FluxAction,
   isConnected: boolean,
   pingTimeout?: number,
   pingServerUrl?: string,
@@ -20,7 +19,7 @@ type Props = {
   pingOnlyIfOffline?: boolean,
   pingInBackground?: boolean,
   httpMethod?: HTTPMethod,
-  children: React.Node,
+  children: React.ReactNode,
 };
 
 class ReduxNetworkProvider extends React.Component<Props> {
@@ -60,7 +59,7 @@ function mapStateToProps(state: { network: NetworkState }) {
   };
 }
 
-const ConnectedReduxNetworkProvider = connect(mapStateToProps)(
+const ConnectedReduxNetworkProvider = connect<>(mapStateToProps)(
   ReduxNetworkProvider,
 );
 

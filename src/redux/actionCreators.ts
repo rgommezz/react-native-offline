@@ -1,12 +1,6 @@
-/* @flow */
+import * as actionTypes from './actionTypes';
+import { FluxAction, FluxActionWithPreviousIntent, FluxActionForRemoval, FluxActionForDismissal } from '../types';
 
-import actionTypes from './actionTypes';
-import type {
-  FluxAction,
-  FluxActionWithPreviousIntent,
-  FluxActionForRemoval,
-  FluxActionForDismissal,
-} from '../types';
 
 type EnqueuedAction = FluxAction | Function;
 

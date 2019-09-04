@@ -1,8 +1,6 @@
-/* @flow */
 import * as React from 'react';
 import { AppState, Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import type { HTTPMethod, State } from '../types';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import {
@@ -10,9 +8,10 @@ import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
 } from '../utils/constants';
+import { State, HTTPMethod } from '../types';
 
 export type RequiredProps = {
-  children: (state: State) => React.Node,
+  children: (state: State) => React.ReactNode,
 };
 
 export type DefaultProps = {

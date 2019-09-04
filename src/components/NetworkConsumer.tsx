@@ -1,8 +1,7 @@
-/* @flow */
 import React from 'react';
 import NetworkContext from './NetworkContext';
 
-type TNetworkContext = ?{
+type TNetworkContext = {
   isConnected: boolean,
 };
 
