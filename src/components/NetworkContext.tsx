@@ -1,6 +1,11 @@
-/* @flow */
 import { createContext } from 'react';
 
-const NetworkContext = createContext();
+export type ConnectivityState = {
+  isConnected: boolean,
+};
+
+const NetworkContext = createContext<ConnectivityState>({
+  isConnected: true,
+});
 
 export default NetworkContext;

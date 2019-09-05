@@ -1,17 +1,12 @@
-/* @flow */
 import * as React from 'react';
 import NetworkConnectivity from './NetworkConnectivity';
 import NetworkContext from './NetworkContext';
-import type { HTTPMethod } from '../types';
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../utils/constants';
-
-type ConnectivityState = {
-  isConnected: boolean,
-};
+import { HTTPMethod } from '../types';
 
 type Props = {
   pingTimeout?: number,
@@ -21,7 +16,7 @@ type Props = {
   pingOnlyIfOffline?: boolean,
   pingInBackground?: boolean,
   httpMethod?: HTTPMethod,
-  children: React.Node,
+  children: React.ReactNode,
 };
 
 NetworkProvider.defaultProps = {
@@ -38,7 +33,7 @@ function NetworkProvider(props: Props) {
   const { children, ...rest } = props;
   return (
     <NetworkConnectivity {...rest}>
-      {(connectionState: ConnectivityState) => (
+      {connectionState => (
         <NetworkContext.Provider value={connectionState}>
           {children}
         </NetworkContext.Provider>
