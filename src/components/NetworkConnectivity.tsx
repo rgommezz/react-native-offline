@@ -8,10 +8,11 @@ import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
 } from '../utils/constants';
-import { State, HTTPMethod } from '../types';
+import { HTTPMethod } from '../types';
+import { ConnectivityState } from './NetworkContext';
 
 export type RequiredProps = {
-  children: (state: State) => React.ReactNode,
+  children: (state: ConnectivityState) => React.ReactNode,
 };
 
 export type DefaultProps = {
@@ -56,7 +57,7 @@ function validateProps(props: Props) {
   }
 }
 
-class NetworkConnectivity extends React.PureComponent<Props, State> {
+class NetworkConnectivity extends React.PureComponent<Props, ConnectivityState> {
   static defaultProps = {
     onConnectivityChange: () => undefined,
     pingTimeout: DEFAULT_TIMEOUT,
@@ -91,7 +92,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: ConnectivityState) {
     const { pingServerUrl, onConnectivityChange } = this.props;
     const { isConnected } = this.state;
     if (prevProps.pingServerUrl !== pingServerUrl) {

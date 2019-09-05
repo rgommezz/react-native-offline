@@ -1,14 +1,11 @@
-/* @flow */
-
 import { get, without } from 'lodash';
-import actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
-import type {
+import {
   FluxAction,
-  FluxActionWithPreviousIntent,
-  FluxActionForRemoval,
   NetworkState,
 } from '../types';
+import { ActionCreatorTypes, RemoveActionFromQueueType, FetchOfflineModeType } from './actionCreators';
 
 export const initialState = {
   isConnected: true,
@@ -17,7 +14,7 @@ export const initialState = {
 
 function handleOfflineAction(
   state: NetworkState,
-  { payload: { prevAction, prevThunk }, meta }: FluxActionWithPreviousIntent,
+  { payload: { prevAction, prevThunk }, meta }: FetchOfflineModeType,
 ): NetworkState {
   const isActionToRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;
@@ -52,7 +49,7 @@ function handleOfflineAction(
 
 function handleRemoveActionFromQueue(
   state: NetworkState,
-  action: FluxActionForRemoval,
+  action: RemoveActionFromQueueType,
 ): NetworkState {
   const similarActionQueued = getSimilarActionInQueue(
     action,
@@ -82,7 +79,7 @@ function handleDismissActionsFromQueue(
 
 export default function(
   state: NetworkState = initialState,
-  action: *,
+  action: ActionCreatorTypes,
 ): NetworkState {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:

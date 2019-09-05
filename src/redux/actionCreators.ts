@@ -1,21 +1,21 @@
 import * as actionTypes from './actionTypes';
-import { FluxAction, FluxActionWithPreviousIntent, FluxActionForRemoval, FluxActionForDismissal } from '../types';
+import { FluxAction } from '../types';
 
-
+// FIXME change this, use ThunkAction from redux instead of `Function`
 type EnqueuedAction = FluxAction | Function;
 
-export const connectionChange = (isConnected: boolean): FluxAction => ({
-  type: actionTypes.CONNECTION_CHANGE,
+export const connectionChange = (isConnected: boolean) => ({
+  type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
   payload: isConnected,
 });
 
 export const fetchOfflineMode = (
   action: EnqueuedAction,
-): FluxActionWithPreviousIntent => {
+) => {
   const { meta = {}, ...actionRest } = action;
   if (typeof action === 'object') {
     return {
-      type: actionTypes.FETCH_OFFLINE_MODE,
+      type: actionTypes.FETCH_OFFLINE_MODE as typeof actionTypes.FETCH_OFFLINE_MODE,
       payload: {
         prevAction: {
           ...actionRest,
@@ -26,7 +26,7 @@ export const fetchOfflineMode = (
   }
   // Thunk
   return {
-    type: actionTypes.FETCH_OFFLINE_MODE,
+    type: actionTypes.FETCH_OFFLINE_MODE as typeof actionTypes.FETCH_OFFLINE_MODE,
     payload: {
       prevThunk: action,
     },
@@ -36,14 +36,25 @@ export const fetchOfflineMode = (
 
 export const removeActionFromQueue = (
   action: EnqueuedAction,
-): FluxActionForRemoval => ({
-  type: actionTypes.REMOVE_FROM_ACTION_QUEUE,
+) => ({
+  type: actionTypes.REMOVE_FROM_ACTION_QUEUE as typeof actionTypes.REMOVE_FROM_ACTION_QUEUE,
   payload: action,
 });
 
 export const dismissActionsFromQueue = (
   actionTrigger: string,
-): FluxActionForDismissal => ({
-  type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
+) => ({
+  type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE as typeof actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
 });
+
+export type ConnectionChangeType = ReturnType<typeof connectionChange>;
+export type FetchOfflineModeType = ReturnType<typeof fetchOfflineMode>;
+export type RemoveActionFromQueueType = ReturnType<typeof removeActionFromQueue>;
+export type DismissActionsFromQueueType = ReturnType<typeof dismissActionsFromQueue>;
+
+export type ActionCreatorTypes = 
+| ConnectionChangeType
+| FetchOfflineModeType
+| RemoveActionFromQueueType
+| DismissActionsFromQueueType;

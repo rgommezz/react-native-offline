@@ -1,36 +1,12 @@
-export type State = {
-  isConnected: boolean,
-};
+import { Action } from "redux";
 
-export type FluxAction = {
+export interface FluxAction extends Action {
   type: string,
   payload: any,
   meta?: {
     retry?: boolean,
     dismiss?: Array<string>,
   },
-};
-
-export type FluxActionWithPreviousIntent = {
-  type: string,
-  payload: {
-    prevAction?: FluxAction,
-    prevThunk?: Function,
-  },
-  meta: {
-    retry?: boolean,
-    dismiss?: Array<string>,
-  },
-};
-
-export type FluxActionForRemoval = {
-  type: string,
-  payload: FluxAction | Function,
-};
-
-export type FluxActionForDismissal = {
-  type: string,
-  payload: string,
 };
 
 export type NetworkState = {
