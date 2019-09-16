@@ -1,8 +1,10 @@
 import * as actionTypes from './actionTypes';
-import { FluxAction } from '../types';
+import { FluxAction, Meta } from '../types';
+import { ThunkAction } from 'redux-thunk';
+import { Action } from 'redux';
 
-// FIXME change this, use ThunkAction from redux instead of `Function`
-type EnqueuedAction = FluxAction | Function;
+type Thunk = Meta<ThunkAction<any, any, null, Action>>;
+type EnqueuedAction = FluxAction | Thunk;
 
 export const connectionChange = (isConnected: boolean) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,

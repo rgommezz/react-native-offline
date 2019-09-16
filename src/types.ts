@@ -1,12 +1,18 @@
 import { Action } from "redux";
 
-export interface FluxAction extends Action {
+interface MetaProps {
+  retry?: boolean,
+  dismiss?: Array<string>,  
+}
+
+export type Meta<T> = T & {
+  meta?: MetaProps
+}
+
+export interface FluxAction<T = any> extends Action {
   type: string,
-  payload: any,
-  meta?: {
-    retry?: boolean,
-    dismiss?: Array<string>,
-  },
+  payload: T,
+  meta?: MetaProps
 };
 
 export type NetworkState = {
