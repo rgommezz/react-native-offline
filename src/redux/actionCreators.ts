@@ -3,8 +3,8 @@ import { FluxAction, Meta } from '../types';
 import { ThunkAction } from 'redux-thunk';
 import { Action } from 'redux';
 
-type Thunk = Meta<ThunkAction<any, any, null, Action>>;
-type EnqueuedAction = FluxAction | Thunk;
+export type Thunk = Meta<ThunkAction<any, any, null, Action>> & { interceptInOffline?: boolean };
+export type EnqueuedAction = FluxAction | Thunk;
 
 export const connectionChange = (isConnected: boolean) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
