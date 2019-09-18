@@ -84,7 +84,7 @@ function handleDismissActionsFromQueue(
 export default (comparisonFn: Function = getSimilarActionInQueue) => (
   state: NetworkState = initialState,
   action: *,
-) => {
+): NetworkState => {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:
       return {
