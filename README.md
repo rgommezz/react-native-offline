@@ -251,7 +251,7 @@ const ImageViewer = () => (
 There are 3 features that this library provides in order to leverage offline capabilities in your Redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
 
 ### Network reducer
-A network reducer to be provided to the store.
+A network reducer to be provided to the store. The reducer can take an optional comparisonFn. If no function is provided default comparison function will be used.
 
 #### State
 ```js
@@ -262,8 +262,11 @@ type NetworkState = {
 ```
 
 #### Usage
+The library exposes a simple reducer or a factory function to tailor it a bit more to your needs.
 
-##### 1.- Give the network reducer to Redux
+
+##### Basic reducer
+This reducer will use a preconfigured comparison function for the [offline queue](#offline-queue).
 ```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
@@ -277,6 +280,33 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer);
 export default store;
 ```
+
+##### Factory Function
+This may be useful if you are using the [offline queue](#offline-queue) and would like to have more control on how it behaves, particularly when determining whether an action already exists on the queue. That's why we expose a factory function as well, so that you can provide your own comparison function. You'd use it in the next way:
+```js
+// configureStore.js
+import { createStore, combineReducers } from 'redux'
+import { reducer as network } from 'react-native-offline';
+import { comparisonFn } from './utils';
+
+const rootReducer = combineReducers({
+  // ... your other reducers here ...
+  network(comparisonFn),
+});
+
+const store = createStore(rootReducer);
+export default store;
+```
+
+The comparison function receives the action dispatched when offline and the current actionQueue. The result of the function will be either undefined meaning no match found or the action that matches the passed in action.
+```js
+function comparisonFn(
+  action: ReduxAction | ReduxThunk,
+  actionQueue: Array<ReduxAction | ReduxThunk>,
+): ?(ReduxAction | ReduxThunk)
+```
+
+
 
 ##### 2.- Here you have 2 options:
 
