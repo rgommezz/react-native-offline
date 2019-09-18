@@ -251,7 +251,7 @@ const ImageViewer = () => (
 There are 3 features that this library provides in order to leverage offline capabilities in your Redux store: a reducer, a middleware and an offline queue system. You can use all of them or just the ones that suits your needs.
 
 ### Network reducer
-A network reducer to be provided to the store. The reducer can take an optional comparisonFn. If no function is provided default comparison function will be used.
+A network reducer to be provided to the store.
 
 #### State
 ```js
@@ -262,11 +262,8 @@ type NetworkState = {
 ```
 
 #### Usage
-The library exposes a simple reducer or a factory function to tailor it a bit more to your needs.
 
-
-##### Basic reducer
-This reducer will use a preconfigured comparison function for the [offline queue](#offline-queue).
+##### 1.- Give the network reducer to Redux
 ```js
 // configureStore.js
 import { createStore, combineReducers } from 'redux'
@@ -280,33 +277,6 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer);
 export default store;
 ```
-
-##### Factory Function
-This may be useful if you are using the [offline queue](#offline-queue) and would like to have more control on how it behaves, particularly when determining whether an action already exists on the queue. That's why we expose a factory function as well, so that you can provide your own comparison function. You'd use it in the next way:
-```js
-// configureStore.js
-import { createStore, combineReducers } from 'redux'
-import { reducer as network } from 'react-native-offline';
-import { comparisonFn } from './utils';
-
-const rootReducer = combineReducers({
-  // ... your other reducers here ...
-  network(comparisonFn),
-});
-
-const store = createStore(rootReducer);
-export default store;
-```
-
-The comparison function receives the action dispatched when offline and the current actionQueue. The result of the function will be either undefined meaning no match found or the action that matches the passed in action.
-```js
-function comparisonFn(
-  action: ReduxAction | ReduxThunk,
-  actionQueue: Array<ReduxAction | ReduxThunk>,
-): ?(ReduxAction | ReduxThunk)
-```
-
-
 
 ##### 2.- Here you have 2 options:
 
@@ -468,10 +438,38 @@ if(action.type === offlineActionTypes.FETCH_OFFLINE_MODE) // do something in you
 SnackBars, Dialog, Popups, or simple informative text are good means of conveying to the user that the operation failed due to lack of internet connection.
 
 ### Offline Queue
-A queue system to store actions that failed due to lack of connectivity. It works for both plain object actions and thunks.
-It allows you to:
+A queue system to store actions that failed due to lack of connectivity. It works for both plain object actions and thunks. It allows you to:
+
 - Re-dispatch the action/thunk as soon as the internet connection is back online again
 - Dismiss the action from the queue based on a different action dispatched (i.e. navigating to a different screen, the fetch action is no longer relevant)
+
+#### Managing duplicate actions
+If a similar action already exists on the queue, we remove it and push it again to the end, so it has an overriding effect.
+The default criteria to detect duplicates is by using `lodash.isEqual` for plain actions and `thunk.toString()` for thunks/functions. However, you can customise the comparison function to acommodate it to your needs. For that, you need to use the factory version for your network reducer.
+
+```js
+// configureStore.js
+import { createStore, combineReducers } from 'redux'
+import { createReducer as createNetworkReducer } from 'react-native-offline';
+import { comparisonFn } from './utils';
+
+const rootReducer = combineReducers({
+  // ... your other reducers here ...
+  createNetworkReducer(comparisonFn),
+});
+
+const store = createStore(rootReducer);
+export default store;
+```
+
+The comparison function receives the action dispatched when offline and the current `actionQueue`. The result of the function will be either `undefined`, meaning no match found, or the action that matches the passed in action. So basically, you need to return the upcoming action if you wish to replace an existing one. An example of how to use it can be found [here](https://github.com/rgommezz/react-native-offline/blob/master/test/reducer.test.js#L121).
+
+```js
+function comparisonFn(
+  action: ReduxAction | ReduxThunk,
+  actionQueue: Array<ReduxAction | ReduxThunk>,
+): ?(ReduxAction | ReduxThunk)
+```
 
 #### Plain Objects
 In order to configure your PO actions to interact with the offline queue you need to use the `meta` property in your actions, following [flux standard actions convention](https://github.com/acdlite/flux-standard-action#meta). They need to adhere to the below API:
