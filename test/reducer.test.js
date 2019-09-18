@@ -14,21 +14,6 @@ const getState = (isConnected = false, ...actionQueue) => ({
   actionQueue,
 });
 
-function comparisonFn(action, actionQueue) {
-  if (typeof action === 'object') {
-    return actionQueue.find(queued => isEqual(queued, action));
-  }
-  if (typeof action === 'function') {
-    return actionQueue.find(
-      queued =>
-        action.meta.name === queued.meta.name &&
-        action.meta.args.id === queued.meta.args.id,
-    );
-  }
-
-  return undefined;
-}
-
 /** Actions used from now on to test different scenarios */
 const prevActionToRetry1 = {
   type: 'FETCH_DATA_REQUEST',
@@ -133,6 +118,20 @@ describe('OFFLINE_ACTION action type', () => {
     });
 
     describe('thunks that are the same with custom comparison function', () => {
+      function comparisonFn(action, actionQueue) {
+        if (typeof action === 'object') {
+          return actionQueue.find(queued => isEqual(queued, action));
+        }
+        if (typeof action === 'function') {
+          return actionQueue.find(
+            queued =>
+              action.meta.name === queued.meta.name &&
+              action.meta.args.id === queued.meta.args.id,
+          );
+        }
+        return undefined;
+      }
+
       const thunkFactory = (id, name, age) => {
         function thunk(dispatch) {
           dispatch({ type: 'UPDATE_DATA_REQUEST', payload: { id, name, age } });
