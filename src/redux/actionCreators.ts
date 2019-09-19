@@ -1,62 +1,58 @@
-import * as actionTypes from './actionTypes';
-import { FluxAction, Meta } from '../types';
-import { ThunkAction } from 'redux-thunk';
-import { Action } from 'redux';
+import * as actionTypes from "./actionTypes";
+import { FluxAction, Meta } from "../types";
 
-export type Thunk = Meta<ThunkAction<any, any, null, Action>> & { interceptInOffline?: boolean };
+export type Thunk = Meta<(...args: any[]) => any>;
 export type EnqueuedAction = FluxAction | Thunk;
 
 export const connectionChange = (isConnected: boolean) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
-  payload: isConnected,
+  payload: isConnected
 });
 
-export const fetchOfflineMode = (
-  action: EnqueuedAction,
-) => {
+export const fetchOfflineMode = (action: EnqueuedAction) => {
   const { meta = {}, ...actionRest } = action;
-  if (typeof action === 'object') {
+  if (typeof action === "object") {
     return {
       type: actionTypes.FETCH_OFFLINE_MODE as typeof actionTypes.FETCH_OFFLINE_MODE,
       payload: {
         prevAction: {
-          ...actionRest,
-        },
+          ...actionRest
+        }
       },
-      meta,
+      meta
     };
   }
   // Thunk
   return {
     type: actionTypes.FETCH_OFFLINE_MODE as typeof actionTypes.FETCH_OFFLINE_MODE,
     payload: {
-      prevThunk: action,
+      prevThunk: action
     },
-    meta,
+    meta
   };
 };
 
-export const removeActionFromQueue = (
-  action: EnqueuedAction,
-) => ({
+export const removeActionFromQueue = (action: EnqueuedAction) => ({
   type: actionTypes.REMOVE_FROM_ACTION_QUEUE as typeof actionTypes.REMOVE_FROM_ACTION_QUEUE,
-  payload: action,
+  payload: action
 });
 
-export const dismissActionsFromQueue = (
-  actionTrigger: string,
-) => ({
+export const dismissActionsFromQueue = (actionTrigger: string) => ({
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE as typeof actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
-  payload: actionTrigger,
+  payload: actionTrigger
 });
 
 export type ConnectionChangeType = ReturnType<typeof connectionChange>;
 export type FetchOfflineModeType = ReturnType<typeof fetchOfflineMode>;
-export type RemoveActionFromQueueType = ReturnType<typeof removeActionFromQueue>;
-export type DismissActionsFromQueueType = ReturnType<typeof dismissActionsFromQueue>;
+export type RemoveActionFromQueueType = ReturnType<
+  typeof removeActionFromQueue
+>;
+export type DismissActionsFromQueueType = ReturnType<
+  typeof dismissActionsFromQueue
+>;
 
-export type ActionCreatorTypes = 
-| ConnectionChangeType
-| FetchOfflineModeType
-| RemoveActionFromQueueType
-| DismissActionsFromQueueType;
+export type ActionCreatorTypes =
+  | ConnectionChangeType
+  | FetchOfflineModeType
+  | RemoveActionFromQueueType
+  | DismissActionsFromQueueType;

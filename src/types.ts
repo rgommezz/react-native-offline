@@ -1,23 +1,25 @@
-import { Action } from "redux";
+import { AnyAction } from "redux";
+import { EnqueuedAction } from "./redux/actionCreators";
 
 interface MetaProps {
-  retry?: boolean,
-  dismiss?: Array<string>,  
+  retry?: boolean;
+  dismiss?: string[];
 }
 
 export type Meta<T> = T & {
-  meta?: MetaProps
+  meta?: MetaProps;
+  interceptInOffline?: boolean;
+};
+
+export interface FluxAction<T = any> extends AnyAction {
+  type: string;
+  payload: T;
+  meta?: MetaProps;
 }
 
-export interface FluxAction<T = any> extends Action {
-  type: string,
-  payload: T,
-  meta?: MetaProps
-};
-
 export type NetworkState = {
-  isConnected: boolean,
-  actionQueue: Array<any>,
+  isConnected: boolean;
+  actionQueue: EnqueuedAction[];
 };
 
-export type HTTPMethod = 'HEAD' | 'OPTIONS';
+export type HTTPMethod = "HEAD" | "OPTIONS";
