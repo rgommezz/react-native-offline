@@ -298,6 +298,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LiquidSean",
+      "name": "Sean Luthjohn",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1811319?v=4",
+      "profile": "https://github.com/LiquidSean",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
-  ]
+  ],
+  "contributorsPerLine": 7
 }
