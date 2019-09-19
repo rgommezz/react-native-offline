@@ -4,8 +4,8 @@ import getSimilarActionInQueue from "../utils/getSimilarActionInQueue";
 import { NetworkState } from "../types";
 import {
   ActionCreatorTypes,
-  RemoveActionFromQueueType,
-  FetchOfflineModeType
+  FetchOfflineModeType,
+  EnqueuedAction
 } from "./actionCreators";
 
 export const initialState = {
@@ -50,7 +50,7 @@ function handleOfflineAction(
 
 function handleRemoveActionFromQueue(
   state: NetworkState,
-  action: RemoveActionFromQueueType
+  action: EnqueuedAction
 ): NetworkState {
   const similarActionQueued = getSimilarActionInQueue(
     action,
