@@ -18,6 +18,7 @@ export const initialState = {
 function handleOfflineAction(
   state: NetworkState,
   { payload: { prevAction, prevThunk }, meta }: FluxActionWithPreviousIntent,
+  comparisonFn: Function,
 ): NetworkState {
   const isActionToRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;
@@ -32,7 +33,7 @@ function handleOfflineAction(
       typeof actionToLookUp === 'object'
         ? { ...actionToLookUp, meta }
         : actionToLookUp;
-    const similarActionQueued = getSimilarActionInQueue(
+    const similarActionQueued = comparisonFn(
       actionWithMetaData,
       state.actionQueue,
     );
@@ -80,10 +81,10 @@ function handleDismissActionsFromQueue(
   };
 }
 
-export default function(
+export default (comparisonFn: Function = getSimilarActionInQueue) => (
   state: NetworkState = initialState,
   action: *,
-): NetworkState {
+): NetworkState => {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:
       return {
@@ -91,7 +92,7 @@ export default function(
         isConnected: action.payload,
       };
     case actionTypes.FETCH_OFFLINE_MODE:
-      return handleOfflineAction(state, action);
+      return handleOfflineAction(state, action, comparisonFn);
     case actionTypes.REMOVE_FROM_ACTION_QUEUE:
       return handleRemoveActionFromQueue(state, action.payload);
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
@@ -99,7 +100,7 @@ export default function(
     default:
       return state;
   }
-}
+};
 
 export function networkSelector(state: { network: NetworkState }) {
   return state.network;

@@ -19,7 +19,7 @@ import {
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../src/utils/constants';
-import { networkSelector } from '../src/redux/reducer';
+import { networkSelector } from '../src/redux/createReducer';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 
 const args = {
