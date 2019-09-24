@@ -1,9 +1,9 @@
-import makeHttpRequest, { headers } from '../src/utils/makeHttpRequest';
+import makeHttpRequest, { headers } from "../src/utils/makeHttpRequest";
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_TIMEOUT,
-} from '../src/utils/constants';
+  DEFAULT_TIMEOUT
+} from "../src/utils/constants";
 
 const mockOpen = jest.fn();
 const mockSetRequestHeader = jest.fn();
@@ -14,23 +14,23 @@ const mockOnError = jest.fn();
 const mockOnTimeout = jest.fn();
 
 global.XMLHttpRequest = class MockXMLHttpRequest {
-  constructor(callbackToFire = '') {
+  constructor(callbackToFire = "") {
     this.callbackToFire = callbackToFire;
     switch (callbackToFire) {
-      case 'onload/2xx':
+      case "onload/2xx":
         this.status = 200;
         break;
-      case 'onload/3xx':
+      case "onload/3xx":
         this.status = 304;
         break;
-      case 'onload/4xx':
+      case "onload/4xx":
         this.status = 403;
         break;
-      case 'onload/5xx':
+      case "onload/5xx":
         this.status = 500;
         break;
-      case 'onerror':
-      case 'ontimeout':
+      case "onerror":
+      case "ontimeout":
         this.status = -1;
         break;
     }
@@ -43,21 +43,21 @@ global.XMLHttpRequest = class MockXMLHttpRequest {
 
   set onload(fn) {
     mockOnLoad();
-    if (this.callbackToFire.includes('onload')) {
+    if (this.callbackToFire.includes("onload")) {
       fn.call(this);
     }
   }
 
   set onerror(fn) {
     mockOnError();
-    if (this.callbackToFire === 'onerror') {
+    if (this.callbackToFire === "onerror") {
       fn.call(this);
     }
   }
 
   set ontimeout(fn) {
     mockOnTimeout();
-    if (this.callbackToFire === 'ontimeout') {
+    if (this.callbackToFire === "ontimeout") {
       fn.call(this);
     }
   }
@@ -66,7 +66,7 @@ global.XMLHttpRequest.prototype.open = mockOpen;
 global.XMLHttpRequest.prototype.setRequestHeader = mockSetRequestHeader;
 global.XMLHttpRequest.prototype.send = mockSend;
 
-describe('makeHttpRequest', () => {
+describe("makeHttpRequest", () => {
   afterEach(() => {
     mockOpen.mockClear();
     mockSend.mockClear();
@@ -76,11 +76,11 @@ describe('makeHttpRequest', () => {
     mockOnTimeout.mockClear();
   });
   const params = {
-    method: 'HEAD',
-    url: 'foo.com',
-    timeout: 5000,
+    method: "HEAD",
+    url: "foo.com",
+    timeout: 5000
   };
-  it('sets up the XMLHttpRequest configuration properly', async () => {
+  it("sets up the XMLHttpRequest configuration properly", async () => {
     const headerKeys = Object.keys(headers);
     makeHttpRequest(params);
     expect(mockOpen).toHaveBeenCalledWith(params.method, params.url);
@@ -93,42 +93,42 @@ describe('makeHttpRequest', () => {
       expect(mockSetRequestHeader).toHaveBeenNthCalledWith(
         index + 1,
         key,
-        headers[key],
+        headers[key]
       );
     });
     expect(mockSend).toHaveBeenCalledWith(null);
   });
 
-  it('default parameters', () => {
+  it("default parameters", () => {
     makeHttpRequest();
     expect(mockOpen).toHaveBeenCalledWith(
       DEFAULT_HTTP_METHOD,
-      DEFAULT_PING_SERVER_URL,
+      DEFAULT_PING_SERVER_URL
     );
     expect(mockSetTimeout).toHaveBeenCalledWith(DEFAULT_TIMEOUT);
   });
 
-  describe('onload', () => {
-    it('resolves the promise if status is 2xx or 3xx', async () => {
+  describe("onload", () => {
+    it("resolves the promise if status is 2xx or 3xx", async () => {
       let result = await makeHttpRequest({
         ...params,
-        testMethod: 'onload/2xx',
+        testMethod: "onload/2xx"
       });
       expect(result).toEqual({ status: 200 });
 
       result = await makeHttpRequest({
         ...params,
-        testMethod: 'onload/3xx',
+        testMethod: "onload/3xx"
       });
 
       expect(result).toEqual({ status: 304 });
     });
 
-    it('rejects the promise if status is 4xx or 5xx', async () => {
+    it("rejects the promise if status is 4xx or 5xx", async () => {
       try {
         await makeHttpRequest({
           ...params,
-          testMethod: 'onload/4xx',
+          testMethod: "onload/4xx"
         });
       } catch (e) {
         expect(e).toEqual({ status: 403 });
@@ -137,7 +137,7 @@ describe('makeHttpRequest', () => {
       try {
         await makeHttpRequest({
           ...params,
-          testMethod: 'onload/5xx',
+          testMethod: "onload/5xx"
         });
       } catch (e) {
         expect(e).toEqual({ status: 500 });
@@ -145,12 +145,12 @@ describe('makeHttpRequest', () => {
     });
   });
 
-  describe('onerror', () => {
-    it('rejects the promise with the xhr status', async () => {
+  describe("onerror", () => {
+    it("rejects the promise with the xhr status", async () => {
       try {
         await makeHttpRequest({
           ...params,
-          testMethod: 'onerror',
+          testMethod: "onerror"
         });
       } catch (e) {
         expect(e).toEqual({ status: -1 });
@@ -158,12 +158,12 @@ describe('makeHttpRequest', () => {
     });
   });
 
-  describe('ontimeout', () => {
-    it('rejects the promise with the xhr status', async () => {
+  describe("ontimeout", () => {
+    it("rejects the promise with the xhr status", async () => {
       try {
         await makeHttpRequest({
           ...params,
-          testMethod: 'ontimeout',
+          testMethod: "ontimeout"
         });
       } catch (e) {
         expect(e).toEqual({ status: -1 });

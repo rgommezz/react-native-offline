@@ -8,6 +8,7 @@ declare global {
       navigator: {
         userAgent: string;
       };
+      XMLHttpRequest: XMLHttpRequest;
     }
   }
 }

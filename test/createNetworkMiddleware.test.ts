@@ -1,6 +1,5 @@
-/* eslint flowtype/require-parameter-type: 0 */
 import configureStore from "redux-mock-store";
-import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk";
+import thunk, { ThunkDispatch } from "redux-thunk";
 import createNetworkMiddleware, {
   createReleaseQueue
 } from "../src/redux/createNetworkMiddleware";

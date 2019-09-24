@@ -1,33 +1,35 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import NetworkConnectivity from './NetworkConnectivity';
-import { connectionChange } from '../redux/actionCreators';
+import * as React from "react";
+import { connect } from "react-redux";
+import NetworkConnectivity from "./NetworkConnectivity";
+import { connectionChange } from "../redux/actionCreators";
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_TIMEOUT,
-} from '../utils/constants';
-import { HTTPMethod, NetworkState } from '../types';
-import { ActionCreator } from 'redux';
+  DEFAULT_TIMEOUT
+} from "../utils/constants";
+import { HTTPMethod, NetworkState } from "../types";
+import { ActionCreator } from "redux";
 
-interface AppState { network: NetworkState };
+interface AppState {
+  network: Partial<NetworkState>;
+}
 
 interface OwnProps {
-  pingTimeout?: number,
-  pingServerUrl?: string,
-  shouldPing?: boolean,
-  pingInterval?: number,
-  pingOnlyIfOffline?: boolean,
-  pingInBackground?: boolean,
-  httpMethod?: HTTPMethod,
-};
+  pingTimeout?: number;
+  pingServerUrl?: string;
+  shouldPing?: boolean;
+  pingInterval?: number;
+  pingOnlyIfOffline?: boolean;
+  pingInBackground?: boolean;
+  httpMethod?: HTTPMethod;
+}
 
-interface  StateProps {
-  isConnected: boolean,
+interface StateProps {
+  isConnected: boolean;
 }
 
 interface DispatchProps {
-  connectionChange: ActionCreator<ReturnType<typeof connectionChange>>
+  connectionChange: ActionCreator<ReturnType<typeof connectionChange>>;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -51,12 +53,18 @@ class ReduxNetworkProvider extends React.Component<Props> {
       httpMethod = DEFAULT_HTTP_METHOD
     } = this.props;
     const passDownProps: OwnProps = {
-      pingTimeout, pingServerUrl, shouldPing, pingInterval, pingOnlyIfOffline,
-      pingInBackground, httpMethod
-    }
+      pingTimeout,
+      pingServerUrl,
+      shouldPing,
+      pingInterval,
+      pingOnlyIfOffline,
+      pingInBackground,
+      httpMethod
+    };
     return (
       <NetworkConnectivity
-        {...this.props} {...passDownProps}
+        {...this.props}
+        {...passDownProps}
         onConnectivityChange={this.handleConnectivityChange}
       >
         {() => children}
@@ -65,8 +73,8 @@ class ReduxNetworkProvider extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: AppState, _: OwnProps): StateProps => ({
-  isConnected: state.network.isConnected,
+const mapStateToProps = (state: AppState, _?: OwnProps): StateProps => ({
+  isConnected: state.network.isConnected
 });
 const mapDispatchToProps: DispatchProps = { connectionChange };
 
@@ -78,5 +86,5 @@ const ConnectedReduxNetworkProvider = connect(
 export {
   ConnectedReduxNetworkProvider as default,
   ReduxNetworkProvider,
-  mapStateToProps,
+  mapStateToProps
 };
