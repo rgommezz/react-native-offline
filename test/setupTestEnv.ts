@@ -1,35 +1,27 @@
-import React from 'react';
-import { NativeModules } from 'react-native';
-import 'jest-enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-import Enzyme from 'enzyme';
-
-// Mocking the NetInfo native module
-NativeModules.RNCNetInfo = {
-  getCurrentState: jest.fn(),
-  addListener: jest.fn(),
-  removeListeners: jest.fn(),
-};
+import "jest-enzyme";
+import Adapter from "enzyme-adapter-react-16";
+import Enzyme from "enzyme";
+import { JSDOM as JSDOMType } from "jsdom";
 
 /**
  * Set up DOM in node.js environment for Enzyme to mount to
  */
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require("jsdom");
 
-const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
-const { window } = jsdom;
+const jsdom = new JSDOM("<!doctype html><html><body></body></html>");
+const { window } = jsdom as JSDOMType;
 
-function copyProps(src, target) {
+function copyProps(src: Object, target: Object) {
   Object.defineProperties(target, {
     ...Object.getOwnPropertyDescriptors(src),
-    ...Object.getOwnPropertyDescriptors(target),
+    ...Object.getOwnPropertyDescriptors(target)
   });
 }
 
 global.window = window;
 global.document = window.document;
 global.navigator = {
-  userAgent: 'node.js',
+  userAgent: "node.js"
 };
 copyProps(window, global);
 
@@ -39,5 +31,4 @@ copyProps(window, global);
  */
 Enzyme.configure({ adapter: new Adapter() });
 
-const originalConsoleError = console.error;
 console.error = () => null;

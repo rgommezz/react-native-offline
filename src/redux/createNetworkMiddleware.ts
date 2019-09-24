@@ -13,11 +13,17 @@ import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from "redux";
 type State = {
   network: NetworkState;
 };
-
+type ActionType = Array<string> | string;
 type Arguments = {
   regexActionType: RegExp;
-  actionTypes: Array<string>;
+  actionTypes: ActionType;
   queueReleaseThrottle: number;
+};
+
+const DEFAULT_ARGUMENTS: Arguments = {
+  actionTypes: [],
+  regexActionType: /FETCH.*REQUEST/,
+  queueReleaseThrottle: 50
 };
 
 type AllActions = EnqueuedAction;
@@ -25,7 +31,7 @@ type AllActions = EnqueuedAction;
 // because I don't know how many middlewares would be added, thunk, oberservable etc
 type StoreDispatch = (...args: any[]) => any;
 
-function validateParams(regexActionType: RegExp, actionTypes: Array<string>) {
+function validateParams(regexActionType: RegExp, actionTypes: ActionType) {
   if ({}.toString.call(regexActionType) !== "[object RegExp]")
     throw new Error("You should pass a regex as regexActionType param");
 
@@ -46,7 +52,7 @@ function findActionToBeDismissed(
 function isObjectAndShouldBeIntercepted(
   action: AllActions,
   regexActionType: RegExp,
-  actionTypes: Array<string>
+  actionTypes: ActionType
 ) {
   if (typeof action === "object" && "type" in action) {
     return (
@@ -63,7 +69,7 @@ function isThunkAndShouldBeIntercepted(action: AllActions) {
 function checkIfActionShouldBeIntercepted(
   action: AllActions,
   regexActionType: RegExp,
-  actionTypes: Array<string>
+  actionTypes: ActionType
 ): boolean {
   return (
     isObjectAndShouldBeIntercepted(action, regexActionType, actionTypes) ||
@@ -102,11 +108,13 @@ export const createReleaseQueue = (
   }
 };
 
-function createNetworkMiddleware({
-  regexActionType = /FETCH.*REQUEST/,
-  actionTypes = [],
-  queueReleaseThrottle = 50
-}: Arguments): Middleware<{}, State, Dispatch> {
+function createNetworkMiddleware(
+  args?: Partial<Arguments>
+): Middleware<{}, State, Dispatch> {
+  const { regexActionType, actionTypes, queueReleaseThrottle } = {
+    ...DEFAULT_ARGUMENTS,
+    ...args
+  };
   return ({ getState }: MiddlewareAPI<Dispatch, State>) => (
     next: StoreDispatch
   ) => (action: AllActions) => {
