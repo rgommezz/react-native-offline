@@ -23,3 +23,5 @@ export type NetworkState = {
 };
 
 export type HTTPMethod = "HEAD" | "OPTIONS";
+
+export type AddUndefined<T> = { [P in keyof T]: T[P] | undefined };
