@@ -7,6 +7,7 @@ import {
   FetchOfflineModeType,
   EnqueuedAction
 } from "./actionCreators";
+import { AnyAction } from "redux";
 
 export const initialState = {
   isConnected: true,
@@ -80,7 +81,7 @@ function handleDismissActionsFromQueue(
 
 export default function(
   state: NetworkState = initialState,
-  action: ActionCreatorTypes
+  action: ActionCreatorTypes | AnyAction
 ): NetworkState {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:
@@ -89,7 +90,8 @@ export default function(
         isConnected: action.payload
       };
     case actionTypes.FETCH_OFFLINE_MODE:
-      return handleOfflineAction(state, action);
+      return handleOfflineAction(state, action as FetchOfflineModeType);
+
     case actionTypes.REMOVE_FROM_ACTION_QUEUE:
       return handleRemoveActionFromQueue(state, action.payload);
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:

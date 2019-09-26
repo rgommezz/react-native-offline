@@ -1,4 +1,3 @@
-/* eslint flowtype/require-parameter-type: 0 */
 import reducer, { initialState, networkSelector } from "../src/redux/reducer";
 import * as actionCreators from "../src/redux/actionCreators";
 import { Dispatch } from "redux";
@@ -192,7 +191,9 @@ describe("thunks", () => {
     describe("action with meta.retry === true", () => {
       it("should add the action to the queue if the thunk is different", () => {
         const prevState = getState(false);
-        fetchThunk.meta = {
+
+        // Property 'meta' does not exist on type '(dispatch: Dispatch<AnyAction>) => void'
+        (fetchThunk as any).meta = {
           retry: true
         };
         const action = actionCreators.fetchOfflineMode(fetchThunk);
@@ -212,7 +213,7 @@ describe("thunks", () => {
         const prevState = getState(false, thunk);
 
         const similarThunk = thunkFactory("bar");
-        similarThunk.meta = {
+        (similarThunk as any).meta = {
           retry: true
         };
         const action = actionCreators.fetchOfflineMode(similarThunk);
@@ -312,12 +313,14 @@ describe("networkSelector", () => {
     const state = {
       network: {
         isConnected: true,
-        actionQueue: ["foo"]
+        // actionQueue contains `EnqueuedAction` objects? Correct?
+        // actionQueue: ["foo"]
+        actionQueue: [{ type: "foo", payload: {} }]
       }
     };
     expect(networkSelector(state)).toEqual({
       isConnected: true,
-      actionQueue: ["foo"]
+      actionQueue: [{ type: "foo", payload: {} }]
     });
   });
 });
