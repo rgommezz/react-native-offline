@@ -12,6 +12,7 @@ const networkReducer = createReducer();
 const getState = (isConnected = false, ...actionQueue) => ({
   isConnected,
   actionQueue,
+  hasQueueBeenHalted: false,
 });
 
 /** Actions used from now on to test different scenarios */
@@ -63,6 +64,7 @@ describe('CONNECTION_CHANGE action type', () => {
     expect(networkReducer(initialState, mockAction)).toEqual({
       isConnected: false,
       actionQueue: [],
+      hasQueueBeenHalted: false,
     });
   });
 });
@@ -106,6 +108,7 @@ describe('OFFLINE_ACTION action type', () => {
         expect(nextState).toEqual({
           isConnected: false,
           actionQueue: [prevActionToRetry1],
+          hasQueueBeenHalted: false,
         });
 
         const action2 = actionCreators.fetchOfflineMode(prevActionToRetry2);
@@ -233,6 +236,17 @@ describe('REMOVE_ACTION_FROM_QUEUE action type', () => {
         prevActionToRetry1WithDifferentPayload,
       ),
     );
+  });
+});
+
+describe('QUEUE_SEMAPHORE_CHANGE action type', () => {
+  it('Assigns the correct value to hasQueueBeenHalted', () => {
+    expect(
+      networkReducer(undefined, actionCreators.queueSemaphoreChange(true)),
+    ).toEqual({
+      ...initialState,
+      hasQueueBeenHalted: true,
+    });
   });
 });
 

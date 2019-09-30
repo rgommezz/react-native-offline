@@ -378,6 +378,7 @@ describe('createReleaseQueue', () => {
   const mockGetState = jest.fn().mockImplementation(() => ({
     network: {
       isConnected: true,
+      hasQueueBeenHalted: false,
     },
   }));
   const mockDelay = 50;
@@ -385,7 +386,8 @@ describe('createReleaseQueue', () => {
     mockDispatch.mockClear();
     mockGetState.mockClear();
   });
-  it('empties the queue if we are online', async () => {
+
+  it('empties the queue if we are online and queue is not halted', async () => {
     const releaseQueue = createReleaseQueue(
       mockGetState,
       mockDispatch,
@@ -430,6 +432,27 @@ describe('createReleaseQueue', () => {
       removeActionFromQueue('foo'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
+  });
+
+  it('should stop dispatching if queue has been halted', async () => {
+    const haltQueue = () =>
+      new Promise(async resolve => {
+        await wait(30);
+        mockGetState.mockImplementation(() => ({
+          network: {
+            hasQueueBeenHalted: true,
+          }, 
+        }));
+        resolve();
+      });
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+    );
+    const actionQueue = ['foo', 'bar'];
+    await Promise.all([releaseQueue(actionQueue), haltQueue()]);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
   });
 });
 

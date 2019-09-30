@@ -5,6 +5,7 @@ type ActionTypes = {|
   FETCH_OFFLINE_MODE: '@@network-connectivity/FETCH_OFFLINE_MODE',
   REMOVE_FROM_ACTION_QUEUE: '@@network-connectivity/REMOVE_FROM_ACTION_QUEUE',
   DISMISS_ACTIONS_FROM_QUEUE: '@@network-connectivity/DISMISS_ACTIONS_FROM_QUEUE',
+  QUEUE_SEMAPHORE_CHANGE: '@@network-connectivity/QUEUE_SEMAPHORE_CHANGE',
 |};
 
 const actionTypes: ActionTypes = {
@@ -13,6 +14,7 @@ const actionTypes: ActionTypes = {
   REMOVE_FROM_ACTION_QUEUE: '@@network-connectivity/REMOVE_FROM_ACTION_QUEUE',
   DISMISS_ACTIONS_FROM_QUEUE:
     '@@network-connectivity/DISMISS_ACTIONS_FROM_QUEUE',
+  QUEUE_SEMAPHORE_CHANGE: '@@network-connectivity/QUEUE_SEMAPHORE_CHANGE',
 };
 
 export default actionTypes;

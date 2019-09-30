@@ -6,6 +6,7 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   FluxActionForDismissal,
+  FluxActionForQueueSemaphoreChange,
 } from '../types';
 
 type EnqueuedAction = FluxAction | Function;
@@ -52,4 +53,11 @@ export const dismissActionsFromQueue = (
 ): FluxActionForDismissal => ({
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
+});
+
+export const queueSemaphoreChange = (
+  shouldHaltQueue: boolean,
+): FluxActionForQueueSemaphoreChange => ({
+  type: actionTypes.QUEUE_SEMAPHORE_CHANGE,
+  payload: shouldHaltQueue,
 });

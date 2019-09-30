@@ -35,9 +35,15 @@ export type FluxActionForDismissal = {
   payload: string,
 };
 
+export type FluxActionForQueueSemaphoreChange = {
+  type: string,
+  payload: boolean,
+};
+
 export type NetworkState = {
   isConnected: boolean,
   actionQueue: Array<*>,
+  hasQueueBeenHalted: boolean,
 };
 
 export type HTTPMethod = 'HEAD' | 'OPTIONS';
