@@ -3,27 +3,16 @@ import { AppState, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import * as connectivityInterval from "../utils/checkConnectivityInterval";
 import checkInternetAccess from "../utils/checkInternetAccess";
-import {
-  DEFAULT_HTTP_METHOD,
-  DEFAULT_TIMEOUT,
-  DEFAULT_PING_SERVER_URL
-} from "../utils/constants";
-import { HTTPMethod } from "../types";
+import { ConnectivityArgs } from "../types";
 import { ConnectivityState } from "./NetworkContext";
+import DEFAULT_ARGS from "../utils/defaultConnectivityArgs";
 
 export type RequiredProps = {
   children: (state: ConnectivityState) => React.ReactNode;
 } & Partial<DefaultProps>;
 
-export type DefaultProps = {
+export type DefaultProps = ConnectivityArgs & {
   onConnectivityChange: (isConnected: boolean) => void;
-  pingTimeout: number;
-  pingServerUrl: string;
-  shouldPing: boolean;
-  pingInterval: number;
-  pingOnlyIfOffline: boolean;
-  pingInBackground: boolean;
-  httpMethod: HTTPMethod;
 };
 
 function validateProps(props: RequiredProps) {
@@ -55,20 +44,15 @@ function validateProps(props: RequiredProps) {
   }
 }
 
+const defaultProps = {
+  ...DEFAULT_ARGS,
+  onConnectivityChange: () => undefined
+};
 class NetworkConnectivity extends React.PureComponent<
   RequiredProps,
   ConnectivityState
 > {
-  static defaultProps = {
-    onConnectivityChange: () => undefined,
-    pingTimeout: DEFAULT_TIMEOUT,
-    pingServerUrl: DEFAULT_PING_SERVER_URL,
-    shouldPing: true,
-    pingInterval: 0,
-    pingOnlyIfOffline: false,
-    pingInBackground: false,
-    httpMethod: DEFAULT_HTTP_METHOD
-  };
+  static defaultProps = defaultProps;
 
   constructor(props: RequiredProps) {
     super(props);

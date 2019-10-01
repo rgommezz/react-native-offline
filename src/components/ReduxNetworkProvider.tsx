@@ -7,22 +7,14 @@ import {
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT
 } from "../utils/constants";
-import { HTTPMethod, NetworkState } from "../types";
+import { NetworkState, ConnectivityArgs } from "../types";
 import { ActionCreator } from "redux";
 
 interface AppState {
   network: Partial<NetworkState>;
 }
 
-interface OwnProps {
-  pingTimeout?: number;
-  pingServerUrl?: string;
-  shouldPing?: boolean;
-  pingInterval?: number;
-  pingOnlyIfOffline?: boolean;
-  pingInBackground?: boolean;
-  httpMethod?: HTTPMethod;
-}
+type OwnProps = Partial<ConnectivityArgs>;
 
 interface StateProps {
   isConnected: boolean;

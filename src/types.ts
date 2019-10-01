@@ -25,3 +25,15 @@ export type NetworkState = {
 export type HTTPMethod = "HEAD" | "OPTIONS";
 
 export type AddUndefined<T> = { [P in keyof T]: T[P] | undefined };
+
+export type ConnectivityArgs = {
+  pingTimeout: number;
+  pingServerUrl: string;
+  shouldPing: boolean;
+  pingInterval: number;
+  pingOnlyIfOffline: boolean;
+  pingInBackground: boolean;
+  httpMethod: HTTPMethod;
+};
+
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
