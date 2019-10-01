@@ -61,3 +61,7 @@ export const queueSemaphoreChange = (
   type: actionTypes.QUEUE_SEMAPHORE_CHANGE,
   payload: shouldHaltQueue,
 });
+
+export default {
+  queueSemaphoreChange,
+};
