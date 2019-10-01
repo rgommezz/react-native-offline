@@ -92,8 +92,14 @@ function handleQueueSemaphoreChange(
   };
 }
 
-export default (comparisonFn: Function = getSimilarActionInQueue) => (
-  state: NetworkState = initialState,
+export default (
+  comparisonFn: Function = getSimilarActionInQueue,
+  shouldQueueStartAutomatically: boolean = true,
+) => (
+  state: NetworkState = {
+    ...initialState,
+    hasQueueBeenHalted: !shouldQueueStartAutomatically,
+  },
   action: *,
 ): NetworkState => {
   switch (action.type) {

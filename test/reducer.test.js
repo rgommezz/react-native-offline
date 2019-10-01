@@ -397,3 +397,21 @@ describe('networkSelector', () => {
     });
   });
 });
+
+describe('network reducer config', () => {
+  it('has hasQueueBeenHalted set to false by default', () => {
+    expect(networkReducer(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(
+      initialState,
+    );
+  });
+
+  it('has hasQueueBeenHalted set to true if shouldQueueStartAutomatically is false', () => {
+    const networkReducerWithConfig = createReducer(undefined, false);
+    expect(
+      networkReducerWithConfig(undefined, { type: 'ACTION_I_DONT_CARE' }),
+    ).toEqual({
+      ...initialState,
+      hasQueueBeenHalted: true,
+    });
+  });
+});
