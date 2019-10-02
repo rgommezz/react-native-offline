@@ -23,6 +23,7 @@ type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
   queueReleaseThrottle: number,
+  shouldDequeueSelector: (state: State) => boolean
 |};
 
 function validateParams(regexActionType, actionTypes) {
@@ -70,11 +71,12 @@ function didComeBackOnline(action, wasConnected) {
   );
 }
 
-export const createReleaseQueue = (getState, next, delay) => async queue => {
+export const createReleaseQueue = (getState, next, delay, shouldDequeueSelector) => async queue => {
   // eslint-disable-next-line
   for (const action of queue) {
     const { isConnected } = getState().network;
-    if (isConnected) {
+    if (isConnected &&
+      shouldDequeueSelector(getState())) {
       next(removeActionFromQueue(action));
       next(action);
       // eslint-disable-next-line
@@ -89,6 +91,7 @@ function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
   queueReleaseThrottle = 50,
+  shouldDequeueSelector = (state) => true,
 }: Arguments = {}) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
@@ -98,6 +101,7 @@ function createNetworkMiddleware({
       getState,
       next,
       queueReleaseThrottle,
+      shouldDequeueSelector
     );
     validateParams(regexActionType, actionTypes);
 
@@ -114,7 +118,8 @@ function createNetworkMiddleware({
     }
 
     const isBackOnline = didComeBackOnline(action, isConnected);
-    if (isBackOnline) {
+    let shouldDequeue = (isConnected || isBackOnline) && actionQueue.length > 0 && shouldDequeueSelector(getState());
+    if (shouldDequeue) {
       // Dispatching queued actions in order of arrival (if we have any)
       next(action);
       return releaseQueue(actionQueue);

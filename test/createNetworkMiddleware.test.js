@@ -385,11 +385,37 @@ describe('createReleaseQueue', () => {
     mockDispatch.mockClear();
     mockGetState.mockClear();
   });
-  it('empties the queue if we are online', async () => {
+  
+  it('empties the queue if we are online and dequeue selector returns true', async () => {
+    const mockDequeueSelector = () => true;
     const releaseQueue = createReleaseQueue(
       mockGetState,
       mockDispatch,
       mockDelay,
+      mockDequeueSelector,
+    );
+    const actionQueue = ['foo', 'bar'];
+    await releaseQueue(actionQueue);
+    expect(mockDispatch).toHaveBeenCalledTimes(4);
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      1,
+      removeActionFromQueue('foo'),
+    );
+    expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      3,
+      removeActionFromQueue('bar'),
+    );
+    expect(mockDispatch).toHaveBeenNthCalledWith(4, 'bar');
+  });
+
+  it('does not empty the queue if we are online and dequeue selector returns false', async () => {
+    const mockDequeueSelector = () => false;
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+      mockDequeueSelector,
     );
     const actionQueue = ['foo', 'bar'];
     await releaseQueue(actionQueue);
