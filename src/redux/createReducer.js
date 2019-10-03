@@ -13,6 +13,7 @@ import type {
 export const initialState = {
   isConnected: true,
   actionQueue: [],
+  hasQueueBeenHalted: false,
 };
 
 function handleOfflineAction(
@@ -81,8 +82,24 @@ function handleDismissActionsFromQueue(
   };
 }
 
-export default (comparisonFn: Function = getSimilarActionInQueue) => (
-  state: NetworkState = initialState,
+function handleQueueSemaphoreChange(
+  state: NetworkState,
+  hasQueueBeenHalted: boolean,
+): NetworkState {
+  return {
+    ...state,
+    hasQueueBeenHalted,
+  };
+}
+
+export default (
+  comparisonFn: Function = getSimilarActionInQueue,
+  shouldQueueStartAutomatically: boolean = true,
+) => (
+  state: NetworkState = {
+    ...initialState,
+    hasQueueBeenHalted: !shouldQueueStartAutomatically,
+  },
   action: *,
 ): NetworkState => {
   switch (action.type) {
@@ -97,6 +114,8 @@ export default (comparisonFn: Function = getSimilarActionInQueue) => (
       return handleRemoveActionFromQueue(state, action.payload);
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
       return handleDismissActionsFromQueue(state, action.payload);
+    case actionTypes.QUEUE_SEMAPHORE_CHANGE:
+      return handleQueueSemaphoreChange(state, action.payload);
     default:
       return state;
   }

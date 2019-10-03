@@ -71,12 +71,19 @@ function didComeBackOnline(action, wasConnected) {
   );
 }
 
-export const createReleaseQueue = (getState, next, delay, shouldDequeueSelector) => async queue => {
+function didQueueResume(action, wasQueueHalted) {
+  return (
+    action.type === networkActionTypes.QUEUE_SEMAPHORE_CHANGE &&
+    wasQueueHalted &&
+    action.payload === false
+  );
+}
+
+export const createReleaseQueue = (getState, next, delay) => async queue => {
   // eslint-disable-next-line
   for (const action of queue) {
-    const { isConnected } = getState().network;
-    if (isConnected &&
-      shouldDequeueSelector(getState())) {
+    const { isConnected, hasQueueBeenHalted } = getState().network;
+    if (isConnected && !hasQueueBeenHalted) {
       next(removeActionFromQueue(action));
       next(action);
       // eslint-disable-next-line
@@ -96,7 +103,7 @@ function createNetworkMiddleware({
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {
-    const { isConnected, actionQueue } = getState().network;
+    const { isConnected, actionQueue, hasQueueBeenHalted } = getState().network;
     const releaseQueue = createReleaseQueue(
       getState,
       next,
@@ -118,8 +125,10 @@ function createNetworkMiddleware({
     }
 
     const isBackOnline = didComeBackOnline(action, isConnected);
-    let shouldDequeue = (isConnected || isBackOnline) && actionQueue.length > 0 && shouldDequeueSelector(getState());
-    if (shouldDequeue) {
+    const hasQueueBeenResumed = didQueueResume(action, hasQueueBeenHalted);
+
+    let shouldDequeue = (isConnected || isBackOnline || hasQueueBeenResumed) && actionQueue.length > 0 && shouldDequeueSelector(getState());
+    if (isBackOnline || hasQueueBeenResumed) {
       // Dispatching queued actions in order of arrival (if we have any)
       next(action);
       return releaseQueue(actionQueue);
