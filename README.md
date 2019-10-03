@@ -1,5 +1,5 @@
 # react-native-offline
-[![All Contributors](https://img.shields.io/badge/all_contributors-32-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-33-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
@@ -818,6 +818,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
     <td align="center"><a href="https://github.com/jozr"><img src="https://avatars1.githubusercontent.com/u/8154741?v=4" width="100px;" alt="Josephine Wright"/><br /><sub><b>Josephine Wright</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=jozr" title="Documentation">📖</a></td>
     <td align="center"><a href="http://umbrellait.com"><img src="https://avatars0.githubusercontent.com/u/16078455?v=4" width="100px;" alt="Kirill Karpov"/><br /><sub><b>Kirill Karpov</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=umbrella-kirill-karpov" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/LiquidSean"><img src="https://avatars3.githubusercontent.com/u/1811319?v=4" width="100px;" alt="Sean Luthjohn"/><br /><sub><b>Sean Luthjohn</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/cuttlas"><img src="https://avatars2.githubusercontent.com/u/1228574?v=4" width="100px;" alt="cuttlas"/><br /><sub><b>cuttlas</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=cuttlas" title="Documentation">📖</a></td>
   </tr>
 </table>
 
