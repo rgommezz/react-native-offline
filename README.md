@@ -447,7 +447,7 @@ A queue system to store actions that failed due to lack of connectivity. It work
 
 #### Managing duplicate actions
 If a similar action already exists on the queue, we remove it and push it again to the end, so it has an overriding effect.
-The default criteria to detect duplicates is by using `lodash.isEqual` for plain actions and `thunk.toString()` for thunks/functions. However, you can customise the comparison function to acommodate it to your needs. For that, you need to use the factory version for your network reducer.
+The default criteria to detect duplicates is by using `lodash.isEqual` for plain actions and `thunk.toString()` for thunks/functions. However, you can customise the comparison function to acommodate it to your needs. For that, you need to use the factory version for your network reducer. **Please remember to name `network` the key of your reducer**.
 
 ```js
 // configureStore.js
@@ -457,7 +457,8 @@ import { comparisonFn } from './utils';
 
 const rootReducer = combineReducers({
   // ... your other reducers here ...
-  createNetworkReducer(comparisonFn),
+  // Use network key, that's important!
+  network: createNetworkReducer(comparisonFn),
 });
 
 const store = createStore(rootReducer);
