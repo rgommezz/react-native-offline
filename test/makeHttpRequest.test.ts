@@ -13,7 +13,13 @@ const mockOnLoad = jest.fn();
 const mockOnError = jest.fn();
 const mockOnTimeout = jest.fn();
 
+type Fn = () => any;
+
+//@ts-ignore
 global.XMLHttpRequest = class MockXMLHttpRequest {
+  private status: number = 0;
+  private t: number = 0;
+  private callbackToFire: string;
   constructor(callbackToFire = "") {
     this.callbackToFire = callbackToFire;
     switch (callbackToFire) {
@@ -36,34 +42,38 @@ global.XMLHttpRequest = class MockXMLHttpRequest {
     }
   }
 
-  set timeout(t) {
+  set timeout(t: number) {
     mockSetTimeout(t);
     this.t = t;
   }
 
-  set onload(fn) {
+  set onload(fn: Fn) {
     mockOnLoad();
     if (this.callbackToFire.includes("onload")) {
       fn.call(this);
     }
   }
 
-  set onerror(fn) {
+  set onerror(fn: Fn) {
     mockOnError();
     if (this.callbackToFire === "onerror") {
       fn.call(this);
     }
   }
 
-  set ontimeout(fn) {
+  set ontimeout(fn: Fn) {
     mockOnTimeout();
     if (this.callbackToFire === "ontimeout") {
       fn.call(this);
     }
   }
 };
+
+//@ts-ignore
 global.XMLHttpRequest.prototype.open = mockOpen;
+//@ts-ignore
 global.XMLHttpRequest.prototype.setRequestHeader = mockSetRequestHeader;
+//@ts-ignore
 global.XMLHttpRequest.prototype.send = mockSend;
 
 describe("makeHttpRequest", () => {
@@ -76,7 +86,7 @@ describe("makeHttpRequest", () => {
     mockOnTimeout.mockClear();
   });
   const params = {
-    method: "HEAD",
+    method: "HEAD" as "HEAD",
     url: "foo.com",
     timeout: 5000
   };
@@ -90,10 +100,11 @@ describe("makeHttpRequest", () => {
     expect(mockOnTimeout).toHaveBeenCalledTimes(1);
     expect(mockSetRequestHeader).toHaveBeenCalledTimes(3);
     headerKeys.forEach((key, index) => {
+      const k = key as keyof typeof headers;
       expect(mockSetRequestHeader).toHaveBeenNthCalledWith(
         index + 1,
-        key,
-        headers[key]
+        k,
+        headers[k]
       );
     });
     expect(mockSend).toHaveBeenCalledWith(null);

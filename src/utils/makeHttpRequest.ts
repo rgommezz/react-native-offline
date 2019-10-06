@@ -1,31 +1,31 @@
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_TIMEOUT,
-} from './constants';
+  DEFAULT_TIMEOUT
+} from "./constants";
 
 type Options = {
-  method?: 'HEAD' | 'OPTIONS',
-  url: string,
-  timeout?: number,
+  method?: "HEAD" | "OPTIONS";
+  url: string;
+  timeout?: number;
   testMethod?:
-    | 'onload/2xx'
-    | 'onload/3xx'
-    | 'onload/4xx'
-    | 'onload/5xx'
-    | 'onerror'
-    | 'ontimeout',
+    | "onload/2xx"
+    | "onload/3xx"
+    | "onload/4xx"
+    | "onload/5xx"
+    | "onerror"
+    | "ontimeout";
 };
 
 type ResolvedValue = {
-  status: number,
+  status: number;
 };
 
-const CACHE_HEADER_VALUE = 'no-cache, no-store, must-revalidate';
+const CACHE_HEADER_VALUE = "no-cache, no-store, must-revalidate";
 export const headers = {
-  'Cache-Control': CACHE_HEADER_VALUE, 
-  Pragma: 'no-cache' as 'no-cache',
-  Expires: '0',
+  "Cache-Control": CACHE_HEADER_VALUE,
+  Pragma: "no-cache" as "no-cache",
+  Expires: "0"
 };
 
 /**
@@ -38,45 +38,48 @@ export const headers = {
  */
 
 type PromiseHandler = (args: ResolvedValue) => void;
-export default function makeHttpRequest({
-  method = DEFAULT_HTTP_METHOD,
-  url = DEFAULT_PING_SERVER_URL,
-  timeout = DEFAULT_TIMEOUT,
-}: Options) {
-  return new Promise(
-    (resolve: PromiseHandler, reject: PromiseHandler) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open(method, url);
-      xhr.timeout = timeout;
-      xhr.onload = function onLoad() {
-        // 3xx is a valid response for us, since the server was reachable
-        if (this.status >= 200 && this.status < 400) {
-          resolve({
-            status: this.status,
-          });
-        } else {
-          reject({
-            status: this.status,
-          });
-        }
-      };
-      xhr.onerror = function onError() {
-        reject({
-          status: this.status,
+const DEFAULT_OPTIONS: Options = {
+  method: DEFAULT_HTTP_METHOD,
+  url: DEFAULT_PING_SERVER_URL,
+  timeout: DEFAULT_TIMEOUT
+};
+export default function makeHttpRequest(args?: Options) {
+  const {
+    method = DEFAULT_HTTP_METHOD,
+    url = DEFAULT_PING_SERVER_URL,
+    timeout = DEFAULT_TIMEOUT
+  } = args || DEFAULT_OPTIONS;
+  return new Promise((resolve: PromiseHandler, reject: PromiseHandler) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.timeout = timeout;
+    xhr.onload = function onLoad() {
+      // 3xx is a valid response for us, since the server was reachable
+      if (this.status >= 200 && this.status < 400) {
+        resolve({
+          status: this.status
         });
-      };
-      xhr.ontimeout = function onTimeOut() {
+      } else {
         reject({
-          status: this.status,
+          status: this.status
         });
-      };
-      
-      
-      Object.keys(headers).forEach(key => {
-        const k = key as keyof typeof headers;
-        xhr.setRequestHeader(k, headers[k]);
+      }
+    };
+    xhr.onerror = function onError() {
+      reject({
+        status: this.status
       });
-      xhr.send(null);
-    },
-  );
+    };
+    xhr.ontimeout = function onTimeOut() {
+      reject({
+        status: this.status
+      });
+    };
+
+    Object.keys(headers).forEach(key => {
+      const k = key as keyof typeof headers;
+      xhr.setRequestHeader(k, headers[k]);
+    });
+    xhr.send(null);
+  });
 }

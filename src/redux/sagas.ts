@@ -6,7 +6,7 @@ import { networkSelector } from "./reducer";
 import checkInternetAccess from "../utils/checkInternetAccess";
 import { connectionChange } from "./actionCreators";
 import DEFAULT_ARGS from "../utils/defaultConnectivityArgs";
-import { ConnectivityArgs } from "../types";
+import { ConnectivityArgs, NetworkState } from "../types";
 import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
@@ -161,8 +161,8 @@ export function* connectionIntervalSaga({
   try {
     while (true) {
       yield take(chan);
-      const { isConnected } = yield select(networkSelector);
-      if (!(isConnected && pingOnlyIfOffline === true)) {
+      const state: NetworkState = yield select(networkSelector);
+      if (!(state.isConnected && pingOnlyIfOffline === true)) {
         yield fork(checkInternetAccessSaga, {
           pingTimeout,
           pingServerUrl,
@@ -210,8 +210,8 @@ export function* checkInternetAccessSaga({
  * @param hasInternetAccess
  */
 export function* handleConnectivityChange(hasInternetAccess: boolean) {
-  const { isConnected } = yield select(networkSelector);
-  if (isConnected !== hasInternetAccess) {
+  const state: NetworkState = yield select(networkSelector);
+  if (state.isConnected !== hasInternetAccess) {
     yield put(connectionChange(hasInternetAccess));
   }
 }

@@ -1,5 +1,9 @@
 /* @flow */
-import { testSaga } from "redux-saga-test-plan";
+import {
+  testSaga,
+  TestApi,
+  TestApiWithEffectsTesters
+} from "redux-saga-test-plan";
 import { Platform, AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import networkSaga, {
@@ -60,7 +64,7 @@ describe("sagas", () => {
       shouldPing: args.shouldPing,
       httpMethod: args.httpMethod
     };
-    function channelLoop(saga) {
+    function channelLoop(saga: TestApi) {
       return saga
         .next()
         .call(createNetInfoConnectionChangeChannel, netInfoEventChannelFn)
@@ -167,7 +171,7 @@ describe("sagas", () => {
 
   describe("connectionIntervalSaga", () => {
     const { shouldPing, ...params } = args;
-    function takeChannelAndGetConnection(saga, isConnected) {
+    function takeChannelAndGetConnection(saga: TestApi, isConnected: boolean) {
       return saga
         .next()
         .call(createIntervalChannel, 3000, intervalChannelFn)
@@ -179,7 +183,8 @@ describe("sagas", () => {
     }
     it(`forks checkInternetAccessSaga if it's NOT connected or it is,
      but pingOnlyIfOffline is false`, () => {
-      let saga = testSaga(connectionIntervalSaga, {
+      // @ts-ignore
+      let saga: TestApiWithEffectsTesters = testSaga(connectionIntervalSaga, {
         ...params,
         pingOnlyIfOffline: false,
         pingInterval: 3000
@@ -198,7 +203,8 @@ describe("sagas", () => {
 
     it(`does NOT fork checkInternetAccessSaga if it's connected 
     AND pingOnlyIfOffline is true`, () => {
-      let saga = testSaga(connectionIntervalSaga, {
+      // @ts-ignore
+      let saga: TestApiWithEffectsTesters = testSaga(connectionIntervalSaga, {
         ...params,
         pingOnlyIfOffline: true,
         pingInterval: 3000
@@ -210,7 +216,9 @@ describe("sagas", () => {
     it("closes the channel when it ends emitting", () => {
       const mockCloseFn = jest.fn();
       const mockChannel = {
-        close: mockCloseFn
+        close: mockCloseFn,
+        isConnected: false,
+        actionQueue: []
       };
       const iterator = connectionIntervalSaga({
         ...params,
@@ -223,6 +231,7 @@ describe("sagas", () => {
       // hence executing the finally block.
       iterator.next(mockChannel);
       try {
+        // @ts-ignore
         iterator.next(true);
         expect(mockCloseFn).toHaveBeenCalled();
         // eslint-disable-next-line
@@ -232,7 +241,9 @@ describe("sagas", () => {
     it("does NOT close the channel if redux-saga does NOT yield a cancelled effect", () => {
       const mockCloseFn = jest.fn();
       const mockChannel = {
-        close: mockCloseFn
+        close: mockCloseFn,
+        isConnected: false,
+        actionQueue: []
       };
       const iterator = connectionIntervalSaga({
         ...params,
@@ -245,6 +256,7 @@ describe("sagas", () => {
       // hence executing the finally block.
       iterator.next(mockChannel);
       try {
+        // @ts-ignore
         iterator.next(false);
         expect(mockCloseFn).not.toHaveBeenCalled();
         // eslint-disable-next-line
@@ -285,6 +297,7 @@ describe("sagas", () => {
   describe("handleConnectivityChange", () => {
     it("dispatches a CONNECTION_CHANGE action if the connection changed ", () => {
       const actionQueue = ["foo", "bar"];
+      // @ts-ignore
       const saga = testSaga(handleConnectivityChange, false);
       saga
         .next()
@@ -297,6 +310,7 @@ describe("sagas", () => {
 
     it("does NOT dispatch if connection did NOT change and we are offline", () => {
       const actionQueue = ["foo", "bar"];
+      // @ts-ignore
       const saga = testSaga(handleConnectivityChange, false);
       saga
         .next()

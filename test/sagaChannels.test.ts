@@ -1,55 +1,56 @@
-import { eventChannel } from 'redux-saga';
-import NetInfo from '@react-native-community/netinfo';
+import { mocked } from "ts-jest/utils";
+import { eventChannel } from "redux-saga";
+import NetInfo from "@react-native-community/netinfo";
 import {
   createNetInfoConnectionChangeChannel,
   netInfoEventChannelFn,
   createIntervalChannel,
-  intervalChannelFn,
-} from '../src/redux/sagas';
+  intervalChannelFn
+} from "../src/redux/sagas";
 
-jest.mock('redux-saga');
-jest.mock('@react-native-community/netinfo');
+jest.mock("redux-saga");
+jest.mock("@react-native-community/netinfo");
 
-describe('createNetInfoConnectionChangeChannel', () => {
-  it('returns a redux-saga channel', () => {
-    const eventChannelMock = jest.fn().mockReturnValue('channel');
-    eventChannel.mockImplementation(eventChannelMock);
-    const mockNetInfoChannelFn = jest.fn().mockReturnValue('handlerFn');
+describe("createNetInfoConnectionChangeChannel", () => {
+  it("returns a redux-saga channel", () => {
+    const eventChannelMock = jest.fn().mockReturnValue("channel");
+    mocked(eventChannel).mockImplementation(eventChannelMock);
+    const mockNetInfoChannelFn = jest.fn().mockReturnValue("handlerFn");
     expect(createNetInfoConnectionChangeChannel(mockNetInfoChannelFn)).toBe(
-      'channel',
+      "channel"
     );
     expect(eventChannelMock).toHaveBeenCalledWith(mockNetInfoChannelFn);
   });
 
-  it('netInfoEventChannelFn adheres to eventChannel cb interface', () => {
+  it("netInfoEventChannelFn adheres to eventChannel cb interface", () => {
     const emitMock = jest.fn();
     const unsubscribe = netInfoEventChannelFn(emitMock);
     expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
-      'connectionChange',
-      emitMock,
+      "connectionChange",
+      emitMock
     );
     unsubscribe();
     expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledWith(
-      'connectionChange',
-      emitMock,
+      "connectionChange",
+      emitMock
     );
   });
 });
 
-describe('createIntervalChannel', () => {
+describe("createIntervalChannel", () => {
   const interval = 50;
-  it('returns a redux-saga channel', () => {
-    const eventChannelMock = jest.fn().mockReturnValue('channel');
-    eventChannel.mockImplementation(eventChannelMock);
-    const mockIntervalChannelFn = jest.fn().mockReturnValue('handlerFn');
+  it("returns a redux-saga channel", () => {
+    const eventChannelMock = jest.fn().mockReturnValue("channel");
+    mocked(eventChannel).mockImplementation(eventChannelMock);
+    const mockIntervalChannelFn = jest.fn().mockReturnValue("handlerFn");
     expect(createIntervalChannel(interval, mockIntervalChannelFn)).toBe(
-      'channel',
+      "channel"
     );
     expect(mockIntervalChannelFn).toHaveBeenCalledWith(interval);
-    expect(eventChannel).toHaveBeenCalledWith('handlerFn');
+    expect(eventChannel).toHaveBeenCalledWith("handlerFn");
   });
 
-  it('intervalChannelFn adheres to eventChannel cb interface', done => {
+  it("intervalChannelFn adheres to eventChannel cb interface", done => {
     global.clearInterval = jest.fn();
     const emitMock = jest.fn();
     const unsubscribe = intervalChannelFn(interval)(emitMock);
