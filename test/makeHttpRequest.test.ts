@@ -17,7 +17,9 @@ type Fn = () => any;
 
 //@ts-ignore
 global.XMLHttpRequest = class MockXMLHttpRequest {
+  //@ts-ignore
   private status: number = 0;
+  //@ts-ignore
   private t: number = 0;
   private callbackToFire: string;
   constructor(callbackToFire = "") {

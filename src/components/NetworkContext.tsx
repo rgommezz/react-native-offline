@@ -1,11 +1,9 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export type ConnectivityState = {
-  isConnected: boolean,
+  isConnected: boolean;
 };
 
-const NetworkContext = createContext<ConnectivityState>({
-  isConnected: true,
-});
+const NetworkContext = createContext<ConnectivityState>(undefined as any);
 
 export default NetworkContext;

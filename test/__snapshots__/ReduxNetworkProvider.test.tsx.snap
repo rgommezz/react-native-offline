@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReduxNetworkProvider render has the correct structure 1`] = `
+<NetworkConnectivity
+  dispatch={[MockFunction]}
+  httpMethod="HEAD"
+  isConnected={false}
+  onConnectivityChange={[Function]}
+  pingInBackground={false}
+  pingInterval={0}
+  pingOnlyIfOffline={false}
+  pingServerUrl="https://www.google.com/"
+  pingTimeout={10000}
+  shouldPing={true}
+>
+  [Function]
+</NetworkConnectivity>
+`;

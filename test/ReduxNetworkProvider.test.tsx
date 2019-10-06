@@ -1,48 +1,48 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import {
   shallow as rnShallow,
   render as rnRender
 } from "react-native-testing-library";
 import { shallow } from "enzyme";
-import ConnectedReduxNetworkProvider, {
+import {
   ReduxNetworkProvider,
   mapStateToProps
 } from "../src/components/ReduxNetworkProvider";
 import { connectionChange } from "../src/redux/actionCreators";
 
-const mockedConnectionChange = jest.fn(connectionChange);
+const dispatch = jest.fn();
 const props = {
-  connectionChange: mockedConnectionChange,
-  isConnected: false,
-  actionQueue: []
+  dispatch,
+  isConnected: false
 };
 
 const getProps = (overrides = {}) => ({ ...props, ...overrides });
 
 describe("ReduxNetworkProvider", () => {
   afterEach(() => {
-    mockedConnectionChange.mockClear();
+    dispatch.mockClear();
   });
 
   describe("render", () => {
     it("has the correct structure", () => {
       const { output } = rnShallow(
-        <ConnectedReduxNetworkProvider>
+        <ReduxNetworkProvider {...props}>
           <View />
-        </ConnectedReduxNetworkProvider>
+        </ReduxNetworkProvider>
       );
       expect(output).toMatchSnapshot();
     });
 
     it("renders the children correctly", () => {
-      const { getByTestId } = rnRender(
-        <ConnectedReduxNetworkProvider>
-          <View key="foo" testID="childrenView" />
-        </ConnectedReduxNetworkProvider>
+      const { getByText } = rnRender(
+        <ReduxNetworkProvider {...props}>
+          <Text>Baz</Text>
+        </ReduxNetworkProvider>
       );
-      const viewChild = getByTestId("childrenView");
-      expect(viewChild.props.title).toBe("foo");
+
+      const viewChild = getByText("Baz");
+      expect(viewChild).toBeDefined();
     });
   });
 
@@ -52,8 +52,8 @@ describe("ReduxNetworkProvider", () => {
         <ReduxNetworkProvider {...props} />
       );
       wrapper.instance().handleConnectivityChange(true);
-      expect(props.connectionChange).toHaveBeenCalledWith(true);
-      expect(props.connectionChange).toHaveBeenCalledTimes(1);
+      expect(props.dispatch).toHaveBeenCalledWith(connectionChange(true));
+      expect(props.dispatch).toHaveBeenCalledTimes(1);
     });
 
     it(`does NOT dispatch a CONNECTION_CHANGE action if the connection
@@ -62,7 +62,7 @@ describe("ReduxNetworkProvider", () => {
         <ReduxNetworkProvider {...getProps({ isConnected: true })} />
       );
       wrapper.instance().handleConnectivityChange(true);
-      expect(props.connectionChange).not.toHaveBeenCalled();
+      expect(props.dispatch).not.toHaveBeenCalled();
     });
   });
 });

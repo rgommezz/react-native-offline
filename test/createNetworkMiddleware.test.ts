@@ -334,7 +334,7 @@ describe("createNetworkMiddleware with dismissing actions functionality", () => 
       const networkMiddleware = createNetworkMiddleware();
       const middlewares = [networkMiddleware];
       const mockStore = configureStore(middlewares);
-      fetchThunk.meta = {
+      (fetchThunk as any).meta = {
         retry: true,
         dismiss: []
       };
@@ -352,15 +352,14 @@ describe("createNetworkMiddleware with dismissing actions functionality", () => 
       expect(actionsDispatched).toEqual([{ type: "NAVIGATE_BACK" }]);
     });
 
-    fetchThunk.meta = {
-      retry: true,
-      dismiss: ["NAVIGATE_TO_LOGIN"]
-    };
     it("SOME thunks enqueued with dismiss options", () => {
       const networkMiddleware = createNetworkMiddleware();
       const middlewares = [networkMiddleware];
       const mockStore = configureStore(middlewares);
-
+      (fetchThunk as any).meta = {
+        retry: true,
+        dismiss: ["NAVIGATE_TO_LOGIN"]
+      };
       const navigationAction = { type: "NAVIGATE_TO_LOGIN" };
       const initialState = {
         network: {
@@ -431,7 +430,7 @@ describe("createReleaseQueue", () => {
     await Promise.all([releaseQueue(actionQueue), switchToOffline()]);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockDispatch).toHaveBeenNthCalledWith(1, removeActionFromQueue(foo));
-    expect(mockDispatch).toHaveBeenNthCalledWith(2, "foo");
+    expect(mockDispatch).toHaveBeenNthCalledWith(2, foo);
   });
 });
 
@@ -443,8 +442,9 @@ describe("createNetworkMiddleware with wrong type params", () => {
         actionQueue: []
       }
     };
+    // typecasting as any because otherwise TS won't let you send a string
     const networkMiddleware = createNetworkMiddleware({
-      regexActionType: /REFRESH/
+      regexActionType: "REFRESH" as any
     });
     const middlewares = [networkMiddleware];
     const mockStore = configureStore(middlewares);

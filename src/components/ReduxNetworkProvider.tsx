@@ -8,7 +8,7 @@ import {
   DEFAULT_TIMEOUT
 } from "../utils/constants";
 import { NetworkState, ConnectivityArgs } from "../types";
-import { ActionCreator } from "redux";
+import { Dispatch } from "redux";
 
 interface AppState {
   network: Partial<NetworkState>;
@@ -18,18 +18,15 @@ type OwnProps = Partial<ConnectivityArgs>;
 
 interface StateProps {
   isConnected: boolean;
+  dispatch: Dispatch;
 }
 
-interface DispatchProps {
-  connectionChange: ActionCreator<ReturnType<typeof connectionChange>>;
-}
-
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateProps;
 class ReduxNetworkProvider extends React.Component<Props> {
   handleConnectivityChange = (isConnected: boolean) => {
-    const { isConnected: wasConnected, connectionChange } = this.props;
+    const { isConnected: wasConnected, dispatch } = this.props;
     if (isConnected !== wasConnected) {
-      connectionChange(isConnected);
+      dispatch(connectionChange(isConnected));
     }
   };
 
@@ -65,15 +62,13 @@ class ReduxNetworkProvider extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: AppState, _?: OwnProps): StateProps => ({
+const mapStateToProps = (state: AppState, _?: OwnProps) => ({
   isConnected: !!state.network.isConnected
 });
-const mapDispatchToProps: DispatchProps = { connectionChange };
 
-const ConnectedReduxNetworkProvider = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ReduxNetworkProvider);
+const ConnectedReduxNetworkProvider = connect(mapStateToProps)(
+  ReduxNetworkProvider
+);
 
 export {
   ConnectedReduxNetworkProvider as default,

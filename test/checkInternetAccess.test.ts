@@ -44,13 +44,13 @@ describe("checkInternetAccess", () => {
 
   it("resolves to false if there is NOT Internet access", async () => {
     const timeout = 2000;
-    const url = "foo.com";
-    const method = "HEAD";
+    const url = "foo123321.com";
+    const method = "FAIL";
     const hasInternetAccess = await checkInternetAccess({
       timeout,
       url,
       method
-    });
+    } as any); // typecasting it because method can only be HEAD, OPTIONS as per TS
     expect(makeHttpRequest).toHaveBeenCalledWith({
       timeout,
       url,
