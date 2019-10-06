@@ -47,8 +47,9 @@
     "@types/react-test-renderer": "^16.9.0",
     "@types/redux-mock-store": "^1.0.1",
     "all-contributors-cli": "^5.4.0",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.6.0",
+    "babel-jest": "^24.9.0",
     "babel-preset-react-native": "^4.0.1",
     "coveralls": "^3.0.6",
     "enzyme": "^3.8.0",
@@ -61,14 +62,15 @@
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.11.1",
     "husky": "^0.14.3",
-    "jest": "^23.6.0",
+    "jest": "^24.9.0",
     "jest-enzyme": "^7.0.1",
     "jsdom": "^13.1.0",
+    "metro-react-native-babel-preset": "^0.56.0",
     "prettier": "^1.15.3",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-native": "^0.60.5",
+    "react-native": "^0.61.2",
     "react-native-testing-library": "^1.5.0",
     "react-native-typescript-transformer": "^1.2.13",
     "react-test-renderer": "^16.6.3",
@@ -76,8 +78,8 @@
     "redux-mock-store": "^1.5.3",
     "redux-saga-test-plan": "4.0.0-beta.2",
     "redux-thunk": "^2.3.0",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.6.2"
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^4.1.2",
@@ -85,13 +87,5 @@
     "react-redux": "^6.0.0 || ^7.0.0",
     "redux": "4.x",
     "redux-saga": "^1.0.2"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "preset": "ts-jest",
-    "setupTestFrameworkScriptFile": "<rootDir>/test/setupTestEnv.js",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/"
-    ]
   }
 }
