@@ -6,7 +6,7 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   FluxActionForDismissal,
-  FluxActionForQueueSemaphoreChange,
+  FluxActionForChangeQueueSemaphore,
   SemaphoreColor,
 } from '../types';
 
@@ -56,9 +56,9 @@ export const dismissActionsFromQueue = (
   payload: actionTrigger,
 });
 
-export const queueSemaphoreChange = (
+export const changeQueueSemaphore = (
   semaphoreColor: SemaphoreColor,
-): FluxActionForQueueSemaphoreChange => ({
+): FluxActionForChangeQueueSemaphore => ({
   type: actionTypes.CHANGE_QUEUE_SEMAPHORE,
   payload: semaphoreColor,
 });

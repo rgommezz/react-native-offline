@@ -242,7 +242,7 @@ describe('REMOVE_ACTION_FROM_QUEUE action type', () => {
 describe('QUEUE_SEMAPHORE_CHANGE action type', () => {
   it('Pauses the queue if semaphore is red', () => {
     expect(
-      networkReducer(undefined, actionCreators.queueSemaphoreChange('RED')),
+      networkReducer(undefined, actionCreators.changeQueueSemaphore('RED')),
     ).toEqual({
       ...initialState,
       isQueuePaused: true,
@@ -251,7 +251,7 @@ describe('QUEUE_SEMAPHORE_CHANGE action type', () => {
 
   it('Resumes the queue if semaphore is green', () => {
     expect(
-      networkReducer(undefined, actionCreators.queueSemaphoreChange('GREEN')),
+      networkReducer(undefined, actionCreators.changeQueueSemaphore('GREEN')),
     ).toEqual({
       ...initialState,
       isQueuePaused: false,

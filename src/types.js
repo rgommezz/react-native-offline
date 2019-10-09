@@ -37,7 +37,7 @@ export type FluxActionForDismissal = {
   payload: string,
 };
 
-export type FluxActionForQueueSemaphoreChange = {
+export type FluxActionForChangeQueueSemaphore = {
   type: string,
   payload: SemaphoreColor,
 };
