@@ -1,17 +1,19 @@
 import { get, without } from "lodash";
 import * as actionTypes from "./actionTypes";
 import getSimilarActionInQueue from "../utils/getSimilarActionInQueue";
-import { NetworkState } from "../types";
 import {
-  ActionCreatorTypes,
-  FetchOfflineModeType,
-  EnqueuedAction
-} from "./actionCreators";
+  NetworkState,
+  nonNullable,
+  EnqueuedAction,
+  FluxAction
+} from "../types";
+import { ActionCreatorTypes, FetchOfflineModeType } from "./actionCreators";
 import { AnyAction } from "redux";
 
+const actionQueue: EnqueuedAction[] = [];
 export const initialState = {
   isConnected: true,
-  actionQueue: []
+  actionQueue
 };
 
 function handleOfflineAction(
@@ -29,21 +31,18 @@ function handleOfflineAction(
     const actionToLookUp = prevAction || prevThunk;
     const actionWithMetaData =
       typeof actionToLookUp === "object"
-        ? { ...actionToLookUp, meta }
+        ? ({ ...actionToLookUp, meta } as FluxAction)
         : actionToLookUp;
     const similarActionQueued = getSimilarActionInQueue(
       actionWithMetaData,
       state.actionQueue
     );
-
+    const actions = similarActionQueued
+      ? [...without(state.actionQueue, similarActionQueued), actionWithMetaData]
+      : [...state.actionQueue, actionWithMetaData];
     return {
       ...state,
-      actionQueue: similarActionQueued
-        ? [
-            ...without(state.actionQueue, similarActionQueued),
-            actionWithMetaData
-          ]
-        : [...state.actionQueue, actionWithMetaData]
+      actionQueue: actions.filter(nonNullable)
     };
   }
   return state;
@@ -60,7 +59,9 @@ function handleRemoveActionFromQueue(
 
   return {
     ...state,
-    actionQueue: without(state.actionQueue, similarActionQueued)
+    actionQueue: without(state.actionQueue, similarActionQueued).filter(
+      nonNullable
+    )
   };
 }
 

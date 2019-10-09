@@ -2,12 +2,11 @@ import { find, get } from "lodash";
 import {
   fetchOfflineMode,
   removeActionFromQueue,
-  dismissActionsFromQueue,
-  EnqueuedAction
+  dismissActionsFromQueue
 } from "./actionCreators";
 import * as networkActionTypes from "./actionTypes";
 import wait from "../utils/wait";
-import { NetworkState } from "../types";
+import { NetworkState, EnqueuedAction } from "../types";
 import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from "redux";
 
 type State = {

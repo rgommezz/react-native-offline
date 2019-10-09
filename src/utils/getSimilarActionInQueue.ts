@@ -1,6 +1,6 @@
 // TODO import directly to reduce bundle-size?
 import { isEqual } from "lodash";
-import { EnqueuedAction } from "../redux/actionCreators";
+import { EnqueuedAction } from "../types";
 
 /**
  * Finds and returns a similar thunk or action in the actionQueue.

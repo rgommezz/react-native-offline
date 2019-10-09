@@ -1,8 +1,5 @@
 import * as actionTypes from "./actionTypes";
-import { FluxAction, Meta } from "../types";
-
-export type Thunk = Meta<(...args: any[]) => any>;
-export type EnqueuedAction = FluxAction | Thunk;
+import { EnqueuedAction } from "../types";
 
 export const connectionChange = (isConnected: boolean) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
