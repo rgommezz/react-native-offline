@@ -62,3 +62,11 @@ export const changeQueueSemaphore = (
   type: actionTypes.CHANGE_QUEUE_SEMAPHORE,
   payload: semaphoreColor,
 });
+
+export default {
+  changeQueueSemaphore,
+  dismissActionsFromQueue,
+  removeActionFromQueue,
+  fetchOfflineMode,
+  connectionChange,
+};
