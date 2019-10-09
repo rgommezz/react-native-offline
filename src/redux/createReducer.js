@@ -8,12 +8,13 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   NetworkState,
+  SemaphoreColor,
 } from '../types';
 
 export const initialState = {
   isConnected: true,
   actionQueue: [],
-  hasQueueBeenHalted: false,
+  isQueuePaused: false,
 };
 
 function handleOfflineAction(
@@ -82,23 +83,19 @@ function handleDismissActionsFromQueue(
   };
 }
 
-function handleQueueSemaphoreChange(
+function handleChangeQueueSemaphore(
   state: NetworkState,
-  hasQueueBeenHalted: boolean,
+  semaphoreColor: SemaphoreColor,
 ): NetworkState {
   return {
     ...state,
-    hasQueueBeenHalted,
+    isQueuePaused: semaphoreColor === 'RED',
   };
 }
 
-export default (
-  comparisonFn: Function = getSimilarActionInQueue,
-  shouldQueueStartAutomatically: boolean = true,
-) => (
+export default (comparisonFn: Function = getSimilarActionInQueue) => (
   state: NetworkState = {
     ...initialState,
-    hasQueueBeenHalted: !shouldQueueStartAutomatically,
   },
   action: *,
 ): NetworkState => {
@@ -114,8 +111,8 @@ export default (
       return handleRemoveActionFromQueue(state, action.payload);
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
       return handleDismissActionsFromQueue(state, action.payload);
-    case actionTypes.QUEUE_SEMAPHORE_CHANGE:
-      return handleQueueSemaphoreChange(state, action.payload);
+    case actionTypes.CHANGE_QUEUE_SEMAPHORE:
+      return handleChangeQueueSemaphore(state, action.payload);
     default:
       return state;
   }

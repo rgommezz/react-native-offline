@@ -7,6 +7,7 @@ import type {
   FluxActionForRemoval,
   FluxActionForDismissal,
   FluxActionForQueueSemaphoreChange,
+  SemaphoreColor,
 } from '../types';
 
 type EnqueuedAction = FluxAction | Function;
@@ -56,12 +57,8 @@ export const dismissActionsFromQueue = (
 });
 
 export const queueSemaphoreChange = (
-  shouldHaltQueue: boolean,
+  semaphoreColor: SemaphoreColor,
 ): FluxActionForQueueSemaphoreChange => ({
-  type: actionTypes.QUEUE_SEMAPHORE_CHANGE,
-  payload: shouldHaltQueue,
+  type: actionTypes.CHANGE_QUEUE_SEMAPHORE,
+  payload: semaphoreColor,
 });
-
-export default {
-  queueSemaphoreChange,
-};

@@ -23,7 +23,7 @@ type Arguments = {|
   regexActionType: RegExp,
   actionTypes: Array<string>,
   queueReleaseThrottle: number,
-  shouldDequeueSelector: (state: State) => boolean
+  shouldDequeueSelector: (state: State) => boolean,
 |};
 
 function validateParams(regexActionType, actionTypes) {
@@ -71,19 +71,19 @@ function didComeBackOnline(action, wasConnected) {
   );
 }
 
-function didQueueResume(action, wasQueueHalted) {
+function didQueueResume(action, isQueuePaused) {
   return (
-    action.type === networkActionTypes.QUEUE_SEMAPHORE_CHANGE &&
-    wasQueueHalted &&
-    action.payload === false
+    action.type === networkActionTypes.CHANGE_QUEUE_SEMAPHORE &&
+    !isQueuePaused &&
+    action.payload === 'GREEN'
   );
 }
 
 export const createReleaseQueue = (getState, next, delay) => async queue => {
   // eslint-disable-next-line
   for (const action of queue) {
-    const { isConnected, hasQueueBeenHalted } = getState().network;
-    if (isConnected && !hasQueueBeenHalted) {
+    const { isConnected, isQueuePaused } = getState().network;
+    if (isConnected && !isQueuePaused) {
       next(removeActionFromQueue(action));
       next(action);
       // eslint-disable-next-line
@@ -98,17 +98,16 @@ function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
   queueReleaseThrottle = 50,
-  shouldDequeueSelector = (state) => true,
+  shouldDequeueSelector = () => true,
 }: Arguments = {}) {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {
-    const { isConnected, actionQueue, hasQueueBeenHalted } = getState().network;
+    const { isConnected, actionQueue, isQueuePaused } = getState().network;
     const releaseQueue = createReleaseQueue(
       getState,
       next,
       queueReleaseThrottle,
-      shouldDequeueSelector
     );
     validateParams(regexActionType, actionTypes);
 
@@ -125,10 +124,14 @@ function createNetworkMiddleware({
     }
 
     const isBackOnline = didComeBackOnline(action, isConnected);
-    const hasQueueBeenResumed = didQueueResume(action, hasQueueBeenHalted);
+    const hasQueueBeenResumed = didQueueResume(action, isQueuePaused);
 
-    let shouldDequeue = (isConnected || isBackOnline || hasQueueBeenResumed) && actionQueue.length > 0 && shouldDequeueSelector(getState());
-    if (isBackOnline || hasQueueBeenResumed) {
+    const shouldDequeue =
+      isConnected &&
+      (isBackOnline || hasQueueBeenResumed) &&
+      shouldDequeueSelector(getState());
+
+    if (shouldDequeue) {
       // Dispatching queued actions in order of arrival (if we have any)
       next(action);
       return releaseQueue(actionQueue);

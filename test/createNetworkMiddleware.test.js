@@ -5,7 +5,6 @@ import createNetworkMiddleware, {
   createReleaseQueue,
 } from '../src/redux/createNetworkMiddleware';
 import * as actionCreators from '../src/redux/actionCreators';
-import { removeActionFromQueue } from '../src/redux/actionCreators';
 import wait from '../src/utils/wait';
 
 const getFetchAction = type => ({
@@ -378,7 +377,7 @@ describe('createReleaseQueue', () => {
   const mockGetState = jest.fn().mockImplementation(() => ({
     network: {
       isConnected: true,
-      hasQueueBeenHalted: false,
+      isQueuePaused: false,
     },
   }));
   const mockDelay = 50;
@@ -398,12 +397,12 @@ describe('createReleaseQueue', () => {
     expect(mockDispatch).toHaveBeenCalledTimes(4);
     expect(mockDispatch).toHaveBeenNthCalledWith(
       1,
-      removeActionFromQueue('foo'),
+      actionCreators.removeActionFromQueue('foo'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
     expect(mockDispatch).toHaveBeenNthCalledWith(
       3,
-      removeActionFromQueue('bar'),
+      actionCreators.removeActionFromQueue('bar'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(4, 'bar');
   });
@@ -421,12 +420,12 @@ describe('createReleaseQueue', () => {
     expect(mockDispatch).toHaveBeenCalledTimes(4);
     expect(mockDispatch).toHaveBeenNthCalledWith(
       1,
-      removeActionFromQueue('foo'),
+      actionCreators.removeActionFromQueue('foo'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
     expect(mockDispatch).toHaveBeenNthCalledWith(
       3,
-      removeActionFromQueue('bar'),
+      actionCreators.removeActionFromQueue('bar'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(4, 'bar');
   });
@@ -452,7 +451,7 @@ describe('createReleaseQueue', () => {
     expect(mockDispatch).toHaveBeenCalledTimes(2);
     expect(mockDispatch).toHaveBeenNthCalledWith(
       1,
-      removeActionFromQueue('foo'),
+      actionCreators.removeActionFromQueue('foo'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
   });
@@ -463,8 +462,8 @@ describe('createReleaseQueue', () => {
         await wait(30);
         mockGetState.mockImplementation(() => ({
           network: {
-            hasQueueBeenHalted: true,
-          }, 
+            isQueuePaused: true,
+          },
         }));
         resolve();
       });
