@@ -127,8 +127,7 @@ function createNetworkMiddleware({
     const hasQueueBeenResumed = didQueueResume(action, isQueuePaused);
 
     const shouldDequeue =
-      isConnected &&
-      (isBackOnline || hasQueueBeenResumed) &&
+      (isConnected || isBackOnline || hasQueueBeenResumed) &&
       shouldDequeueSelector(getState());
 
     if (shouldDequeue) {
