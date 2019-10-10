@@ -47,10 +47,12 @@ export default function makeHttpRequest(args?: Options) {
   const {
     method = DEFAULT_HTTP_METHOD,
     url = DEFAULT_PING_SERVER_URL,
-    timeout = DEFAULT_TIMEOUT
+    timeout = DEFAULT_TIMEOUT,
+    testMethod
   } = args || DEFAULT_OPTIONS;
   return new Promise((resolve: PromiseHandler, reject: PromiseHandler) => {
-    const xhr = new XMLHttpRequest();
+    // @ts-ignore
+    const xhr = new XMLHttpRequest(testMethod);
     xhr.open(method, url);
     xhr.timeout = timeout;
     xhr.onload = function onLoad() {
