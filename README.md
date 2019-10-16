@@ -347,6 +347,7 @@ type MiddlewareConfig = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
   actionTypes?: Array<string> = [],
   queueReleaseThrottle?: number = 50,
+  shouldDequeueSelector: (state: State) => boolean = state => state.conditionToReleaseQueue
 }
 ```
 
@@ -359,6 +360,9 @@ By default it's configured to intercept actions for fetching data following the 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
 `queueReleaseThrottle`: waiting time in ms between dispatches when flushing the offline queue. Useful to reduce the server pressure when coming back online. Defaults to 50ms.
+
+`shouldDequeueSelector`: state selector used to control if the queue should be released on connection change. Returning `true` releases the queue, returning `false` prevents queue release. Note, if the result of `shouldDequeueSelector` changes *while* the queue is being released, the queue will not halt. If you want to halt the queue *while* is being released, please see relevant FAQ section.
+
 
 ##### Thunks Config
 For `redux-thunk` library, the async flow is wrapped inside functions that will be lazily evaluated when dispatched, so our store is able to dispatch functions as well. Therefore, the configuration differs:
@@ -550,16 +554,14 @@ checkInternetConnection(
 ##### Example
 
 ```js
-import { checkInternetConnection, offlineActionTypes } from 'react-native-offline';
+import { checkInternetConnection, offlineActionCreators } from 'react-native-offline';
 
 async function internetChecker(dispatch) {
   const isConnected = await checkInternetConnection();
+  const { connectionChange } = offlineActionCreators;
   // Dispatching can be done inside a connected component, a thunk (where dispatch is injected), saga, or any sort of middleware
   // In this example we are using a thunk
-  dispatch({
-    type: offlineActionTypes.CONNECTION_CHANGE,
-    payload: isConnected,
-  });
+  dispatch(connectionChange(isConnected));
 }
 ```
 
@@ -583,21 +585,19 @@ As you can see in the snippets below, we create the `store` instance as usual an
 // configureStore.js
 import { createStore, applyMiddleware } from 'redux';
 import { persistStore } from 'redux-persist';
-import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
+import { createNetworkMiddleware, offlineActionCreators, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
 const networkMiddleware = createNetworkMiddleware();
 
 export default function configureStore(callback) {
   const store = createStore(rootReducer, applyMiddleware(networkMiddleware));
+  const { connectionChange } = offlineActionCreators;
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
   persistStore(store, null, () => {
     // After rehydration completes, we detect initial connection
     checkInternetConnection().then(isConnected => {
-      store.dispatch({
-        type: offlineActionTypes.CONNECTION_CHANGE,
-        payload: isConnected,
-      });
+      store.dispatch(connectionChange(isConnected));
       callback(); // Notify our root component we are good to go, so that we can render our app
     });
   });
@@ -640,25 +640,32 @@ export default App;
 
 This way, we make sure the right actions are dispatched before anything else can be.
 
-#### How to intercept and queue actions when the server responds with client (4xx) or server (5xx) errors
-You can do that by dispatching yourself an action of type `@@network-connectivity/FETCH_OFFLINE_MODE`. The action types the library uses are exposed under `offlineActionTypes` property.
+#### How do I stop the queue *while* it is being released?
 
-Unfortunately, the action creators are not exposed yet, so I'll release soon a new version with that fixed. In the meantime, you can check that specific action creator in  [here](https://github.com/rgommezz/react-native-offline/blob/master/src/actionCreators.js#L18), so that you can emulate its payload. That should queue up your action properly.
+You can do that by dispatching a `CHANGE_QUEUE_SEMAPHORE` action using `changeQueueSemaphore` action creator. This action is used to manually stop and resume the queue even if it's being released.
+
+It works in the following way: if a `changeQueueSemaphore('RED')` action is dispatched, queue release is now halted. It will only resume if another if `changeQueueSemaphore('GREEN')` is dispatched.
 
 ```js
-import { offlineActionTypes } from 'react-native-offline';
+import { offlineActionCreators } from 'react-native-offline';
+...
+async function weHaltQeueeReleaseHere(){
+  const { changeQueueSemaphore } = offlineActionCreators;
+  dispatch(changeQueueSemaphore('RED')) // The queue is now halted and it won't continue dispatching actions
+  await somePromise();
+  dispatch(changeQueueSemaphore('GREEN')) // The queue is now resumed and it will continue dispatching actions
+}
+```
+
+
+#### How to intercept and queue actions when the server responds with client (4xx) or server (5xx) errors
+You can do that by dispatching a `FETCH_OFFLINE_MODE` action using `fetchOfflineMode` action creator.
+
+```js
+import { offlineActionCreators } from 'react-native-offline';
 ...
 fetch('someurl/data').catch(error => {
-  dispatch({
-    type: actionTypes.FETCH_OFFLINE_MODE,
-    payload: {
-      prevAction: {
-        type: action.type, // <-- action is the one that triggered your api call
-        payload: action.payload,
-      },
-    },
-    meta: { retry: true }
-  })
+  dispatch(offlineActionCreators.fetchOfflineMode(action)) // <-- action is the one that triggered your api call
 );
 ```
 
