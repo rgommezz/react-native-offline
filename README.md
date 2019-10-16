@@ -1,5 +1,5 @@
 # react-native-offline
-[![All Contributors](https://img.shields.io/badge/all_contributors-32-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-33-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
@@ -185,7 +185,7 @@ type Props = {
 
 `pingTimeout`: amount of time (in ms) that the component should wait for the ping response. Defaults to `10000` ms. If you want to use a different value, it's recommended to use a higher one.
 
-`pingServerUrl`: remote server to ping to. Defaults to `https://www.google.com/` since it's probably one the most stable servers out there, but you can provide your own if needed.
+`pingServerUrl`: remote server to ping to. Defaults to `https://www.google.com/` since it's probably one the most stable servers out there, but you can provide your own if needed. Warning: www.google.com is a blocked domain in China, so if you need your app to be accessible from there, you MUST use another domain.
 
 `shouldPing`: flag that denotes whether the extra ping check will be performed or not. Defaults to `true`.
 
@@ -451,7 +451,7 @@ A queue system to store actions that failed due to lack of connectivity. It work
 
 #### Managing duplicate actions
 If a similar action already exists on the queue, we remove it and push it again to the end, so it has an overriding effect.
-The default criteria to detect duplicates is by using `lodash.isEqual` for plain actions and `thunk.toString()` for thunks/functions. However, you can customise the comparison function to acommodate it to your needs. For that, you need to use the factory version for your network reducer.
+The default criteria to detect duplicates is by using `lodash.isEqual` for plain actions and `thunk.toString()` for thunks/functions. However, you can customise the comparison function to acommodate it to your needs. For that, you need to use the factory version for your network reducer. **Please remember to name `network` the key of your reducer**.
 
 ```js
 // configureStore.js
@@ -461,7 +461,8 @@ import { comparisonFn } from './utils';
 
 const rootReducer = combineReducers({
   // ... your other reducers here ...
-  createNetworkReducer(comparisonFn),
+  // Use network key, that's important!
+  network: createNetworkReducer(comparisonFn),
 });
 
 const store = createStore(rootReducer);
@@ -824,6 +825,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
     <td align="center"><a href="https://github.com/jozr"><img src="https://avatars1.githubusercontent.com/u/8154741?v=4" width="100px;" alt="Josephine Wright"/><br /><sub><b>Josephine Wright</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=jozr" title="Documentation">📖</a></td>
     <td align="center"><a href="http://umbrellait.com"><img src="https://avatars0.githubusercontent.com/u/16078455?v=4" width="100px;" alt="Kirill Karpov"/><br /><sub><b>Kirill Karpov</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=umbrella-kirill-karpov" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/LiquidSean"><img src="https://avatars3.githubusercontent.com/u/1811319?v=4" width="100px;" alt="Sean Luthjohn"/><br /><sub><b>Sean Luthjohn</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/cuttlas"><img src="https://avatars2.githubusercontent.com/u/1228574?v=4" width="100px;" alt="cuttlas"/><br /><sub><b>cuttlas</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=cuttlas" title="Documentation">📖</a></td>
   </tr>
 </table>
 
