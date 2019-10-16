@@ -9,6 +9,7 @@ import {
 import type { NetworkState } from '../types';
 import networkActionTypes from './actionTypes';
 import wait from '../utils/wait';
+import { SEMAPHORE_COLOR } from '../utils/constants';
 
 type MiddlewareAPI<S> = {
   dispatch: (action: any) => void,
@@ -75,7 +76,7 @@ function didQueueResume(action, isQueuePaused) {
   return (
     action.type === networkActionTypes.CHANGE_QUEUE_SEMAPHORE &&
     !isQueuePaused &&
-    action.payload === 'GREEN'
+    action.payload === SEMAPHORE_COLOR.GREEN
   );
 }
 
