@@ -66,7 +66,7 @@ function checkIfActionShouldBeIntercepted(
 function didComeBackOnline(action, wasConnected) {
   return (
     action.type === networkActionTypes.CONNECTION_CHANGE &&
-    !wasConnected &&
+    wasConnected &&
     action.payload === true
   );
 }
