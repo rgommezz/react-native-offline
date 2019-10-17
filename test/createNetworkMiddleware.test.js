@@ -6,6 +6,7 @@ import createNetworkMiddleware, {
 } from '../src/redux/createNetworkMiddleware';
 import * as actionCreators from '../src/redux/actionCreators';
 import wait from '../src/utils/wait';
+import { SEMAPHORE_COLOR } from '../src/utils/constants';
 
 const getFetchAction = type => ({
   type,
@@ -96,6 +97,26 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     store.dispatch(actionCreators.connectionChange(true));
     const actions = store.getActions();
     expect(actions).toEqual([actionCreators.connectionChange(true)]);
+  });
+
+  it('action ENQUEUED, queue PAUSED, status queue RESUMED', async () => {
+    const action1 = getFetchAction('FETCH_SOME_DATA_REQUEST');
+    const action2 = getFetchAction('FETCH_SOMETHING_ELSE_REQUEST');
+    const action3 = getFetchAction('FETCH_USER_REQUEST');
+    const prevActionQueue = [action1, action2, action3];
+    const initialState = {
+      network: {
+        isConnected: true,
+        isQueuePaused: true,
+        actionQueue: prevActionQueue,
+      },
+    };
+    const store = mockStore(initialState);
+    store.dispatch(actionCreators.changeQueueSemaphore(SEMAPHORE_COLOR.GREEN));
+    const actions = store.getActions();
+    expect(actions).toEqual([
+      actionCreators.changeQueueSemaphore(SEMAPHORE_COLOR.GREEN),
+    ]);
   });
 });
 

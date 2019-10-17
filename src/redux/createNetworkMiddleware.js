@@ -67,7 +67,7 @@ function checkIfActionShouldBeIntercepted(
 function didComeBackOnline(action, wasConnected) {
   return (
     action.type === networkActionTypes.CONNECTION_CHANGE &&
-    wasConnected &&
+    !wasConnected &&
     action.payload === true
   );
 }
@@ -75,7 +75,7 @@ function didComeBackOnline(action, wasConnected) {
 function didQueueResume(action, isQueuePaused) {
   return (
     action.type === networkActionTypes.CHANGE_QUEUE_SEMAPHORE &&
-    !isQueuePaused &&
+    isQueuePaused &&
     action.payload === SEMAPHORE_COLOR.GREEN
   );
 }
