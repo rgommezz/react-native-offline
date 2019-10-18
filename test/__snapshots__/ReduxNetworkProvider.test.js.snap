@@ -10,6 +10,7 @@ exports[`ReduxNetworkProvider render has the correct structure 1`] = `
   pingServerUrl="https://www.google.com/"
   pingTimeout={10000}
   shouldPing={true}
+  userHeaders={Object {}}
 >
   [Function]
 </NetworkConnectivity>

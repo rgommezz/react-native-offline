@@ -21,6 +21,7 @@ type Props = {
   pingInBackground?: boolean,
   httpMethod?: HTTPMethod,
   children: React.Node,
+  userHeaders: {},
 };
 
 class ReduxNetworkProvider extends React.Component<Props> {

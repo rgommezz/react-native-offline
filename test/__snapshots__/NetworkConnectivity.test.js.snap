@@ -10,5 +10,6 @@ Object {
   "pingServerUrl": "https://www.google.com/",
   "pingTimeout": 10000,
   "shouldPing": true,
+  "userHeaders": Object {},
 }
 `;

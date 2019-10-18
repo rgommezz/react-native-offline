@@ -22,6 +22,7 @@ type Props = {
   pingInBackground?: boolean,
   httpMethod?: HTTPMethod,
   children: React.Node,
+  userHeaders: {},
 };
 
 NetworkProvider.defaultProps = {

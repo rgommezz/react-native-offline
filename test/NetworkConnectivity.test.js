@@ -255,6 +255,7 @@ describe('NetworkConnectivity', () => {
         pingServerUrl: 'dummy.com',
         httpMethod: 'OPTIONS',
         children: ChildrenComponent,
+        userHeaders: {},
       };
       AppState.currentState = 'active';
       const wrapper = shallow(
@@ -268,6 +269,7 @@ describe('NetworkConnectivity', () => {
         url: props.pingServerUrl,
         timeout: props.pingTimeout,
         method: props.httpMethod,
+        userHeaders: props.userHeaders,
       });
       expect(mockHandleConnectivityChange).toHaveBeenCalledWith(true);
     });

@@ -9,6 +9,7 @@ import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
+  DEFAULT_USER_HEADERS,
 } from '../utils/constants';
 
 export type RequiredProps = {
@@ -24,6 +25,7 @@ export type DefaultProps = {
   pingOnlyIfOffline: boolean,
   pingInBackground: boolean,
   httpMethod: HTTPMethod,
+  userHeaders: {},
 };
 
 type Props = RequiredProps & DefaultProps;
@@ -67,6 +69,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     pingOnlyIfOffline: false,
     pingInBackground: false,
     httpMethod: DEFAULT_HTTP_METHOD,
+    userHeaders: DEFAULT_USER_HEADERS,
   };
 
   constructor(props: Props) {
@@ -130,6 +133,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
       pingTimeout,
       pingServerUrl,
       httpMethod,
+      userHeaders,
     } = this.props;
     if (pingInBackground === false && AppState.currentState !== 'active') {
       return; // <-- Return early as we don't care about connectivity if app is not in foreground.
@@ -138,6 +142,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
       url: pingServerUrl,
       timeout: pingTimeout,
       method: httpMethod,
+      userHeaders,
     });
     this.handleConnectivityChange(hasInternetAccess);
   };

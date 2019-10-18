@@ -4,6 +4,7 @@ import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
+  DEFAULT_USER_HEADERS,
 } from '../src/utils/constants';
 
 jest.mock('../src/utils/makeHttpRequest', () =>
@@ -22,6 +23,7 @@ describe('checkInternetAccess', () => {
       timeout: DEFAULT_TIMEOUT,
       url: DEFAULT_PING_SERVER_URL,
       method: DEFAULT_HTTP_METHOD,
+      userHeaders: DEFAULT_USER_HEADERS,
     });
   });
 
@@ -38,6 +40,7 @@ describe('checkInternetAccess', () => {
       url,
       timeout,
       method,
+      userHeaders: DEFAULT_USER_HEADERS,
     });
     expect(hasInternetAccess).toBe(true);
   });
@@ -55,6 +58,7 @@ describe('checkInternetAccess', () => {
       timeout,
       url,
       method,
+      userHeaders: DEFAULT_USER_HEADERS,
     });
     expect(hasInternetAccess).toBe(false);
   });

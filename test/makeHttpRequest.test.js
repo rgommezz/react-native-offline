@@ -71,6 +71,7 @@ describe('makeHttpRequest', () => {
     mockOpen.mockClear();
     mockSend.mockClear();
     mockSetTimeout.mockClear();
+    mockSetRequestHeader.mockClear();
     mockOnLoad.mockClear();
     mockOnError.mockClear();
     mockOnTimeout.mockClear();
@@ -106,6 +107,11 @@ describe('makeHttpRequest', () => {
       DEFAULT_PING_SERVER_URL,
     );
     expect(mockSetTimeout).toHaveBeenCalledWith(DEFAULT_TIMEOUT);
+  });
+
+  it('accepts custom headers', () => {
+    makeHttpRequest({ ...params, customHeaders: { foo: 'bar' } });
+    expect(mockSetRequestHeader).toHaveBeenCalledTimes(4);
   });
 
   describe('onload', () => {
