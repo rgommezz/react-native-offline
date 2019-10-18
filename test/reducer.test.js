@@ -406,11 +406,3 @@ describe('networkSelector', () => {
     });
   });
 });
-
-describe('network reducer config', () => {
-  it('has isQueuePaused set to false by default', () => {
-    expect(networkReducer(undefined, { type: 'ACTION_I_DONT_CARE' })).toEqual(
-      initialState,
-    );
-  });
-});

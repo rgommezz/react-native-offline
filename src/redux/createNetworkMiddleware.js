@@ -80,11 +80,20 @@ function didQueueResume(action, isQueuePaused) {
   );
 }
 
-export const createReleaseQueue = (getState, next, delay) => async queue => {
+export const createReleaseQueue = (
+  getState,
+  next,
+  delay,
+  shouldDequeueSelector,
+) => async queue => {
   // eslint-disable-next-line
   for (const action of queue) {
-    const { isConnected, isQueuePaused } = getState().network;
-    if (isConnected && !isQueuePaused) {
+    const state = getState();
+    const {
+      network: { isConnected, isQueuePaused },
+    } = state;
+
+    if (isConnected && !isQueuePaused && shouldDequeueSelector(state)) {
       next(removeActionFromQueue(action));
       next(action);
       // eslint-disable-next-line
@@ -109,6 +118,7 @@ function createNetworkMiddleware({
       getState,
       next,
       queueReleaseThrottle,
+      shouldDequeueSelector,
     );
     validateParams(regexActionType, actionTypes);
 

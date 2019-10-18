@@ -1,6 +1,7 @@
 /* @flow */
 
 import { get, without } from 'lodash';
+import { SEMAPHORE_COLOR } from '../utils/constants';
 import actionTypes from './actionTypes';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import type {
@@ -89,7 +90,7 @@ function handleChangeQueueSemaphore(
 ): NetworkState {
   return {
     ...state,
-    isQueuePaused: semaphoreColor === 'RED',
+    isQueuePaused: semaphoreColor === SEMAPHORE_COLOR.RED,
   };
 }
 

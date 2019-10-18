@@ -393,43 +393,52 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
   });
 });
 
+describe('createNetworkMiddleware with queueDeselector', () => {
+  const mockDequeueSelector = jest.fn();
+  const networkMiddleware = createNetworkMiddleware({
+    shouldDequeueSelector: mockDequeueSelector,
+  });
+  const middlewares = [networkMiddleware];
+  const mockStore = configureStore(middlewares);
+
+  it('Proxies action to next middleware if deselector returns false', () => {
+    const initialState = {
+      network: {
+        isConnected: true,
+        actionQueue: [],
+      },
+    };
+    const store = mockStore(initialState);
+    const action = getFetchAction('REFRESH_DATA');
+    store.dispatch(action);
+
+    const actions = store.getActions();
+    expect(actions).toEqual([getFetchAction('REFRESH_DATA')]);
+  });
+});
+
 describe('createReleaseQueue', () => {
   const mockDispatch = jest.fn();
-  const mockGetState = jest.fn().mockImplementation(() => ({
-    network: {
-      isConnected: true,
-      isQueuePaused: false,
-    },
-  }));
+  const mockGetState = jest.fn();
+  const mockDequeueSelector = jest.fn();
   const mockDelay = 50;
+
+  beforeEach(() => {
+    mockDequeueSelector.mockImplementation(() => true);
+    mockGetState.mockImplementation(() => ({
+      network: {
+        isConnected: true,
+        isQueuePaused: false,
+      },
+    }));
+  });
+
   afterEach(() => {
     mockDispatch.mockClear();
     mockGetState.mockClear();
   });
 
   it('empties the queue if we are online and queue is not halted', async () => {
-    const releaseQueue = createReleaseQueue(
-      mockGetState,
-      mockDispatch,
-      mockDelay,
-    );
-    const actionQueue = ['foo', 'bar'];
-    await releaseQueue(actionQueue);
-    expect(mockDispatch).toHaveBeenCalledTimes(4);
-    expect(mockDispatch).toHaveBeenNthCalledWith(
-      1,
-      actionCreators.removeActionFromQueue('foo'),
-    );
-    expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
-    expect(mockDispatch).toHaveBeenNthCalledWith(
-      3,
-      actionCreators.removeActionFromQueue('bar'),
-    );
-    expect(mockDispatch).toHaveBeenNthCalledWith(4, 'bar');
-  });
-
-  it('does not empty the queue if we are online and dequeue selector returns false', async () => {
-    const mockDequeueSelector = () => false;
     const releaseQueue = createReleaseQueue(
       mockGetState,
       mockDispatch,
@@ -451,6 +460,36 @@ describe('createReleaseQueue', () => {
     expect(mockDispatch).toHaveBeenNthCalledWith(4, 'bar');
   });
 
+  it('does not empty the queue if dequeue selector returns false', async () => {
+    const mockDequeueSelector = () => false;
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+      mockDequeueSelector,
+    );
+    const actionQueue = ['foo', 'bar'];
+    await releaseQueue(actionQueue);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
+  });
+
+  it('does not empty the queue if queue has been halted', async () => {
+    mockGetState.mockImplementation(() => ({
+      network: {
+        isQueuePaused: true,
+      },
+    }));
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+      mockDequeueSelector,
+    );
+    const actionQueue = ['foo', 'bar'];
+    await releaseQueue(actionQueue);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
+  });
+
   it('dispatches only during the online window', async () => {
     const switchToOffline = () =>
       new Promise(async resolve => {
@@ -466,6 +505,7 @@ describe('createReleaseQueue', () => {
       mockGetState,
       mockDispatch,
       mockDelay,
+      mockDequeueSelector,
     );
     const actionQueue = ['foo', 'bar'];
     await Promise.all([releaseQueue(actionQueue), switchToOffline()]);
@@ -475,27 +515,6 @@ describe('createReleaseQueue', () => {
       actionCreators.removeActionFromQueue('foo'),
     );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, 'foo');
-  });
-
-  it('should stop dispatching if queue has been halted', async () => {
-    const haltQueue = () =>
-      new Promise(async resolve => {
-        await wait(30);
-        mockGetState.mockImplementation(() => ({
-          network: {
-            isQueuePaused: true,
-          },
-        }));
-        resolve();
-      });
-    const releaseQueue = createReleaseQueue(
-      mockGetState,
-      mockDispatch,
-      mockDelay,
-    );
-    const actionQueue = ['foo', 'bar'];
-    await Promise.all([releaseQueue(actionQueue), haltQueue()]);
-    expect(mockDispatch).toHaveBeenCalledTimes(0);
   });
 });
 

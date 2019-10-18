@@ -347,7 +347,7 @@ type MiddlewareConfig = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
   actionTypes?: Array<string> = [],
   queueReleaseThrottle?: number = 50,
-  shouldDequeueSelector: (state: State) => boolean = state => state.conditionToReleaseQueue
+  shouldDequeueSelector: (state: RootReduxState) => boolean = () => true
 }
 ```
 
@@ -361,7 +361,7 @@ By default it's configured to intercept actions for fetching data following the 
 
 `queueReleaseThrottle`: waiting time in ms between dispatches when flushing the offline queue. Useful to reduce the server pressure when coming back online. Defaults to 50ms.
 
-`shouldDequeueSelector`: state selector used to control if the queue should be released on connection change. Returning `true` releases the queue, returning `false` prevents queue release. Note, if the result of `shouldDequeueSelector` changes *while* the queue is being released, the queue will not halt. If you want to halt the queue *while* is being released, please see relevant FAQ section.
+`shouldDequeueSelector`: function that receives the redux application state and returns a boolean. It'll be executed every time an action is dispatched, before it reaches the reducer. This is useful to control if the queue should be released when the connection is regained and there were actions queued up. Returning `true` (the default behaviour) releases the queue, whereas returning `false` prevents queue release. For example, you may wanna perform some authentication checks, prior to releasing the queue. Note, if the result of `shouldDequeueSelector` changes *while* the queue is being released, the queue will not halt. If you want to halt the queue *while* is being released, please see relevant FAQ section.
 
 
 ##### Thunks Config
