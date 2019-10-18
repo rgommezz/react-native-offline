@@ -1,12 +1,12 @@
 import configureStore from 'redux-mock-store';
 import thunk, { ThunkDispatch } from 'redux-thunk';
+import { Dispatch, AnyAction } from 'redux';
 import createNetworkMiddleware, {
   createReleaseQueue,
 } from '../src/redux/createNetworkMiddleware';
 import * as actionCreators from '../src/redux/actionCreators';
 import { removeActionFromQueue } from '../src/redux/actionCreators';
 import wait from '../src/utils/wait';
-import { Dispatch, AnyAction } from 'redux';
 
 type Thunk = ThunkDispatch<{}, undefined, AnyAction>;
 

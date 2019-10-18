@@ -12,7 +12,7 @@ import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants';
 export default async function checkInternetConnection(
   url: string = DEFAULT_PING_SERVER_URL,
   timeout: number = DEFAULT_TIMEOUT,
-  shouldPing: boolean = true,
+  shouldPing = true,
 ): Promise<boolean> {
   return NetInfo.isConnected.fetch().then(async (isConnected: boolean) => {
     if (shouldPing) {

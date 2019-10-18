@@ -1,4 +1,5 @@
 import { get, without } from 'lodash';
+import { AnyAction } from 'redux';
 import * as actionTypes from './actionTypes';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import {
@@ -8,7 +9,6 @@ import {
   FluxAction,
 } from '../types';
 import { ActionCreatorTypes, FetchOfflineModeType } from './actionCreators';
-import { AnyAction } from 'redux';
 
 const actionQueue: EnqueuedAction[] = [];
 export const initialState = {

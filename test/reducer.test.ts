@@ -1,6 +1,6 @@
+import { Dispatch } from 'redux';
 import reducer, { initialState, networkSelector } from '../src/redux/reducer';
 import * as actionCreators from '../src/redux/actionCreators';
-import { Dispatch } from 'redux';
 import { EnqueuedAction } from '../src/types';
 
 const getState = (isConnected = false, ...actionQueue: EnqueuedAction[]) => ({

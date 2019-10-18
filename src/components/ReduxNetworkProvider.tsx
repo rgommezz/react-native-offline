@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import NetworkConnectivity from './NetworkConnectivity';
 import { connectionChange } from '../redux/actionCreators';
 import {
@@ -8,7 +9,6 @@ import {
   DEFAULT_TIMEOUT,
 } from '../utils/constants';
 import { NetworkState, ConnectivityArgs } from '../types';
-import { Dispatch } from 'redux';
 
 interface AppState {
   network: Partial<NetworkState>;

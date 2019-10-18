@@ -15,13 +15,16 @@ const mockOnTimeout = jest.fn();
 
 type Fn = () => any;
 
-//@ts-ignore
+// @ts-ignore
 global.XMLHttpRequest = class MockXMLHttpRequest {
-  //@ts-ignore
-  private status: number = 0;
-  //@ts-ignore
-  private t: number = 0;
+  // @ts-ignore
+  private status = 0;
+
+  // @ts-ignore
+  private t = 0;
+
   private callbackToFire: string;
+
   constructor(callbackToFire = '') {
     this.callbackToFire = callbackToFire;
     switch (callbackToFire) {
@@ -71,11 +74,11 @@ global.XMLHttpRequest = class MockXMLHttpRequest {
   }
 };
 
-//@ts-ignore
+// @ts-ignore
 global.XMLHttpRequest.prototype.open = mockOpen;
-//@ts-ignore
+// @ts-ignore
 global.XMLHttpRequest.prototype.setRequestHeader = mockSetRequestHeader;
-//@ts-ignore
+// @ts-ignore
 global.XMLHttpRequest.prototype.send = mockSend;
 
 describe('makeHttpRequest', () => {

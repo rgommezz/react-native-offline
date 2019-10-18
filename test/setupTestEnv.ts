@@ -11,7 +11,7 @@ const { JSDOM } = require('jsdom');
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 const { window } = jsdom as JSDOMType;
 
-function copyProps(src: Object, target: Object) {
+function copyProps(src: Record<string, any>, target: Record<string, any>) {
   Object.defineProperties(target, {
     ...Object.getOwnPropertyDescriptors(src),
     ...Object.getOwnPropertyDescriptors(target),

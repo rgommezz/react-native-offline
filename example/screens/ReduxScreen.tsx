@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View, StyleSheet, Image, Text } from "react-native";
+import { Platform, View, StyleSheet, Image, Text } from 'react-native';
 import { ReduxNetworkProvider } from 'react-native-offline';
 import { Provider } from 'react-redux';
 

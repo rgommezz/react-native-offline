@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { render } from 'react-native-testing-library';
 import NetworkConsumer from '../src/components/NetworkConsumer';
 import NetworkProvider from '../src/components/NetworkProvider';
+
 type NetworkProviderProps = React.ComponentProps<typeof NetworkProvider>;
 const getElement = ({
   props = {} as NetworkProviderProps,

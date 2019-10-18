@@ -1,4 +1,5 @@
 import { find, get } from 'lodash';
+import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from 'redux';
 import {
   fetchOfflineMode,
   removeActionFromQueue,
@@ -7,7 +8,6 @@ import {
 import * as networkActionTypes from './actionTypes';
 import wait from '../utils/wait';
 import { NetworkState, EnqueuedAction } from '../types';
-import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from 'redux';
 
 type State = {
   network: NetworkState;

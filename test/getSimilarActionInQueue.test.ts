@@ -1,5 +1,5 @@
-import getSimilarActionInQueue from '../src/utils/getSimilarActionInQueue';
 import { Dispatch } from 'redux';
+import getSimilarActionInQueue from '../src/utils/getSimilarActionInQueue';
 
 describe('getSimilarActionInQueue', () => {
   describe('action is an object', () => {

@@ -1,11 +1,11 @@
 import NetInfo from '@react-native-community/netinfo';
+import { mocked } from 'ts-jest/utils';
 import checkInternetConnection from '../src/utils/checkInternetConnection';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 import {
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../src/utils/constants';
-import { mocked } from 'ts-jest/utils';
 
 jest.mock('../src/utils/checkInternetAccess');
 
