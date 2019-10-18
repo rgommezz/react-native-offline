@@ -2,10 +2,10 @@
 import {
   testSaga,
   TestApi,
-  TestApiWithEffectsTesters
-} from "redux-saga-test-plan";
-import { Platform, AppState } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
+  TestApiWithEffectsTesters,
+} from 'redux-saga-test-plan';
+import { Platform, AppState } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import networkSaga, {
   netInfoChangeSaga,
   connectionIntervalSaga,
@@ -15,18 +15,18 @@ import networkSaga, {
   handleConnectivityChange,
   createIntervalChannel,
   intervalChannelFn,
-  netInfoEventChannelFn
-} from "../src/redux/sagas";
-import { connectionChange } from "../src/redux/actionCreators";
-import { networkSelector } from "../src/redux/reducer";
-import checkInternetAccess from "../src/utils/checkInternetAccess";
-import DEFAULT_ARGS from "../src/utils/defaultConnectivityArgs";
+  netInfoEventChannelFn,
+} from '../src/redux/sagas';
+import { connectionChange } from '../src/redux/actionCreators';
+import { networkSelector } from '../src/redux/reducer';
+import checkInternetAccess from '../src/utils/checkInternetAccess';
+import DEFAULT_ARGS from '../src/utils/defaultConnectivityArgs';
 
 const args = DEFAULT_ARGS;
 
-describe("sagas", () => {
-  describe("networkSaga", () => {
-    it("forks netInfoChangeSaga with the right params", () => {
+describe('sagas', () => {
+  describe('networkSaga', () => {
+    it('forks netInfoChangeSaga with the right params', () => {
       const { pingInterval, ...params } = args;
       testSaga(networkSaga, params)
         .next()
@@ -47,7 +47,7 @@ describe("sagas", () => {
         .isDone();
     });
 
-    it("default parameters", () => {
+    it('default parameters', () => {
       const { shouldPing, pingInterval, ...params } = args;
       testSaga(networkSaga)
         .next()
@@ -57,51 +57,51 @@ describe("sagas", () => {
     });
   });
 
-  describe("netInfoChangeSaga", () => {
+  describe('netInfoChangeSaga', () => {
     const params = {
       pingTimeout: args.pingTimeout,
       pingServerUrl: args.pingServerUrl,
       shouldPing: args.shouldPing,
-      httpMethod: args.httpMethod
+      httpMethod: args.httpMethod,
     };
     function channelLoop(saga: TestApi) {
       return saga
         .next()
         .call(createNetInfoConnectionChangeChannel, netInfoEventChannelFn)
-        .next("channel")
-        .take("channel")
+        .next('channel')
+        .take('channel')
         .next(true)
         .fork(connectionHandler, {
           ...params,
-          isConnected: true
+          isConnected: true,
         })
         .next()
-        .take("channel");
+        .take('channel');
     }
-    it("iOS", () => {
-      Platform.OS = "ios";
+    it('iOS', () => {
+      Platform.OS = 'ios';
       const saga = testSaga(netInfoChangeSaga, params);
       channelLoop(saga);
     });
 
-    it("Android", () => {
-      Platform.OS = "android";
+    it('Android', () => {
+      Platform.OS = 'android';
       const saga = testSaga(netInfoChangeSaga, params)
         .next()
         .call([NetInfo, NetInfo.isConnected.fetch])
         .next(false)
         .fork(connectionHandler, {
           ...params,
-          isConnected: false
+          isConnected: false,
         });
       channelLoop(saga);
     });
 
-    it("closes the channel when it ends emitting", () => {
-      Platform.OS = "ios";
+    it('closes the channel when it ends emitting', () => {
+      Platform.OS = 'ios';
       const mockCloseFn = jest.fn();
       const mockChannel = {
-        close: mockCloseFn
+        close: mockCloseFn,
       };
 
       const iterator = netInfoChangeSaga(params);
@@ -117,11 +117,11 @@ describe("sagas", () => {
       } catch (e) {}
     });
 
-    it("does NOT close the channel if redux-saga does NOT yield a cancelled effect", () => {
-      Platform.OS = "ios";
+    it('does NOT close the channel if redux-saga does NOT yield a cancelled effect', () => {
+      Platform.OS = 'ios';
       const mockCloseFn = jest.fn();
       const mockChannel = {
-        close: mockCloseFn
+        close: mockCloseFn,
       };
 
       const iterator = netInfoChangeSaga(params);
@@ -138,27 +138,27 @@ describe("sagas", () => {
     });
   });
 
-  describe("connectionHandler", () => {
+  describe('connectionHandler', () => {
     const params = {
       pingTimeout: args.pingTimeout,
       pingServerUrl: args.pingServerUrl,
       shouldPing: true,
       httpMethod: args.httpMethod,
-      isConnected: true
+      isConnected: true,
     };
-    it("forks checkInternetAccessSaga if shouldPing AND isConnected are true", () => {
+    it('forks checkInternetAccessSaga if shouldPing AND isConnected are true', () => {
       const saga = testSaga(connectionHandler, params);
       saga
         .next()
         .fork(checkInternetAccessSaga, {
           pingTimeout: args.pingTimeout,
           pingServerUrl: args.pingServerUrl,
-          httpMethod: args.httpMethod
+          httpMethod: args.httpMethod,
         })
         .next()
         .isDone();
     });
-    it("forks handleConnectivityChange if shouldPing OR isConnected are NOT true", () => {
+    it('forks handleConnectivityChange if shouldPing OR isConnected are NOT true', () => {
       params.isConnected = false;
       const saga = testSaga(connectionHandler, params);
       saga
@@ -169,14 +169,14 @@ describe("sagas", () => {
     });
   });
 
-  describe("connectionIntervalSaga", () => {
+  describe('connectionIntervalSaga', () => {
     const { shouldPing, ...params } = args;
     function takeChannelAndGetConnection(saga: TestApi, isConnected: boolean) {
       return saga
         .next()
         .call(createIntervalChannel, 3000, intervalChannelFn)
-        .next("channel")
-        .take("channel")
+        .next('channel')
+        .take('channel')
         .next()
         .select(networkSelector)
         .next({ isConnected });
@@ -187,7 +187,7 @@ describe("sagas", () => {
       let saga: TestApiWithEffectsTesters = testSaga(connectionIntervalSaga, {
         ...params,
         pingOnlyIfOffline: false,
-        pingInterval: 3000
+        pingInterval: 3000,
       });
       saga = takeChannelAndGetConnection(saga, true);
       saga
@@ -195,10 +195,10 @@ describe("sagas", () => {
           pingTimeout: params.pingTimeout,
           pingServerUrl: params.pingServerUrl,
           httpMethod: params.httpMethod,
-          pingInBackground: params.pingInBackground
+          pingInBackground: params.pingInBackground,
         })
         .next()
-        .take("channel");
+        .take('channel');
     });
 
     it(`does NOT fork checkInternetAccessSaga if it's connected 
@@ -207,23 +207,23 @@ describe("sagas", () => {
       let saga: TestApiWithEffectsTesters = testSaga(connectionIntervalSaga, {
         ...params,
         pingOnlyIfOffline: true,
-        pingInterval: 3000
+        pingInterval: 3000,
       });
       saga = takeChannelAndGetConnection(saga, true);
-      saga.take("channel");
+      saga.take('channel');
     });
 
-    it("closes the channel when it ends emitting", () => {
+    it('closes the channel when it ends emitting', () => {
       const mockCloseFn = jest.fn();
       const mockChannel = {
         close: mockCloseFn,
         isConnected: false,
-        actionQueue: []
+        actionQueue: [],
       };
       const iterator = connectionIntervalSaga({
         ...params,
         pingOnlyIfOffline: true,
-        pingInterval: 3000
+        pingInterval: 3000,
       });
       iterator.next();
       // This will make take(mockChannel) throw an error, since it's not a valid
@@ -238,17 +238,17 @@ describe("sagas", () => {
       } catch (e) {}
     });
 
-    it("does NOT close the channel if redux-saga does NOT yield a cancelled effect", () => {
+    it('does NOT close the channel if redux-saga does NOT yield a cancelled effect', () => {
       const mockCloseFn = jest.fn();
       const mockChannel = {
         close: mockCloseFn,
         isConnected: false,
-        actionQueue: []
+        actionQueue: [],
       };
       const iterator = connectionIntervalSaga({
         ...params,
         pingOnlyIfOffline: true,
-        pingInterval: 3000
+        pingInterval: 3000,
       });
       iterator.next();
       // This will make take(mockChannel) throw an error, since it's not a valid
@@ -264,20 +264,20 @@ describe("sagas", () => {
     });
   });
 
-  describe("checkInternetAccessSaga", () => {
+  describe('checkInternetAccessSaga', () => {
     const params = {
       pingServerUrl: args.pingServerUrl,
       pingTimeout: args.pingTimeout,
       httpMethod: args.httpMethod,
-      pingInBackground: false
+      pingInBackground: false,
     };
-    it("returns early if pingInBackground is false AND app state is NOT active", () => {
-      AppState.currentState = "inactive";
+    it('returns early if pingInBackground is false AND app state is NOT active', () => {
+      AppState.currentState = 'inactive';
       const saga = testSaga(checkInternetAccessSaga, params);
       saga.next().isDone();
     });
 
-    it("calls checkInternetAccess AND handleConnectivityChange", () => {
+    it('calls checkInternetAccess AND handleConnectivityChange', () => {
       params.pingInBackground = true;
       const saga = testSaga(checkInternetAccessSaga, params);
       saga
@@ -285,7 +285,7 @@ describe("sagas", () => {
         .call(checkInternetAccess, {
           url: params.pingServerUrl,
           timeout: params.pingTimeout,
-          method: params.httpMethod
+          method: params.httpMethod,
         })
         .next(true)
         .call(handleConnectivityChange, true)
@@ -294,9 +294,9 @@ describe("sagas", () => {
     });
   });
 
-  describe("handleConnectivityChange", () => {
-    it("dispatches a CONNECTION_CHANGE action if the connection changed ", () => {
-      const actionQueue = ["foo", "bar"];
+  describe('handleConnectivityChange', () => {
+    it('dispatches a CONNECTION_CHANGE action if the connection changed ', () => {
+      const actionQueue = ['foo', 'bar'];
       // @ts-ignore
       const saga = testSaga(handleConnectivityChange, false);
       saga
@@ -308,8 +308,8 @@ describe("sagas", () => {
         .isDone();
     });
 
-    it("does NOT dispatch if connection did NOT change and we are offline", () => {
-      const actionQueue = ["foo", "bar"];
+    it('does NOT dispatch if connection did NOT change and we are offline', () => {
+      const actionQueue = ['foo', 'bar'];
       // @ts-ignore
       const saga = testSaga(handleConnectivityChange, false);
       saga

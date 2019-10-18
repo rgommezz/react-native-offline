@@ -1,14 +1,14 @@
-import * as React from "react";
-import NetInfo from "@react-native-community/netinfo";
-import { View, Platform, AppState } from "react-native";
-import { shallow } from "enzyme";
-import { render } from "react-native-testing-library";
+import * as React from 'react';
+import NetInfo from '@react-native-community/netinfo';
+import { View, Platform, AppState } from 'react-native';
+import { shallow } from 'enzyme';
+import { render } from 'react-native-testing-library';
 import NetworkConnectivity, {
-  RequiredProps
-} from "../src/components/NetworkConnectivity";
-import { setup, clear } from "../src/utils/checkConnectivityInterval";
-import checkInternetAccess from "../src/utils/checkInternetAccess";
-import { entries } from "../src/utils/objectEntries";
+  RequiredProps,
+} from '../src/components/NetworkConnectivity';
+import { setup, clear } from '../src/utils/checkConnectivityInterval';
+import checkInternetAccess from '../src/utils/checkInternetAccess';
+import { entries } from '../src/utils/objectEntries';
 
 interface MethodsMap {
   getConnectionChangeHandler?: any;
@@ -17,7 +17,7 @@ interface MethodsMap {
 }
 const mockConnectionChangeHandler = jest.fn();
 const mockGetConnectionChangeHandler = jest.fn(
-  () => mockConnectionChangeHandler
+  () => mockConnectionChangeHandler,
 );
 const mockIntervalHandler = jest.fn();
 const mockHandleNetInfoChange = jest.fn();
@@ -28,9 +28,9 @@ const addEventListener = NetInfo.isConnected.addEventListener as jest.Mock;
 const removeEventListener = NetInfo.isConnected
   .removeEventListener as jest.Mock;
 const fetch = NetInfo.isConnected.fetch as jest.Mock;
-jest.mock("../src/utils/checkConnectivityInterval");
-jest.mock("../src/utils/checkInternetAccess", () =>
-  jest.fn().mockResolvedValue(true)
+jest.mock('../src/utils/checkConnectivityInterval');
+jest.mock('../src/utils/checkInternetAccess', () =>
+  jest.fn().mockResolvedValue(true),
 );
 
 /**
@@ -44,7 +44,7 @@ jest.mock("../src/utils/checkInternetAccess", () =>
 function mockPrototypeMethods(methodsMap: MethodsMap = {} as MethodsMap) {
   class ClassWithMocks extends NetworkConnectivity {}
   entries(methodsMap).forEach(
-    ([method, mockFn]) => (ClassWithMocks.prototype[method] = mockFn)
+    ([method, mockFn]) => (ClassWithMocks.prototype[method] = mockFn),
   );
   return ClassWithMocks;
 }
@@ -52,7 +52,7 @@ function mockPrototypeMethods(methodsMap: MethodsMap = {} as MethodsMap) {
 const ChildrenComponent = () => <View />;
 
 const initialProps = {
-  children: ChildrenComponent
+  children: ChildrenComponent,
 };
 
 type GetElementParams<P = any> = {
@@ -62,13 +62,13 @@ type GetElementParams<P = any> = {
 
 const getElement = ({
   props = initialProps,
-  Component = NetworkConnectivity
+  Component = NetworkConnectivity,
 }: GetElementParams = {}) => {
   const { children, ...rest } = props;
   return <Component {...rest}>{children}</Component>;
 };
 
-describe("NetworkConnectivity", () => {
+describe('NetworkConnectivity', () => {
   afterEach(() => {
     addEventListener.mockClear();
     removeEventListener.mockClear();
@@ -81,57 +81,57 @@ describe("NetworkConnectivity", () => {
     mockCheckInternet.mockClear();
   });
 
-  it("defaultProps", () => {
+  it('defaultProps', () => {
     expect(NetworkConnectivity.defaultProps).toMatchSnapshot();
   });
 
-  it("passes the connection state into the FACC", () => {
+  it('passes the connection state into the FACC', () => {
     const children = jest.fn();
     shallow(getElement({ props: { children } }));
     expect(children).toHaveBeenCalledWith({ isConnected: true });
   });
 
-  describe("componentDidMount", () => {
-    describe("iOS, pingInterval = 0", () => {
+  describe('componentDidMount', () => {
+    describe('iOS, pingInterval = 0', () => {
       it(`sets up a NetInfo.isConnected listener for connectionChange 
       AND does NOT call setupConnectivityCheckInterval`, () => {
-        Platform.OS = "ios";
+        Platform.OS = 'ios';
         const MockedNetworkConnectivity = mockPrototypeMethods({
-          getConnectionChangeHandler: mockGetConnectionChangeHandler
+          getConnectionChangeHandler: mockGetConnectionChangeHandler,
         });
         shallow(
           getElement({
-            Component: MockedNetworkConnectivity
-          })
+            Component: MockedNetworkConnectivity,
+          }),
         );
         expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledTimes(1);
         expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
-          "connectionChange",
-          mockConnectionChangeHandler
+          'connectionChange',
+          mockConnectionChangeHandler,
         );
         expect(setup).not.toHaveBeenCalled();
       });
     });
 
-    describe("Android, pingInterval = 0", () => {
+    describe('Android, pingInterval = 0', () => {
       it(`sets up a NetInfo.isConnected listener for connectionChange
       AND fetches initial connection
       AND calls the handler
       AND does NOT call setupConnectivityCheckInterval`, (done: Function) => {
         fetch.mockImplementationOnce(() => Promise.resolve(false));
-        Platform.OS = "android";
+        Platform.OS = 'android';
         const MockedNetworkConnectivity = mockPrototypeMethods({
-          getConnectionChangeHandler: mockGetConnectionChangeHandler
+          getConnectionChangeHandler: mockGetConnectionChangeHandler,
         });
         shallow(
           getElement({
-            Component: MockedNetworkConnectivity
-          })
+            Component: MockedNetworkConnectivity,
+          }),
         );
         expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledTimes(1);
         expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
-          "connectionChange",
-          mockConnectionChangeHandler
+          'connectionChange',
+          mockConnectionChangeHandler,
         );
         expect(NetInfo.isConnected.fetch).toHaveBeenCalledTimes(1);
         process.nextTick(() => {
@@ -144,78 +144,78 @@ describe("NetworkConnectivity", () => {
 
     it(`calls setupConnectivityCheckInterval with the right arguments
      WHEN pingInterval is higher than 0`, () => {
-      Platform.OS = "ios";
+      Platform.OS = 'ios';
       const MockedNetworkConnectivity = mockPrototypeMethods({
-        intervalHandler: mockIntervalHandler
+        intervalHandler: mockIntervalHandler,
       });
       shallow(
         getElement({
           Component: MockedNetworkConnectivity,
           props: {
             children: ChildrenComponent,
-            pingInterval: 1000
-          }
-        })
+            pingInterval: 1000,
+          },
+        }),
       );
       expect(setup).toHaveBeenCalled();
     });
   });
 
-  describe("componentWillUnmount", () => {
+  describe('componentWillUnmount', () => {
     it(`removes the NetInfo listener with the right parameters
       AND call connectivityInterval.clear`, () => {
       const MockedNetworkConnectivity = mockPrototypeMethods({
-        getConnectionChangeHandler: mockGetConnectionChangeHandler
+        getConnectionChangeHandler: mockGetConnectionChangeHandler,
       });
       const wrapper = shallow(
         getElement({
-          Component: MockedNetworkConnectivity
-        })
+          Component: MockedNetworkConnectivity,
+        }),
       );
       wrapper.unmount();
       expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledTimes(1);
       expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledWith(
-        "connectionChange",
-        mockConnectionChangeHandler
+        'connectionChange',
+        mockConnectionChangeHandler,
       );
       expect(clear).toHaveBeenCalled();
     });
   });
 
-  describe("getConnectionChangeHandler", () => {
-    it("returns this.handleNetInfoChange when props.shouldPing = true", () => {
+  describe('getConnectionChangeHandler', () => {
+    it('returns this.handleNetInfoChange when props.shouldPing = true', () => {
       const wrapper = shallow<NetworkConnectivity>(
         getElement({
           props: {
             children: ChildrenComponent,
-            shouldPing: true
-          }
-        })
+            shouldPing: true,
+          },
+        }),
       );
       wrapper.instance().handleNetInfoChange = mockHandleNetInfoChange;
       expect(wrapper.instance().getConnectionChangeHandler()).toBe(
-        mockHandleNetInfoChange
+        mockHandleNetInfoChange,
       );
     });
 
-    it("returns this.handleConnectivityChange when props.shouldPing = false", () => {
+    it('returns this.handleConnectivityChange when props.shouldPing = false', () => {
       const wrapper = shallow<NetworkConnectivity>(
         getElement({
           props: {
             children: ChildrenComponent,
-            shouldPing: false
-          }
-        })
+            shouldPing: false,
+          },
+        }),
       );
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       expect(wrapper.instance().getConnectionChangeHandler()).toBe(
-        mockHandleConnectivityChange
+        mockHandleConnectivityChange,
       );
     });
   });
 
-  describe("handleNetInfoChange", () => {
-    it("calls handleConnectivityChange if isConnected is false", () => {
+  describe('handleNetInfoChange', () => {
+    it('calls handleConnectivityChange if isConnected is false', () => {
       const wrapper = shallow<NetworkConnectivity>(getElement());
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       wrapper.instance().checkInternet = mockCheckInternet;
@@ -224,7 +224,7 @@ describe("NetworkConnectivity", () => {
       expect(mockCheckInternet).not.toHaveBeenCalled();
     });
 
-    it("calls checkInternet if isConnected is true", () => {
+    it('calls checkInternet if isConnected is true', () => {
       const wrapper = shallow<NetworkConnectivity>(getElement());
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       wrapper.instance().checkInternet = mockCheckInternet;
@@ -234,16 +234,16 @@ describe("NetworkConnectivity", () => {
     });
   });
 
-  describe("checkInternet", () => {
-    it("returns early if pingIfBackground = false AND app is not in the foreground", async () => {
-      AppState.currentState = "background";
+  describe('checkInternet', () => {
+    it('returns early if pingIfBackground = false AND app is not in the foreground', async () => {
+      AppState.currentState = 'background';
       const wrapper = shallow<NetworkConnectivity>(
         getElement({
           props: {
             children: ChildrenComponent,
-            pingInBackground: false
-          }
-        })
+            pingInBackground: false,
+          },
+        }),
       );
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       await wrapper.instance().checkInternet();
@@ -255,36 +255,36 @@ describe("NetworkConnectivity", () => {
     with the right arguments if app is in foreground`, async () => {
       const props = {
         pingTimeout: 2000,
-        pingServerUrl: "dummy.com",
-        httpMethod: "OPTIONS" as "OPTIONS",
-        children: ChildrenComponent
+        pingServerUrl: 'dummy.com',
+        httpMethod: 'OPTIONS' as 'OPTIONS',
+        children: ChildrenComponent,
       };
-      AppState.currentState = "active";
+      AppState.currentState = 'active';
       const wrapper = shallow<NetworkConnectivity>(
         getElement({
-          props
-        })
+          props,
+        }),
       );
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       await wrapper.instance().checkInternet();
       expect(checkInternetAccess).toHaveBeenCalledWith({
         url: props.pingServerUrl,
         timeout: props.pingTimeout,
-        method: props.httpMethod
+        method: props.httpMethod,
       });
       expect(mockHandleConnectivityChange).toHaveBeenCalledWith(true);
     });
   });
 
-  describe("intervalHandler", () => {
-    it("returns early if there is connection AND pingOnlyIfOffline = true", () => {
+  describe('intervalHandler', () => {
+    it('returns early if there is connection AND pingOnlyIfOffline = true', () => {
       const wrapper = shallow<NetworkConnectivity>(
         getElement({
           props: {
             children: ChildrenComponent,
-            pingOnlyIfOffline: true
-          }
-        })
+            pingOnlyIfOffline: true,
+          },
+        }),
       );
       wrapper.instance().checkInternet = mockCheckInternet;
       wrapper.setState({ isConnected: true });
@@ -297,9 +297,9 @@ describe("NetworkConnectivity", () => {
         getElement({
           props: {
             children: ChildrenComponent,
-            pingOnlyIfOffline: false
-          }
-        })
+            pingOnlyIfOffline: false,
+          },
+        }),
       );
       wrapper.instance().checkInternet = mockCheckInternet;
       wrapper.setState({ isConnected: false });
@@ -312,16 +312,16 @@ describe("NetworkConnectivity", () => {
     });
   });
 
-  describe("handleConnectivityChange", () => {
-    it("calls setState with the new connection value", () => {
+  describe('handleConnectivityChange', () => {
+    it('calls setState with the new connection value', () => {
       const mockSetState = jest.fn();
       const MockedNetworkConnectivity = mockPrototypeMethods({
-        setState: mockSetState
+        setState: mockSetState,
       });
       const wrapper = shallow<NetworkConnectivity>(
         getElement({
-          Component: MockedNetworkConnectivity
-        })
+          Component: MockedNetworkConnectivity,
+        }),
       );
 
       wrapper.instance().handleConnectivityChange(true);
@@ -332,103 +332,103 @@ describe("NetworkConnectivity", () => {
     });
   });
 
-  describe("pingUrlChange", () => {
-    it("calls checkInternet if pingServerUrl changes", () => {
+  describe('pingUrlChange', () => {
+    it('calls checkInternet if pingServerUrl changes', () => {
       const wrapper = shallow<NetworkConnectivity>(getElement());
       wrapper.instance().checkInternet = mockCheckInternet;
       expect(mockCheckInternet).not.toHaveBeenCalled();
-      wrapper.setProps({ pingServerUrl: "https://newServerToPing.com" });
+      wrapper.setProps({ pingServerUrl: 'https://newServerToPing.com' });
       expect(mockCheckInternet).toHaveBeenCalled();
     });
   });
 
-  describe("props validation", () => {
-    it("throws if prop pingTimeout is not a number", () => {
+  describe('props validation', () => {
+    it('throws if prop pingTimeout is not a number', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { pingTimeout: "4000", children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a number as pingTimeout parameter");
+            props: { pingTimeout: '4000', children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a number as pingTimeout parameter');
     });
 
-    it("throws if prop pingServerUrl is not a string", () => {
+    it('throws if prop pingServerUrl is not a string', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { pingServerUrl: 90, children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a string as pingServerUrl parameter");
+            props: { pingServerUrl: 90, children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a string as pingServerUrl parameter');
     });
 
-    it("throws if prop shouldPing is not a boolean", () => {
+    it('throws if prop shouldPing is not a boolean', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { shouldPing: () => null, children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a boolean as shouldPing parameter");
+            props: { shouldPing: () => null, children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a boolean as shouldPing parameter');
     });
 
-    it("throws if prop pingInterval is not a number", () => {
+    it('throws if prop pingInterval is not a number', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { pingInterval: false, children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a number as pingInterval parameter");
+            props: { pingInterval: false, children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a number as pingInterval parameter');
     });
 
-    it("throws if prop pingOnlyIfOffline is not a boolean", () => {
+    it('throws if prop pingOnlyIfOffline is not a boolean', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { pingOnlyIfOffline: 10, children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a boolean as pingOnlyIfOffline parameter");
+            props: { pingOnlyIfOffline: 10, children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a boolean as pingOnlyIfOffline parameter');
     });
 
-    it("throws if prop pingInBackground is not a boolean", () => {
+    it('throws if prop pingInBackground is not a boolean', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { pingInBackground: "4000", children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a string as pingServerUrl parameter");
+            props: { pingInBackground: '4000', children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a string as pingServerUrl parameter');
     });
 
-    it("throws if prop httpMethod is not either HEAD or OPTIONS", () => {
+    it('throws if prop httpMethod is not either HEAD or OPTIONS', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { httpMethod: "POST", children: ChildrenComponent }
-          })
-        )
-      ).toThrow("httpMethod parameter should be either HEAD or OPTIONS");
+            props: { httpMethod: 'POST', children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('httpMethod parameter should be either HEAD or OPTIONS');
     });
 
-    it("throws if prop onConnectivityChange is not a function", () => {
+    it('throws if prop onConnectivityChange is not a function', () => {
       expect(() =>
         render(
           // @ts-ignore
           getElement({
-            props: { onConnectivityChange: "foo", children: ChildrenComponent }
-          })
-        )
-      ).toThrow("you should pass a function as onConnectivityChange parameter");
+            props: { onConnectivityChange: 'foo', children: ChildrenComponent },
+          }),
+        ),
+      ).toThrow('you should pass a function as onConnectivityChange parameter');
     });
   });
 });
