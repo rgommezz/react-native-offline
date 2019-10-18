@@ -1,11 +1,11 @@
-import * as React from "react";
-import { AppState, Platform } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
-import * as connectivityInterval from "../utils/checkConnectivityInterval";
-import checkInternetAccess from "../utils/checkInternetAccess";
-import { ConnectivityArgs } from "../types";
-import { ConnectivityState } from "./NetworkContext";
-import DEFAULT_ARGS from "../utils/defaultConnectivityArgs";
+import * as React from 'react';
+import { AppState, Platform } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import * as connectivityInterval from '../utils/checkConnectivityInterval';
+import checkInternetAccess from '../utils/checkInternetAccess';
+import { ConnectivityArgs } from '../types';
+import { ConnectivityState } from './NetworkContext';
+import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
 
 export type RequiredProps = {
   children: (state: ConnectivityState) => React.ReactNode;
@@ -16,37 +16,37 @@ export type DefaultProps = ConnectivityArgs & {
 };
 
 function validateProps(props: RequiredProps) {
-  if (typeof props.onConnectivityChange !== "function") {
+  if (typeof props.onConnectivityChange !== 'function') {
     throw new Error(
-      "you should pass a function as onConnectivityChange parameter"
+      'you should pass a function as onConnectivityChange parameter',
     );
   }
-  if (typeof props.pingTimeout !== "number") {
-    throw new Error("you should pass a number as pingTimeout parameter");
+  if (typeof props.pingTimeout !== 'number') {
+    throw new Error('you should pass a number as pingTimeout parameter');
   }
-  if (typeof props.pingServerUrl !== "string") {
-    throw new Error("you should pass a string as pingServerUrl parameter");
+  if (typeof props.pingServerUrl !== 'string') {
+    throw new Error('you should pass a string as pingServerUrl parameter');
   }
-  if (typeof props.shouldPing !== "boolean") {
-    throw new Error("you should pass a boolean as shouldPing parameter");
+  if (typeof props.shouldPing !== 'boolean') {
+    throw new Error('you should pass a boolean as shouldPing parameter');
   }
-  if (typeof props.pingInterval !== "number") {
-    throw new Error("you should pass a number as pingInterval parameter");
+  if (typeof props.pingInterval !== 'number') {
+    throw new Error('you should pass a number as pingInterval parameter');
   }
-  if (typeof props.pingOnlyIfOffline !== "boolean") {
-    throw new Error("you should pass a boolean as pingOnlyIfOffline parameter");
+  if (typeof props.pingOnlyIfOffline !== 'boolean') {
+    throw new Error('you should pass a boolean as pingOnlyIfOffline parameter');
   }
-  if (typeof props.pingInBackground !== "boolean") {
-    throw new Error("you should pass a string as pingServerUrl parameter");
+  if (typeof props.pingInBackground !== 'boolean') {
+    throw new Error('you should pass a string as pingServerUrl parameter');
   }
-  if (props.httpMethod && !["HEAD", "OPTIONS"].includes(props.httpMethod)) {
-    throw new Error("httpMethod parameter should be either HEAD or OPTIONS");
+  if (props.httpMethod && !['HEAD', 'OPTIONS'].includes(props.httpMethod)) {
+    throw new Error('httpMethod parameter should be either HEAD or OPTIONS');
   }
 }
 
 const defaultProps = {
   ...DEFAULT_ARGS,
-  onConnectivityChange: () => undefined
+  onConnectivityChange: () => undefined,
 };
 class NetworkConnectivity extends React.PureComponent<
   RequiredProps,
@@ -58,7 +58,7 @@ class NetworkConnectivity extends React.PureComponent<
     super(props);
     validateProps(props);
     this.state = {
-      isConnected: true
+      isConnected: true,
     };
   }
 
@@ -66,9 +66,9 @@ class NetworkConnectivity extends React.PureComponent<
     const { pingInterval } = this.props;
     const handler = this.getConnectionChangeHandler();
 
-    NetInfo.isConnected.addEventListener("connectionChange", handler);
+    NetInfo.isConnected.addEventListener('connectionChange', handler);
     // On Android the listener does not fire on startup
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       const netConnected = await NetInfo.isConnected.fetch();
       handler(netConnected);
     }
@@ -90,7 +90,7 @@ class NetworkConnectivity extends React.PureComponent<
 
   componentWillUnmount() {
     const handler = this.getConnectionChangeHandler();
-    NetInfo.isConnected.removeEventListener("connectionChange", handler);
+    NetInfo.isConnected.removeEventListener('connectionChange', handler);
     connectivityInterval.clear();
   }
 
@@ -114,15 +114,15 @@ class NetworkConnectivity extends React.PureComponent<
       pingInBackground,
       pingTimeout,
       pingServerUrl,
-      httpMethod
+      httpMethod,
     } = this.props;
-    if (pingInBackground === false && AppState.currentState !== "active") {
+    if (pingInBackground === false && AppState.currentState !== 'active') {
       return; // <-- Return early as we don't care about connectivity if app is not in foreground.
     }
     const hasInternetAccess = await checkInternetAccess({
       url: pingServerUrl,
       timeout: pingTimeout,
-      method: httpMethod
+      method: httpMethod,
     });
     this.handleConnectivityChange(hasInternetAccess);
   };
@@ -138,7 +138,7 @@ class NetworkConnectivity extends React.PureComponent<
 
   handleConnectivityChange = (isConnected: boolean) => {
     this.setState({
-      isConnected
+      isConnected,
     });
   };
 

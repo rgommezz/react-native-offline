@@ -1,8 +1,8 @@
-import * as React from "react";
-import NetworkConnectivity from "./NetworkConnectivity";
-import NetworkContext from "./NetworkContext";
-import { ConnectivityArgs } from "../types";
-import DEFAULT_ARGS from "../utils/defaultConnectivityArgs";
+import * as React from 'react';
+import NetworkConnectivity from './NetworkConnectivity';
+import NetworkContext from './NetworkContext';
+import { ConnectivityArgs } from '../types';
+import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
 
 type Props = {
   children: React.ReactNode;

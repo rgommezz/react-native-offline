@@ -1,31 +1,31 @@
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_TIMEOUT
-} from "./constants";
+  DEFAULT_TIMEOUT,
+} from './constants';
 
 type Options = {
-  method?: "HEAD" | "OPTIONS";
+  method?: 'HEAD' | 'OPTIONS';
   url: string;
   timeout?: number;
   testMethod?:
-    | "onload/2xx"
-    | "onload/3xx"
-    | "onload/4xx"
-    | "onload/5xx"
-    | "onerror"
-    | "ontimeout";
+    | 'onload/2xx'
+    | 'onload/3xx'
+    | 'onload/4xx'
+    | 'onload/5xx'
+    | 'onerror'
+    | 'ontimeout';
 };
 
 type ResolvedValue = {
   status: number;
 };
 
-const CACHE_HEADER_VALUE = "no-cache, no-store, must-revalidate";
+const CACHE_HEADER_VALUE = 'no-cache, no-store, must-revalidate';
 export const headers = {
-  "Cache-Control": CACHE_HEADER_VALUE,
-  Pragma: "no-cache" as "no-cache",
-  Expires: "0"
+  'Cache-Control': CACHE_HEADER_VALUE,
+  Pragma: 'no-cache' as 'no-cache',
+  Expires: '0',
 };
 
 /**
@@ -41,14 +41,14 @@ type PromiseHandler = (args: ResolvedValue) => void;
 const DEFAULT_OPTIONS: Options = {
   method: DEFAULT_HTTP_METHOD,
   url: DEFAULT_PING_SERVER_URL,
-  timeout: DEFAULT_TIMEOUT
+  timeout: DEFAULT_TIMEOUT,
 };
 export default function makeHttpRequest(args?: Options) {
   const {
     method = DEFAULT_HTTP_METHOD,
     url = DEFAULT_PING_SERVER_URL,
     timeout = DEFAULT_TIMEOUT,
-    testMethod
+    testMethod,
   } = args || DEFAULT_OPTIONS;
   return new Promise((resolve: PromiseHandler, reject: PromiseHandler) => {
     // @ts-ignore
@@ -59,22 +59,22 @@ export default function makeHttpRequest(args?: Options) {
       // 3xx is a valid response for us, since the server was reachable
       if (this.status >= 200 && this.status < 400) {
         resolve({
-          status: this.status
+          status: this.status,
         });
       } else {
         reject({
-          status: this.status
+          status: this.status,
         });
       }
     };
     xhr.onerror = function onError() {
       reject({
-        status: this.status
+        status: this.status,
       });
     };
     xhr.ontimeout = function onTimeOut() {
       reject({
-        status: this.status
+        status: this.status,
       });
     };
 

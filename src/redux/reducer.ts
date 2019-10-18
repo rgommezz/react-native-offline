@@ -1,48 +1,48 @@
-import { get, without } from "lodash";
-import * as actionTypes from "./actionTypes";
-import getSimilarActionInQueue from "../utils/getSimilarActionInQueue";
+import { get, without } from 'lodash';
+import * as actionTypes from './actionTypes';
+import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import {
   NetworkState,
   nonNullable,
   EnqueuedAction,
-  FluxAction
-} from "../types";
-import { ActionCreatorTypes, FetchOfflineModeType } from "./actionCreators";
-import { AnyAction } from "redux";
+  FluxAction,
+} from '../types';
+import { ActionCreatorTypes, FetchOfflineModeType } from './actionCreators';
+import { AnyAction } from 'redux';
 
 const actionQueue: EnqueuedAction[] = [];
 export const initialState = {
   isConnected: true,
-  actionQueue
+  actionQueue,
 };
 
 function handleOfflineAction(
   state: NetworkState,
-  { payload: { prevAction, prevThunk }, meta }: FetchOfflineModeType
+  { payload: { prevAction, prevThunk }, meta }: FetchOfflineModeType,
 ): NetworkState {
   const isActionToRetry =
-    typeof prevAction === "object" && get(meta, "retry") === true;
+    typeof prevAction === 'object' && get(meta, 'retry') === true;
 
   const isThunkToRetry =
-    typeof prevThunk === "function" && get(prevThunk, "meta.retry") === true;
+    typeof prevThunk === 'function' && get(prevThunk, 'meta.retry') === true;
 
   if (isActionToRetry || isThunkToRetry) {
     // If a similar action already existed on the queue, we remove it and push it again to the end of the queue
     const actionToLookUp = prevAction || prevThunk;
     const actionWithMetaData =
-      typeof actionToLookUp === "object"
+      typeof actionToLookUp === 'object'
         ? ({ ...actionToLookUp, meta } as FluxAction)
         : actionToLookUp;
     const similarActionQueued = getSimilarActionInQueue(
       actionWithMetaData,
-      state.actionQueue
+      state.actionQueue,
     );
     const actions = similarActionQueued
       ? [...without(state.actionQueue, similarActionQueued), actionWithMetaData]
       : [...state.actionQueue, actionWithMetaData];
     return {
       ...state,
-      actionQueue: actions.filter(nonNullable)
+      actionQueue: actions.filter(nonNullable),
     };
   }
   return state;
@@ -50,45 +50,45 @@ function handleOfflineAction(
 
 function handleRemoveActionFromQueue(
   state: NetworkState,
-  action: EnqueuedAction
+  action: EnqueuedAction,
 ): NetworkState {
   const similarActionQueued = getSimilarActionInQueue(
     action,
-    state.actionQueue
+    state.actionQueue,
   );
 
   return {
     ...state,
     actionQueue: without(state.actionQueue, similarActionQueued).filter(
-      nonNullable
-    )
+      nonNullable,
+    ),
   };
 }
 
 function handleDismissActionsFromQueue(
   state: NetworkState,
-  triggerActionToDismiss: string
+  triggerActionToDismiss: string,
 ): NetworkState {
   const newActionQueue = state.actionQueue.filter(action => {
-    const dismissArray = get(action, "meta.dismiss", []);
+    const dismissArray = get(action, 'meta.dismiss', []);
     return !dismissArray.includes(triggerActionToDismiss);
   });
 
   return {
     ...state,
-    actionQueue: newActionQueue
+    actionQueue: newActionQueue,
   };
 }
 
 export default function(
   state: NetworkState = initialState,
-  action: ActionCreatorTypes | AnyAction
+  action: ActionCreatorTypes | AnyAction,
 ): NetworkState {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:
       return {
         ...state,
-        isConnected: action.payload
+        isConnected: action.payload,
       };
     case actionTypes.FETCH_OFFLINE_MODE:
       return handleOfflineAction(state, action as FetchOfflineModeType);

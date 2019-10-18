@@ -1,30 +1,30 @@
-import { put, select, call, take, cancelled, fork } from "redux-saga/effects";
-import { eventChannel, Subscribe } from "redux-saga";
-import { AppState, Platform } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
-import { networkSelector } from "./reducer";
-import checkInternetAccess from "../utils/checkInternetAccess";
-import { connectionChange } from "./actionCreators";
-import DEFAULT_ARGS from "../utils/defaultConnectivityArgs";
-import { ConnectivityArgs, NetworkState } from "../types";
+import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
+import { eventChannel, Subscribe } from 'redux-saga';
+import { AppState, Platform } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import { networkSelector } from './reducer';
+import checkInternetAccess from '../utils/checkInternetAccess';
+import { connectionChange } from './actionCreators';
+import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
+import { ConnectivityArgs, NetworkState } from '../types';
 import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_HTTP_METHOD
-} from "../utils/constants";
+  DEFAULT_HTTP_METHOD,
+} from '../utils/constants';
 
 type NetInfoChangeArgs = Omit<
   ConnectivityArgs,
-  "pingInterval" | "pingOnlyIfOffline" | "pingInBackground"
+  'pingInterval' | 'pingOnlyIfOffline' | 'pingInBackground'
 >;
-type CheckInternetArgs = Omit<NetInfoChangeArgs, "shouldPing"> & {
+type CheckInternetArgs = Omit<NetInfoChangeArgs, 'shouldPing'> & {
   pingInBackground: boolean;
 };
 
 export function netInfoEventChannelFn(emit: (param: boolean) => unknown) {
-  NetInfo.isConnected.addEventListener("connectionChange", emit);
+  NetInfo.isConnected.addEventListener('connectionChange', emit);
   return () => {
-    NetInfo.isConnected.removeEventListener("connectionChange", emit);
+    NetInfo.isConnected.removeEventListener('connectionChange', emit);
   };
 }
 
@@ -42,7 +42,7 @@ export function intervalChannelFn(interval: number) {
  * @returns {Channel<T>}
  */
 export function createNetInfoConnectionChangeChannel<T = any>(
-  channelFn: Subscribe<T>
+  channelFn: Subscribe<T>,
 ) {
   return eventChannel(channelFn);
 }
@@ -72,21 +72,21 @@ export function* netInfoChangeSaga({
   pingTimeout,
   pingServerUrl,
   shouldPing,
-  httpMethod
+  httpMethod,
 }: NetInfoChangeArgs) {
-  if (Platform.OS === "android") {
+  if (Platform.OS === 'android') {
     const initialConnection = yield call([NetInfo, NetInfo.isConnected.fetch]);
     yield fork(connectionHandler, {
       shouldPing,
       isConnected: initialConnection,
       pingTimeout,
       pingServerUrl,
-      httpMethod
+      httpMethod,
     });
   }
   const chan = yield call(
     createNetInfoConnectionChangeChannel,
-    netInfoEventChannelFn
+    netInfoEventChannelFn,
   );
   try {
     while (true) {
@@ -96,7 +96,7 @@ export function* netInfoChangeSaga({
         isConnected,
         pingTimeout,
         pingServerUrl,
-        httpMethod
+        httpMethod,
       });
     }
   } finally {
@@ -121,14 +121,14 @@ export function* connectionHandler({
   isConnected,
   pingTimeout,
   pingServerUrl,
-  httpMethod
+  httpMethod,
 }: NetInfoChangeArgs & { isConnected: boolean }) {
   if (shouldPing && isConnected) {
     yield fork(checkInternetAccessSaga, {
       pingTimeout,
       pingServerUrl,
       httpMethod,
-      pingInBackground: false
+      pingInBackground: false,
     });
   } else {
     yield fork(handleConnectivityChange, isConnected);
@@ -151,12 +151,12 @@ export function* connectionIntervalSaga({
   pingInterval,
   pingOnlyIfOffline,
   pingInBackground,
-  httpMethod
-}: Omit<ConnectivityArgs, "shouldPing">) {
+  httpMethod,
+}: Omit<ConnectivityArgs, 'shouldPing'>) {
   const chan = yield call(
     createIntervalChannel,
     pingInterval,
-    intervalChannelFn
+    intervalChannelFn,
   );
   try {
     while (true) {
@@ -167,7 +167,7 @@ export function* connectionIntervalSaga({
           pingTimeout,
           pingServerUrl,
           httpMethod,
-          pingInBackground
+          pingInBackground,
         });
       }
     }
@@ -190,15 +190,15 @@ export function* checkInternetAccessSaga({
   pingServerUrl,
   pingTimeout,
   httpMethod,
-  pingInBackground
+  pingInBackground,
 }: CheckInternetArgs) {
-  if (pingInBackground === false && AppState.currentState !== "active") {
+  if (pingInBackground === false && AppState.currentState !== 'active') {
     return; // <-- Return early as we don't care about connectivity if app is not in foreground.
   }
   const hasInternetAccess = yield call(checkInternetAccess, {
     url: pingServerUrl,
     timeout: pingTimeout,
-    method: httpMethod
+    method: httpMethod,
   });
   yield call(handleConnectivityChange, hasInternetAccess);
 }
@@ -236,14 +236,14 @@ export default function* networkSaga(args?: ConnectivityArgs) {
     shouldPing = true,
     pingOnlyIfOffline = false,
     pingInBackground = false,
-    httpMethod = DEFAULT_HTTP_METHOD
+    httpMethod = DEFAULT_HTTP_METHOD,
   } = args || DEFAULT_ARGS;
 
   yield fork(netInfoChangeSaga, {
     pingTimeout,
     pingServerUrl,
     shouldPing,
-    httpMethod
+    httpMethod,
   });
   if (pingInterval > 0) {
     yield fork(connectionIntervalSaga, {
@@ -252,7 +252,7 @@ export default function* networkSaga(args?: ConnectivityArgs) {
       pingInterval,
       pingOnlyIfOffline,
       pingInBackground,
-      httpMethod
+      httpMethod,
     });
   }
 }

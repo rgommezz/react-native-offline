@@ -1,4 +1,4 @@
-import { AnyAction } from "redux";
+import { AnyAction } from 'redux';
 
 export interface Thunk {
   (...args: any[]): any;
@@ -23,7 +23,7 @@ export type NetworkState = {
   actionQueue: EnqueuedAction[];
 };
 
-export type HTTPMethod = "HEAD" | "OPTIONS";
+export type HTTPMethod = 'HEAD' | 'OPTIONS';
 
 export type AddUndefined<T> = { [P in keyof T]: T[P] | undefined };
 

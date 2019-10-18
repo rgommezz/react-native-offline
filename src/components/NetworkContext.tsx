@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export type ConnectivityState = {
   isConnected: boolean;

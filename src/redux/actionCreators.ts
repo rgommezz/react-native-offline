@@ -1,42 +1,42 @@
-import * as actionTypes from "./actionTypes";
-import { EnqueuedAction } from "../types";
+import * as actionTypes from './actionTypes';
+import { EnqueuedAction } from '../types';
 
 export const connectionChange = (isConnected: boolean) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
-  payload: isConnected
+  payload: isConnected,
 });
 
 export const fetchOfflineMode = (action: EnqueuedAction) => {
   const { meta = {}, ...actionRest } = action;
-  if (typeof action === "object") {
+  if (typeof action === 'object') {
     return {
       type: actionTypes.FETCH_OFFLINE_MODE as typeof actionTypes.FETCH_OFFLINE_MODE,
       payload: {
         prevAction: {
-          ...actionRest
-        }
+          ...actionRest,
+        },
       },
-      meta
+      meta,
     };
   }
   // Thunk
   return {
     type: actionTypes.FETCH_OFFLINE_MODE as typeof actionTypes.FETCH_OFFLINE_MODE,
     payload: {
-      prevThunk: action
+      prevThunk: action,
     },
-    meta
+    meta,
   };
 };
 
 export const removeActionFromQueue = (action: EnqueuedAction) => ({
   type: actionTypes.REMOVE_FROM_ACTION_QUEUE as typeof actionTypes.REMOVE_FROM_ACTION_QUEUE,
-  payload: action
+  payload: action,
 });
 
 export const dismissActionsFromQueue = (actionTrigger: string) => ({
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE as typeof actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
-  payload: actionTrigger
+  payload: actionTrigger,
 });
 
 export type ConnectionChangeType = ReturnType<typeof connectionChange>;

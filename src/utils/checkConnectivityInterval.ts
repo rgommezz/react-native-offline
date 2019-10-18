@@ -1,6 +1,5 @@
 let interval: number | null = null;
 
-
 export function getInterval() {
   return interval;
 }

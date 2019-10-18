@@ -1,13 +1,13 @@
-import { find, get } from "lodash";
+import { find, get } from 'lodash';
 import {
   fetchOfflineMode,
   removeActionFromQueue,
-  dismissActionsFromQueue
-} from "./actionCreators";
-import * as networkActionTypes from "./actionTypes";
-import wait from "../utils/wait";
-import { NetworkState, EnqueuedAction } from "../types";
-import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from "redux";
+  dismissActionsFromQueue,
+} from './actionCreators';
+import * as networkActionTypes from './actionTypes';
+import wait from '../utils/wait';
+import { NetworkState, EnqueuedAction } from '../types';
+import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from 'redux';
 
 type State = {
   network: NetworkState;
@@ -22,7 +22,7 @@ type Arguments = {
 const DEFAULT_ARGUMENTS: Arguments = {
   actionTypes: [],
   regexActionType: /FETCH.*REQUEST/,
-  queueReleaseThrottle: 50
+  queueReleaseThrottle: 50,
 };
 
 type AllActions = EnqueuedAction;
@@ -31,19 +31,19 @@ type AllActions = EnqueuedAction;
 type StoreDispatch = (...args: any[]) => any;
 
 function validateParams(regexActionType: RegExp, actionTypes: ActionType) {
-  if ({}.toString.call(regexActionType) !== "[object RegExp]")
-    throw new Error("You should pass a regex as regexActionType param");
+  if ({}.toString.call(regexActionType) !== '[object RegExp]')
+    throw new Error('You should pass a regex as regexActionType param');
 
-  if ({}.toString.call(actionTypes) !== "[object Array]")
-    throw new Error("You should pass an array as actionTypes param");
+  if ({}.toString.call(actionTypes) !== '[object Array]')
+    throw new Error('You should pass an array as actionTypes param');
 }
 
 function findActionToBeDismissed(
   action: AnyAction,
-  actionQueue: EnqueuedAction[]
+  actionQueue: EnqueuedAction[],
 ) {
   return find(actionQueue, a => {
-    const actionsToDismiss = get(a, "meta.dismiss", []);
+    const actionsToDismiss = get(a, 'meta.dismiss', []);
     return actionsToDismiss.includes(action.type);
   });
 }
@@ -51,9 +51,9 @@ function findActionToBeDismissed(
 function isObjectAndShouldBeIntercepted(
   action: AllActions,
   regexActionType: RegExp,
-  actionTypes: ActionType
+  actionTypes: ActionType,
 ) {
-  if (typeof action === "object" && "type" in action) {
+  if (typeof action === 'object' && 'type' in action) {
     return (
       regexActionType.test(action.type) || actionTypes.includes(action.type)
     );
@@ -62,13 +62,13 @@ function isObjectAndShouldBeIntercepted(
 }
 
 function isThunkAndShouldBeIntercepted(action: AllActions) {
-  return typeof action === "function" && action.interceptInOffline === true;
+  return typeof action === 'function' && action.interceptInOffline === true;
 }
 
 function checkIfActionShouldBeIntercepted(
   action: AllActions,
   regexActionType: RegExp,
-  actionTypes: ActionType
+  actionTypes: ActionType,
 ): boolean {
   return (
     isObjectAndShouldBeIntercepted(action, regexActionType, actionTypes) ||
@@ -77,7 +77,7 @@ function checkIfActionShouldBeIntercepted(
 }
 
 function didComeBackOnline(action: AllActions, wasConnected: boolean) {
-  if ("type" in action && "payload" in action) {
+  if ('type' in action && 'payload' in action) {
     return (
       action.type === networkActionTypes.CONNECTION_CHANGE &&
       !wasConnected &&
@@ -87,11 +87,11 @@ function didComeBackOnline(action: AllActions, wasConnected: boolean) {
   return false;
 }
 
-type GetState = Pick<MiddlewareAPI<Dispatch, State>, "getState">["getState"];
+type GetState = Pick<MiddlewareAPI<Dispatch, State>, 'getState'>['getState'];
 export const createReleaseQueue = (
   getState: GetState,
   next: StoreDispatch,
-  delay: number
+  delay: number,
 ) => async (queue: EnqueuedAction[]) => {
   // eslint-disable-next-line
   for (const action of queue) {
@@ -108,27 +108,27 @@ export const createReleaseQueue = (
 };
 
 function createNetworkMiddleware(
-  args?: Partial<Arguments>
+  args?: Partial<Arguments>,
 ): Middleware<{}, State, Dispatch> {
   const { regexActionType, actionTypes, queueReleaseThrottle } = {
     ...DEFAULT_ARGUMENTS,
-    ...args
+    ...args,
   };
   return ({ getState }: MiddlewareAPI<Dispatch, State>) => (
-    next: StoreDispatch
+    next: StoreDispatch,
   ) => (action: AllActions) => {
     const { isConnected, actionQueue } = getState().network;
     const releaseQueue = createReleaseQueue(
       getState,
       next,
-      queueReleaseThrottle
+      queueReleaseThrottle,
     );
     validateParams(regexActionType, actionTypes);
 
     const shouldInterceptAction = checkIfActionShouldBeIntercepted(
       action,
       regexActionType,
-      actionTypes
+      actionTypes,
     );
 
     if (shouldInterceptAction && isConnected === false) {
@@ -147,10 +147,10 @@ function createNetworkMiddleware(
 
     // Checking if we have a dismissal case
     // narrow down type from thunk to only pass in actions with type -> AnyAction
-    if ("type" in action) {
+    if ('type' in action) {
       const isAnyActionToBeDismissed = findActionToBeDismissed(
         action,
-        actionQueue
+        actionQueue,
       );
       if (isAnyActionToBeDismissed && !isConnected) {
         next(dismissActionsFromQueue(action.type));

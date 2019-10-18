@@ -1,10 +1,10 @@
-import makeHttpRequest from "./makeHttpRequest";
+import makeHttpRequest from './makeHttpRequest';
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_TIMEOUT
-} from "./constants";
-import { HTTPMethod, AddUndefined } from "../types";
+  DEFAULT_TIMEOUT,
+} from './constants';
+import { HTTPMethod, AddUndefined } from '../types';
 
 type Arguments = {
   url: string;
@@ -15,15 +15,15 @@ type Arguments = {
 const DEFAULT_ARGUMENTS: Arguments = {
   timeout: DEFAULT_TIMEOUT,
   url: DEFAULT_PING_SERVER_URL,
-  method: DEFAULT_HTTP_METHOD
+  method: DEFAULT_HTTP_METHOD,
 };
 export default function checkInternetAccess(
-  args?: AddUndefined<Arguments>
+  args?: AddUndefined<Arguments>,
 ): Promise<boolean> {
   const {
     timeout = DEFAULT_TIMEOUT,
     url = DEFAULT_PING_SERVER_URL,
-    method = DEFAULT_HTTP_METHOD
+    method = DEFAULT_HTTP_METHOD,
   } = args || DEFAULT_ARGUMENTS;
 
   return new Promise(async (resolve: (value: boolean) => void) => {
@@ -31,7 +31,7 @@ export default function checkInternetAccess(
       await makeHttpRequest({
         method,
         url,
-        timeout
+        timeout,
       });
       resolve(true);
     } catch (e) {

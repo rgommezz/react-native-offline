@@ -1,9 +1,9 @@
-import { ConnectivityArgs } from "../types";
+import { ConnectivityArgs } from '../types';
 import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
-  DEFAULT_HTTP_METHOD
-} from "./constants";
+  DEFAULT_HTTP_METHOD,
+} from './constants';
 
 const DEFAULT_ARGS: ConnectivityArgs = {
   pingTimeout: DEFAULT_TIMEOUT,
@@ -12,7 +12,7 @@ const DEFAULT_ARGS: ConnectivityArgs = {
   pingInterval: 0,
   pingOnlyIfOffline: false,
   pingInBackground: false,
-  httpMethod: DEFAULT_HTTP_METHOD
+  httpMethod: DEFAULT_HTTP_METHOD,
 };
 
 export default DEFAULT_ARGS;
