@@ -8,7 +8,7 @@ import NetworkConnectivity, {
 } from '../src/components/NetworkConnectivity';
 import { setup, clear } from '../src/utils/checkConnectivityInterval';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
-import { entries } from '../src/utils/objectEntries';
+import entries from '../src/utils/objectEntries';
 
 interface MethodsMap {
   getConnectionChangeHandler?: any;

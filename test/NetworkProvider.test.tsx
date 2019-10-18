@@ -6,7 +6,7 @@ import NetworkProvider from '../src/components/NetworkProvider';
 describe('NetworkProvider', () => {
   it('has the correct structure and default props', () => {
     const { output } = shallow(
-      <NetworkProvider children={() => <Text>Test</Text>} />,
+      <NetworkProvider>{() => <Text>Test</Text>}</NetworkProvider>,
     );
     expect(output).toMatchSnapshot();
   });

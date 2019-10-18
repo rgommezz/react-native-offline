@@ -5,7 +5,6 @@ import createNetworkMiddleware, {
   createReleaseQueue,
 } from '../src/redux/createNetworkMiddleware';
 import * as actionCreators from '../src/redux/actionCreators';
-import { removeActionFromQueue } from '../src/redux/actionCreators';
 import wait from '../src/utils/wait';
 
 type Thunk = ThunkDispatch<{}, undefined, AnyAction>;
@@ -402,9 +401,15 @@ describe('createReleaseQueue', () => {
     const actionQueue = [foo, bar];
     await releaseQueue(actionQueue);
     expect(mockDispatch).toHaveBeenCalledTimes(4);
-    expect(mockDispatch).toHaveBeenNthCalledWith(1, removeActionFromQueue(foo));
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      1,
+      actionCreators.removeActionFromQueue(foo),
+    );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, foo);
-    expect(mockDispatch).toHaveBeenNthCalledWith(3, removeActionFromQueue(bar));
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      3,
+      actionCreators.removeActionFromQueue(bar),
+    );
     expect(mockDispatch).toHaveBeenNthCalledWith(4, bar);
   });
 
@@ -429,7 +434,10 @@ describe('createReleaseQueue', () => {
     const actionQueue = [foo, bar];
     await Promise.all([releaseQueue(actionQueue), switchToOffline()]);
     expect(mockDispatch).toHaveBeenCalledTimes(2);
-    expect(mockDispatch).toHaveBeenNthCalledWith(1, removeActionFromQueue(foo));
+    expect(mockDispatch).toHaveBeenNthCalledWith(
+      1,
+      actionCreators.removeActionFromQueue(foo),
+    );
     expect(mockDispatch).toHaveBeenNthCalledWith(2, foo);
   });
 });

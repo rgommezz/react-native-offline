@@ -7,6 +7,13 @@
     "prettier/react",
     "prettier/@typescript-eslint"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
   "parser": "@typescript-eslint/parser",
   "plugins": ["react", "@typescript-eslint", "prettier"],
   "parserOptions": {
@@ -33,12 +40,14 @@
     "import/extensions": 0,
     "no-use-before-define": 0,
     "import/no-extraneous-dependencies": 0,
+    "import/prefer-default-export": 0,
     "global-require": 0,
     "prefer-promise-reject-errors": 0,
     "react/prop-types": 0,
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/require-default-props": 0,
     "react/display-name": 0,
+    "react/destructuring-assignment": 0,
     "@typescript-eslint/no-use-before-define": 0
   },
   "globals": {

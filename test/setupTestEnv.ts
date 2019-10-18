@@ -1,15 +1,13 @@
 import 'jest-enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import Enzyme from 'enzyme';
-import { JSDOM as JSDOMType } from 'jsdom';
-
 /**
  * Set up DOM in node.js environment for Enzyme to mount to
  */
-const { JSDOM } = require('jsdom');
+import { JSDOM } from 'jsdom';
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
-const { window } = jsdom as JSDOMType;
+const { window } = jsdom;
 
 function copyProps(src: Record<string, any>, target: Record<string, any>) {
   Object.defineProperties(target, {
