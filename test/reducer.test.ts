@@ -1,12 +1,13 @@
 import { Dispatch } from 'redux';
+import { isEqual } from 'lodash';
 import * as actionCreators from '../src/redux/actionCreators';
 import { EnqueuedAction } from '../src/types';
-import { isEqual } from 'lodash';
 import createReducer, {
   initialState,
   networkSelector,
 } from '../src/redux/createReducer';
 import getSimilarActionInQueue from '../src/utils/getSimilarActionInQueue';
+
 const networkReducer = createReducer();
 
 const getState = (isConnected = false, ...actionQueue: EnqueuedAction[]) => ({
