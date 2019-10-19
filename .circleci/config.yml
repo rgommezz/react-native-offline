@@ -41,6 +41,7 @@ jobs:
         - ./node_modules
     # Test
     - run: npm run lint
+    - run: npm run ts
     - run: npm run test:coverage
     # Teardown
     # Save test results
