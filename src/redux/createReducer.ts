@@ -7,6 +7,7 @@ import {
   nonNullable,
   EnqueuedAction,
   FluxAction,
+  Thunk,
 } from '../types';
 import { ActionCreatorTypes, FetchOfflineModeType } from './actionCreators';
 
@@ -19,6 +20,7 @@ export const initialState = {
 function handleOfflineAction(
   state: NetworkState,
   { payload: { prevAction, prevThunk }, meta }: FetchOfflineModeType,
+  comparisonFn: ComparisonFn,
 ): NetworkState {
   const isActionToRetry =
     typeof prevAction === 'object' && get(meta, 'retry') === true;
@@ -33,7 +35,7 @@ function handleOfflineAction(
       typeof actionToLookUp === 'object'
         ? ({ ...actionToLookUp, meta } as FluxAction)
         : actionToLookUp;
-    const similarActionQueued = getSimilarActionInQueue(
+    const similarActionQueued = comparisonFn(
       actionWithMetaData,
       state.actionQueue,
     );
@@ -80,10 +82,14 @@ function handleDismissActionsFromQueue(
   };
 }
 
-export default function(
+type ComparisonFn = (
+  action: any,
+  actionQueue: EnqueuedAction[],
+) => FluxAction<any> | Thunk | undefined;
+export default (comparisonFn: ComparisonFn = getSimilarActionInQueue) => (
   state: NetworkState = initialState,
   action: ActionCreatorTypes | AnyAction,
-): NetworkState {
+): NetworkState => {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:
       return {
@@ -91,7 +97,11 @@ export default function(
         isConnected: action.payload,
       };
     case actionTypes.FETCH_OFFLINE_MODE:
-      return handleOfflineAction(state, action as FetchOfflineModeType);
+      return handleOfflineAction(
+        state,
+        action as FetchOfflineModeType,
+        comparisonFn,
+      );
 
     case actionTypes.REMOVE_FROM_ACTION_QUEUE:
       return handleRemoveActionFromQueue(state, action.payload);
@@ -100,7 +110,7 @@ export default function(
     default:
       return state;
   }
-}
+};
 
 export function networkSelector(state: { network: NetworkState }) {
   return state.network;

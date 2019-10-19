@@ -18,7 +18,9 @@ import networkSaga, {
   netInfoEventChannelFn,
 } from '../src/redux/sagas';
 import { connectionChange } from '../src/redux/actionCreators';
-import { networkSelector } from '../src/redux/reducer';
+
+import { networkSelector } from '../src/redux/createReducer';
+
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 import DEFAULT_ARGS from '../src/utils/defaultConnectivityArgs';
 

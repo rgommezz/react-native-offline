@@ -2,7 +2,7 @@ import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel, Subscribe } from 'redux-saga';
 import { AppState, Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { networkSelector } from './reducer';
+import { networkSelector } from './createReducer';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
 import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
