@@ -317,6 +317,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "emanueleDiVizio",
+      "name": "Emanuele",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/9089203?v=4",
+      "profile": "https://github.com/emanueleDiVizio",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
