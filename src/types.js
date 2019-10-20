@@ -4,6 +4,8 @@ export type State = {
   isConnected: boolean,
 };
 
+export type SemaphoreColor = 'RED' | 'GREEN';
+
 export type FluxAction = {
   type: string,
   payload: any,
@@ -35,9 +37,15 @@ export type FluxActionForDismissal = {
   payload: string,
 };
 
+export type FluxActionForChangeQueueSemaphore = {
+  type: string,
+  payload: SemaphoreColor,
+};
+
 export type NetworkState = {
   isConnected: boolean,
   actionQueue: Array<*>,
+  isQueuePaused: boolean,
 };
 
 export type HTTPMethod = 'HEAD' | 'OPTIONS';

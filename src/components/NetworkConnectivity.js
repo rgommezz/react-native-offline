@@ -56,7 +56,7 @@ function validateProps(props: Props) {
     throw new Error('httpMethod parameter should be either HEAD or OPTIONS');
   }
 }
-
+/* eslint-disable react/default-props-match-prop-types */
 class NetworkConnectivity extends React.PureComponent<Props, State> {
   static defaultProps = {
     onConnectivityChange: () => undefined,

@@ -1,6 +1,7 @@
 /* @flow */
 
 import { get, without } from 'lodash';
+import { SEMAPHORE_COLOR } from '../utils/constants';
 import actionTypes from './actionTypes';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import type {
@@ -8,11 +9,13 @@ import type {
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   NetworkState,
+  SemaphoreColor,
 } from '../types';
 
 export const initialState = {
   isConnected: true,
   actionQueue: [],
+  isQueuePaused: false,
 };
 
 function handleOfflineAction(
@@ -81,8 +84,20 @@ function handleDismissActionsFromQueue(
   };
 }
 
+function handleChangeQueueSemaphore(
+  state: NetworkState,
+  semaphoreColor: SemaphoreColor,
+): NetworkState {
+  return {
+    ...state,
+    isQueuePaused: semaphoreColor === SEMAPHORE_COLOR.RED,
+  };
+}
+
 export default (comparisonFn: Function = getSimilarActionInQueue) => (
-  state: NetworkState = initialState,
+  state: NetworkState = {
+    ...initialState,
+  },
   action: *,
 ): NetworkState => {
   switch (action.type) {
@@ -97,6 +112,8 @@ export default (comparisonFn: Function = getSimilarActionInQueue) => (
       return handleRemoveActionFromQueue(state, action.payload);
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
       return handleDismissActionsFromQueue(state, action.payload);
+    case actionTypes.CHANGE_QUEUE_SEMAPHORE:
+      return handleChangeQueueSemaphore(state, action.payload);
     default:
       return state;
   }

@@ -20,6 +20,9 @@ module.exports = {
   get offlineActionTypes() {
     return require('./redux/actionTypes').default;
   },
+  get offlineActionCreators() {
+    return require('./redux/actionCreators').default;
+  },
   get networkSaga() {
     return require('./redux/sagas').default;
   },
