@@ -7,6 +7,7 @@ export const addOne = () => ({
     retry: true,
   },
 });
+export type addOneType = typeof addOne;
 
 export const subOne = () => ({
   type: 'SUB_ONE',
@@ -15,6 +16,7 @@ export const subOne = () => ({
     retry: true,
   },
 });
+export type subOneType = typeof subOne;
 
 export const other = () => ({
   type: 'OTHER',
@@ -23,7 +25,9 @@ export const other = () => ({
     dismiss: ['CANCEL_OTHER'],
   },
 });
+export type otherType = typeof other;
 
 export const cancelOther = () => ({
   type: 'CANCEL_OTHER',
 });
+export type cancelOtherType = typeof cancelOther;

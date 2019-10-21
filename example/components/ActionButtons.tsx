@@ -5,18 +5,22 @@ import {
   View,
   StyleSheet,
   Text,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  Platform,
+  TouchableHighlight,
 } from 'react-native';
-import { addOne, subOne, other, cancelOther } from '../redux/actions';
+import {
+  addOne,
+  subOne,
+  other,
+  cancelOther,
+  addOneType,
+  subOneType,
+  otherType,
+  cancelOtherType,
+} from '../redux/actions';
 
-const Touchable = Platform.select({
-  android: TouchableNativeFeedback,
-  ios: TouchableOpacity,
-});
+const Touchable = TouchableHighlight;
 
-const showInfo = actionType => () => {
+const showInfo = (actionType: string) => () => {
   const message = (() => {
     switch (actionType) {
       case 'ADD_1':
@@ -48,13 +52,18 @@ const showInfo = actionType => () => {
     cancelable: false,
   });
 };
-
+type ActionTypes = {
+  addOneAction: addOneType;
+  subOneAction: subOneType;
+  otherAction: otherType;
+  cancelOtherAction: cancelOtherType;
+};
 function ActionButtons({
   addOneAction,
   subOneAction,
   otherAction,
   cancelOtherAction,
-}) {
+}: ActionTypes) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Actions to dispatch</Text>

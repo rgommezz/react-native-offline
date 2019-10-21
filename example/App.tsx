@@ -6,9 +6,19 @@ import DummyNetworkContext from './DummyNetworkContext';
 
 const onlineUrl = 'https://www.google.com/';
 const offlineUrl = 'https://www.weifhweopfhwioehfiwoephfpweoifhewifhpewoif.com';
+interface Props {
+  skipLoadingScreen?: boolean;
+}
 
-export default class App extends React.Component {
-  constructor(props) {
+interface State {
+  isLoadingComplete: boolean;
+  network: {
+    pingUrl: string;
+    toggleConnection: () => void;
+  };
+}
+export default class App extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       isLoadingComplete: false,

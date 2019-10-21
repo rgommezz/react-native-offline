@@ -1,4 +1,4 @@
-import { DOMWindow } from "jsdom";
+import { DOMWindow } from 'jsdom';
 
 declare global {
   namespace NodeJS {
