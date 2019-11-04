@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
+import { AppState } from '../redux/createStore';
 
-function OfflineQueue({ queue, title }) {
+type Props = {
+  queue: string[];
+  title: string;
+};
+const OfflineQueue: FunctionComponent<Props> = ({ queue, title }) => {
   return (
     <View style={{ height: 90, marginVertical: 8 }}>
       <Text style={styles.title}>{title}</Text>
@@ -11,7 +16,7 @@ function OfflineQueue({ queue, title }) {
         contentContainerStyle={styles.queue}
         horizontal
       >
-        {queue.map((item, i) => (
+        {queue.map(item => (
           <Text style={styles.queueItem} key={`${item}`}>
             {item}
           </Text>
@@ -19,10 +24,10 @@ function OfflineQueue({ queue, title }) {
       </ScrollView>
     </View>
   );
-}
+};
 
-const mapStateToProps = ({ network }) => ({
-  queue: network.actionQueue.map(a => a.type),
+const mapStateToProps = ({ network }: AppState) => ({
+  queue: network.actionQueue.map(a => ('type' in a ? a.type : 'Thunk')),
 });
 
 export default connect(mapStateToProps)(OfflineQueue);

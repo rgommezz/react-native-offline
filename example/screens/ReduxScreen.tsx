@@ -1,7 +1,7 @@
 import React from 'react';
-import { Platform, View, StyleSheet, Image, Text } from 'react-native';
-import { ReduxNetworkProvider } from 'react-native-offline';
+import { Platform, View, StyleSheet, Image } from 'react-native';
 import { Provider } from 'react-redux';
+import { ReduxNetworkProvider } from '../../src';
 
 import ConnectionToggler from '../components/ConnectionToggler';
 import DummyNetworkContext from '../DummyNetworkContext';
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: 'black',
-        shadowOffset: { height: -3 },
+        shadowOffset: { height: -3, width: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
       },

@@ -14,9 +14,13 @@ const ComponentsStack = createStackNavigator({
   Components: ComponentsScreen,
 });
 
+type TabBarIconArgs = {
+  focused: boolean;
+};
+
 ComponentsStack.navigationOptions = {
   tabBarLabel: 'Components',
-  tabBarIcon: ({ focused }) => (
+  tabBarIcon: ({ focused }: TabBarIconArgs) => (
     <TabBarIcon
       focused={focused}
       name={
@@ -34,7 +38,7 @@ const ReduxStack = createStackNavigator({
 
 ReduxStack.navigationOptions = {
   tabBarLabel: 'Redux',
-  tabBarIcon: ({ focused }) => (
+  tabBarIcon: ({ focused }: TabBarIconArgs) => (
     <TabBarIcon
       focused={focused}
       name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
@@ -48,7 +52,7 @@ const SagasStack = createStackNavigator({
 
 SagasStack.navigationOptions = {
   tabBarLabel: 'Sagas',
-  tabBarIcon: ({ focused }) => (
+  tabBarIcon: ({ focused }: TabBarIconArgs) => (
     <TabBarIcon
       focused={focused}
       name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}

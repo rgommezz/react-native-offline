@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { View, StyleSheet, Text } from 'react-native';
 import { MonoText } from './StyledText';
+import { AppState } from '../redux/createStore';
 
-function ReduxNetworkReader({ isConnected }) {
+type Props = {
+  isConnected: boolean;
+};
+const ReduxNetworkReader: FunctionComponent<Props> = ({ isConnected }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Connected to Internet:</Text>
@@ -19,10 +23,10 @@ function ReduxNetworkReader({ isConnected }) {
       </View>
     </View>
   );
-}
+};
 
-export default connect(store => ({
-  isConnected: store.network.isConnected,
+export default connect((state: AppState) => ({
+  isConnected: state.network.isConnected,
 }))(ReduxNetworkReader);
 
 const styles = StyleSheet.create({

@@ -119,7 +119,10 @@ describe('OFFLINE_ACTION action type', () => {
     });
 
     describe('thunks that are the same with custom comparison function', () => {
-      function comparisonFn(action: any, actionQueue: any) {
+      function comparisonFn(
+        action: EnqueuedAction,
+        actionQueue: EnqueuedAction[],
+      ) {
         if (typeof action === 'object') {
           return actionQueue.find(queued => isEqual(queued, action));
         }

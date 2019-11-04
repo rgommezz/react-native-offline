@@ -1,12 +1,23 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import {
-  reducer as network,
-  createNetworkMiddleware,
-} from 'react-native-offline';
+
+// TODO: removed require and imported it from file system,
+// I hope this is okay
 import createSagaMiddleware from 'redux-saga';
+import { reducer as network, createNetworkMiddleware } from '../../src/index';
+
 import counter from './reducer';
 import rootSaga from './sagas';
 
+type GetReducerState<T> = {
+  [P in keyof T]: T[P] extends (...args: any[]) => infer Q ? Q : never
+};
+
+const reducers = {
+  counter,
+  network,
+};
+
+export type AppState = GetReducerState<typeof reducers>;
 export default function createReduxStore({
   withSaga = false,
   queueReleaseThrottle = 1000,
@@ -19,10 +30,7 @@ export default function createReduxStore({
 
   const sagaMiddleware = createSagaMiddleware();
 
-  const rootReducer = combineReducers({
-    counter,
-    network,
-  });
+  const rootReducer = combineReducers(reducers);
 
   const middlewares = [networkMiddleware];
   if (withSaga === true) {

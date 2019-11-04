@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View } from 'react-native';
 import { MonoText } from './StyledText';
+import { AppState } from '../redux/createStore';
 
-function Counter({ counter }) {
+const Counter: FunctionComponent<{ counter: number }> = ({ counter }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Counter state:</Text>
@@ -12,9 +13,9 @@ function Counter({ counter }) {
       </View>
     </View>
   );
-}
+};
 
-export default connect(state => ({
+export default connect((state: AppState) => ({
   counter: state.counter,
 }))(Counter);
 

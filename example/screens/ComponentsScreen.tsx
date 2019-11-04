@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { NetworkProvider, NetworkConsumer } from 'react-native-offline';
+import { NetworkProvider, NetworkConsumer } from '../../src';
 
 import { MonoText } from '../components/StyledText';
 import ConnectionToggler from '../components/ConnectionToggler';
@@ -38,7 +38,7 @@ export default class ComponentsScreen extends React.Component {
                     >
                       <MonoText
                         style={[
-                          styles.highlightText,
+                          styles.codeHighlightText,
                           { color: isConnected ? 'green' : 'red' },
                         ]}
                       >
@@ -123,14 +123,14 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabBarInfoContainer: {
-    position: 'absolute',
+    position: 'absolute' as 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     ...Platform.select({
       ios: {
         shadowColor: 'black',
-        shadowOffset: { height: -3 },
+        shadowOffset: { height: -3, width: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
       },
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         elevation: 20,
       },
     }),
-    alignItems: 'center',
+    alignItems: 'center' as 'center',
     backgroundColor: '#fbfbfb',
     paddingVertical: 20,
   },

@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: 'black',
-        shadowOffset: { height: -3 },
+        shadowOffset: { height: -3, width: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
       },
