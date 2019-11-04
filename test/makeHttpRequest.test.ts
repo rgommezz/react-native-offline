@@ -44,6 +44,8 @@ global.XMLHttpRequest = class MockXMLHttpRequest {
       case 'ontimeout':
         this.status = -1;
         break;
+      default:
+        this.status = 0;
     }
   }
 

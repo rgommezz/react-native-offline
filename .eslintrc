@@ -48,7 +48,8 @@
     "react/require-default-props": 0,
     "react/display-name": 0,
     "react/destructuring-assignment": 0,
-    "@typescript-eslint/no-use-before-define": 0
+    "@typescript-eslint/no-use-before-define": 0,
+    "no-return-assign": 0
   },
   "globals": {
     "jest": true

@@ -12,7 +12,7 @@ function OfflineQueue({ queue, title }) {
         horizontal
       >
         {queue.map((item, i) => (
-          <Text style={styles.queueItem} key={`${item}-${i}`}>
+          <Text style={styles.queueItem} key={`${item}`}>
             {item}
           </Text>
         ))}
