@@ -119,25 +119,22 @@ describe('OFFLINE_ACTION action type', () => {
     });
 
     describe('thunks that are the same with custom comparison function', () => {
-      function comparisonFn(
-        action: EnqueuedAction,
-        actionQueue: EnqueuedAction[],
-      ) {
+      function comparisonFn(action: any, actionQueue: EnqueuedAction[]) {
         if (typeof action === 'object') {
           return actionQueue.find(queued => isEqual(queued, action));
         }
         if (typeof action === 'function') {
           return actionQueue.find(
             queued =>
-              action.meta.name === queued.meta.name &&
-              action.meta.args.id === queued.meta.args.id,
+              action.meta.name === queued.meta!.name &&
+              action.meta.args.id === queued.meta!.args.id,
           );
         }
         return undefined;
       }
 
-      const thunkFactory = (id, name, age) => {
-        function thunk(dispatch) {
+      const thunkFactory = (id: number, name: string, age: number) => {
+        function thunk(dispatch: Dispatch) {
           dispatch({ type: 'UPDATE_DATA_REQUEST', payload: { id, name, age } });
         }
         thunk.meta = {
@@ -149,30 +146,28 @@ describe('OFFLINE_ACTION action type', () => {
 
       it(`should add thunks if function is same but thunks are modifying different items`, () => {
         const prevState = getState(false, thunkFactory(1, 'Bilbo', 55));
-        const thunk = actionCreators.fetchOfflineMode(
-          thunkFactory(2, 'Link', 54),
-        );
+        const thunk = thunkFactory(2, 'Link', 54);
+        const wrappedThunk = actionCreators.fetchOfflineMode(thunk);
 
         expect(getSimilarActionInQueue(thunk, prevState.actionQueue)).toEqual(
-          prevState.actionQueue[0].action,
+          prevState.actionQueue[0],
         );
 
-        const nextState = createReducer(comparisonFn)(prevState, thunk);
+        const nextState = createReducer(comparisonFn)(prevState, wrappedThunk);
 
         expect(nextState.actionQueue).toHaveLength(2);
       });
 
       it(`should replace a thunk if thunk already exists to modify same item`, () => {
         const prevState = getState(false, thunkFactory(1, 'Bilbo', 55));
-        const thunk = actionCreators.fetchOfflineMode(
-          thunkFactory(1, 'Bilbo', 65),
-        );
+        const thunk = thunkFactory(1, 'Bilbo', 65);
+        const wrappedThunk = actionCreators.fetchOfflineMode(thunk);
 
         expect(getSimilarActionInQueue(thunk, prevState.actionQueue)).toEqual(
-          prevState.actionQueue[0].action,
+          prevState.actionQueue[0],
         );
 
-        const nextState = createReducer(comparisonFn)(prevState, thunk);
+        const nextState = createReducer(comparisonFn)(prevState, wrappedThunk);
 
         expect(nextState.actionQueue).toHaveLength(1);
       });

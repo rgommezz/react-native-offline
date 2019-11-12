@@ -10,6 +10,7 @@ export type EnqueuedAction = FluxAction | Thunk;
 interface MetaProps {
   retry?: boolean;
   dismiss?: string[];
+  [x: string]: any;
 }
 
 export interface FluxAction<T = any> extends AnyAction {
