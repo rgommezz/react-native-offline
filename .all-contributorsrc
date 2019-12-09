@@ -327,7 +327,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "helderburato",
+      "name": "Helder Burato Berto",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/862575?v=4",
+      "profile": "https://helder.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
