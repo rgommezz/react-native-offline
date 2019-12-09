@@ -79,7 +79,7 @@ $ yarn add react-native-offline
 $ npm i --save react-native-offline
 ```
 
-This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using. 
+This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using.
 
 If you are on React Native v0.60, you don't need to do anything else, since it supports autolinking. For iOS, just go to the `ios` folder and run `pod install`. However, autolinking might not pick up and install the `@react-native-community/netinfo` dependency. If that happens, first install `@react-native-community/netinfo` directly, then run `pod install`, then install `react-native-offline` and finish with `pod install`.
 
@@ -586,6 +586,7 @@ As you can see in the snippets below, we create the `store` instance as usual an
 // configureStore.js
 import { createStore, applyMiddleware } from 'redux';
 import { persistStore } from 'redux-persist';
+import AsyncStorage from '@react-native-community/async-storage';
 import { createNetworkMiddleware, offlineActionCreators, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
@@ -595,7 +596,7 @@ export default function configureStore(callback) {
   const store = createStore(rootReducer, applyMiddleware(networkMiddleware));
   const { connectionChange } = offlineActionCreators;
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
-  persistStore(store, null, () => {
+  persistStore(store, { storage: AsyncStorage }, () => {
     // After rehydration completes, we detect initial connection
     checkInternetConnection().then(isConnected => {
       store.dispatch(connectionChange(isConnected));
@@ -691,10 +692,10 @@ export const fetchUser = (url) => {
   };
 
   thunk.interceptInOffline = true;
-  
+
   // Add these
   thunk.meta = {
-    retry: true, 
+    retry: true,
     name: 'fetchUser', // This should be the name of your function
     args: [url], // These are the arguments for the function. Add more as needed.
   };
@@ -752,7 +753,7 @@ const networkTransform = createTransform(
   },
   // The 'network' key may change depending on what you
   // named your network reducer.
-  { whitelist: ['network'] }, 
+  { whitelist: ['network'] },
 );
 
 const persistConfig = {
