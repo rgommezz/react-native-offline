@@ -1,5 +1,5 @@
 # react-native-offline
-[![All Contributors](https://img.shields.io/badge/all_contributors-33-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/rgommezz/react-native-offline.svg?style=shield)](https://circleci.com/gh/rgommezz/react-native-offline) [![npm version](https://badge.fury.io/js/react-native-offline.svg)](https://badge.fury.io/js/react-native-offline) [![Coverage Status](https://coveralls.io/repos/github/rauliyohmc/react-native-offline/badge.svg?branch=master)](https://coveralls.io/github/rauliyohmc/react-native-offline?branch=master)
 [![npm](https://img.shields.io/npm/dm/react-native-offline.svg)]()
 
@@ -79,7 +79,7 @@ $ yarn add react-native-offline
 $ npm i --save react-native-offline
 ```
 
-This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using. 
+This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using.
 
 If you are on React Native v0.60, you don't need to do anything else, since it supports autolinking. For iOS, just go to the `ios` folder and run `pod install`. However, autolinking might not pick up and install the `@react-native-community/netinfo` dependency. If that happens, first install `@react-native-community/netinfo` directly, then run `pod install`, then install `react-native-offline` and finish with `pod install`.
 
@@ -347,6 +347,7 @@ type MiddlewareConfig = {
   regexActionType?: RegExp = /FETCH.*REQUEST/,
   actionTypes?: Array<string> = [],
   queueReleaseThrottle?: number = 50,
+  shouldDequeueSelector: (state: RootReduxState) => boolean = () => true
 }
 ```
 
@@ -359,6 +360,9 @@ By default it's configured to intercept actions for fetching data following the 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
 `queueReleaseThrottle`: waiting time in ms between dispatches when flushing the offline queue. Useful to reduce the server pressure when coming back online. Defaults to 50ms.
+
+`shouldDequeueSelector`: function that receives the redux application state and returns a boolean. It'll be executed every time an action is dispatched, before it reaches the reducer. This is useful to control if the queue should be released when the connection is regained and there were actions queued up. Returning `true` (the default behaviour) releases the queue, whereas returning `false` prevents queue release. For example, you may wanna perform some authentication checks, prior to releasing the queue. Note, if the result of `shouldDequeueSelector` changes *while* the queue is being released, the queue will not halt. If you want to halt the queue *while* is being released, please see relevant FAQ section.
+
 
 ##### Thunks Config
 For `redux-thunk` library, the async flow is wrapped inside functions that will be lazily evaluated when dispatched, so our store is able to dispatch functions as well. Therefore, the configuration differs:
@@ -551,16 +555,14 @@ checkInternetConnection(
 ##### Example
 
 ```js
-import { checkInternetConnection, offlineActionTypes } from 'react-native-offline';
+import { checkInternetConnection, offlineActionCreators } from 'react-native-offline';
 
 async function internetChecker(dispatch) {
   const isConnected = await checkInternetConnection();
+  const { connectionChange } = offlineActionCreators;
   // Dispatching can be done inside a connected component, a thunk (where dispatch is injected), saga, or any sort of middleware
   // In this example we are using a thunk
-  dispatch({
-    type: offlineActionTypes.CONNECTION_CHANGE,
-    payload: isConnected,
-  });
+  dispatch(connectionChange(isConnected));
 }
 ```
 
@@ -584,21 +586,20 @@ As you can see in the snippets below, we create the `store` instance as usual an
 // configureStore.js
 import { createStore, applyMiddleware } from 'redux';
 import { persistStore } from 'redux-persist';
-import { createNetworkMiddleware, offlineActionTypes, checkInternetConnection } from 'react-native-offline';
+import AsyncStorage from '@react-native-community/async-storage';
+import { createNetworkMiddleware, offlineActionCreators, checkInternetConnection } from 'react-native-offline';
 import rootReducer from '../reducers';
 
 const networkMiddleware = createNetworkMiddleware();
 
 export default function configureStore(callback) {
   const store = createStore(rootReducer, applyMiddleware(networkMiddleware));
+  const { connectionChange } = offlineActionCreators;
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
-  persistStore(store, null, () => {
+  persistStore(store, { storage: AsyncStorage }, () => {
     // After rehydration completes, we detect initial connection
     checkInternetConnection().then(isConnected => {
-      store.dispatch({
-        type: offlineActionTypes.CONNECTION_CHANGE,
-        payload: isConnected,
-      });
+      store.dispatch(connectionChange(isConnected));
       callback(); // Notify our root component we are good to go, so that we can render our app
     });
   });
@@ -641,25 +642,32 @@ export default App;
 
 This way, we make sure the right actions are dispatched before anything else can be.
 
-#### How to intercept and queue actions when the server responds with client (4xx) or server (5xx) errors
-You can do that by dispatching yourself an action of type `@@network-connectivity/FETCH_OFFLINE_MODE`. The action types the library uses are exposed under `offlineActionTypes` property.
+#### How do I stop the queue *while* it is being released?
 
-Unfortunately, the action creators are not exposed yet, so I'll release soon a new version with that fixed. In the meantime, you can check that specific action creator in  [here](https://github.com/rgommezz/react-native-offline/blob/master/src/actionCreators.js#L18), so that you can emulate its payload. That should queue up your action properly.
+You can do that by dispatching a `CHANGE_QUEUE_SEMAPHORE` action using `changeQueueSemaphore` action creator. This action is used to manually stop and resume the queue even if it's being released.
+
+It works in the following way: if a `changeQueueSemaphore('RED')` action is dispatched, queue release is now halted. It will only resume if another if `changeQueueSemaphore('GREEN')` is dispatched.
 
 ```js
-import { offlineActionTypes } from 'react-native-offline';
+import { offlineActionCreators } from 'react-native-offline';
+...
+async function weHaltQeueeReleaseHere(){
+  const { changeQueueSemaphore } = offlineActionCreators;
+  dispatch(changeQueueSemaphore('RED')) // The queue is now halted and it won't continue dispatching actions
+  await somePromise();
+  dispatch(changeQueueSemaphore('GREEN')) // The queue is now resumed and it will continue dispatching actions
+}
+```
+
+
+#### How to intercept and queue actions when the server responds with client (4xx) or server (5xx) errors
+You can do that by dispatching a `FETCH_OFFLINE_MODE` action using `fetchOfflineMode` action creator.
+
+```js
+import { offlineActionCreators } from 'react-native-offline';
 ...
 fetch('someurl/data').catch(error => {
-  dispatch({
-    type: actionTypes.FETCH_OFFLINE_MODE,
-    payload: {
-      prevAction: {
-        type: action.type, // <-- action is the one that triggered your api call
-        payload: action.payload,
-      },
-    },
-    meta: { retry: true }
-  })
+  dispatch(offlineActionCreators.fetchOfflineMode(action)) // <-- action is the one that triggered your api call
 );
 ```
 
@@ -684,10 +692,10 @@ export const fetchUser = (url) => {
   };
 
   thunk.interceptInOffline = true;
-  
+
   // Add these
   thunk.meta = {
-    retry: true, 
+    retry: true,
     name: 'fetchUser', // This should be the name of your function
     args: [url], // These are the arguments for the function. Add more as needed.
   };
@@ -745,7 +753,7 @@ const networkTransform = createTransform(
   },
   // The 'network' key may change depending on what you
   // named your network reducer.
-  { whitelist: ['network'] }, 
+  { whitelist: ['network'] },
 );
 
 const persistConfig = {
@@ -775,53 +783,58 @@ MIT
 Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://twitter.com/rgommezz"><img src="https://avatars0.githubusercontent.com/u/4982414?v=4" width="100px;" alt="Raúl Gómez Acuña"/><br /><sub><b>Raúl Gómez Acuña</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=rgommezz" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=rgommezz" title="Documentation">📖</a> <a href="#example-rgommezz" title="Examples">💡</a> <a href="#ideas-rgommezz" title="Ideas, Planning, & Feedback">🤔</a> <a href="#review-rgommezz" title="Reviewed Pull Requests">👀</a> <a href="#question-rgommezz" title="Answering Questions">💬</a></td>
-    <td align="center"><a href="https://github.com/piotrwitek"><img src="https://avatars0.githubusercontent.com/u/739075?v=4" width="100px;" alt="Piotrek Witek"/><br /><sub><b>Piotrek Witek</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=piotrwitek" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://www.thiery.io"><img src="https://avatars3.githubusercontent.com/u/2392118?v=4" width="100px;" alt="Adrien Thiery"/><br /><sub><b>Adrien Thiery</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=adrienthiery" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=adrienthiery" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/hasibsahibzada"><img src="https://avatars0.githubusercontent.com/u/6321988?v=4" width="100px;" alt="Hasibullah Sahibzada"/><br /><sub><b>Hasibullah Sahibzada</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=hasibsahibzada" title="Code">💻</a></td>
-    <td align="center"><a href="https://www.linkedin.com/in/marco-wettstein-b1b8938b?trk=hp-identity-name"><img src="https://avatars3.githubusercontent.com/u/1972353?v=4" width="100px;" alt="Marco Wettstein"/><br /><sub><b>Marco Wettstein</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=macrozone" title="Code">💻</a></td>
-    <td align="center"><a href="http://kentcederstrom.se"><img src="https://avatars1.githubusercontent.com/u/1098636?v=4" width="100px;" alt="Kent Cederström"/><br /><sub><b>Kent Cederström</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=kentos" title="Code">💻</a></td>
-    <td align="center"><a href="https://richardvclam.github.io"><img src="https://avatars0.githubusercontent.com/u/16093452?v=4" width="100px;" alt="Richard V. Lam"/><br /><sub><b>Richard V. Lam</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=richardvclam" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://twitter.com/rgommezz"><img src="https://avatars0.githubusercontent.com/u/4982414?v=4" width="100px;" alt=""/><br /><sub><b>Raúl Gómez Acuña</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=rgommezz" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=rgommezz" title="Documentation">📖</a> <a href="#example-rgommezz" title="Examples">💡</a> <a href="#ideas-rgommezz" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/rgommezz/react-native-offline/pulls?q=is%3Apr+reviewed-by%3Argommezz" title="Reviewed Pull Requests">👀</a> <a href="#question-rgommezz" title="Answering Questions">💬</a></td>
+    <td align="center"><a href="https://github.com/piotrwitek"><img src="https://avatars0.githubusercontent.com/u/739075?v=4" width="100px;" alt=""/><br /><sub><b>Piotrek Witek</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=piotrwitek" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://www.thiery.io"><img src="https://avatars3.githubusercontent.com/u/2392118?v=4" width="100px;" alt=""/><br /><sub><b>Adrien Thiery</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=adrienthiery" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=adrienthiery" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/hasibsahibzada"><img src="https://avatars0.githubusercontent.com/u/6321988?v=4" width="100px;" alt=""/><br /><sub><b>Hasibullah Sahibzada</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=hasibsahibzada" title="Code">💻</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/marco-wettstein-b1b8938b?trk=hp-identity-name"><img src="https://avatars3.githubusercontent.com/u/1972353?v=4" width="100px;" alt=""/><br /><sub><b>Marco Wettstein</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=macrozone" title="Code">💻</a></td>
+    <td align="center"><a href="http://kentcederstrom.se"><img src="https://avatars1.githubusercontent.com/u/1098636?v=4" width="100px;" alt=""/><br /><sub><b>Kent Cederström</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=kentos" title="Code">💻</a></td>
+    <td align="center"><a href="https://richardvclam.github.io"><img src="https://avatars0.githubusercontent.com/u/16093452?v=4" width="100px;" alt=""/><br /><sub><b>Richard V. Lam</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=richardvclam" title="Documentation">📖</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://www.codecentric.de"><img src="https://avatars1.githubusercontent.com/u/1300393?v=4" width="100px;" alt="Thomas Bosch"/><br /><sub><b>Thomas Bosch</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=dickerpulli" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=dickerpulli" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://blog.cinan.sk"><img src="https://avatars2.githubusercontent.com/u/1828134?v=4" width="100px;" alt="cinan"/><br /><sub><b>cinan</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=cinan" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/YKSing"><img src="https://avatars2.githubusercontent.com/u/3830084?v=4" width="100px;" alt="Colon D"/><br /><sub><b>Colon D</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=YKSing" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.stephenkempin.co.uk"><img src="https://avatars1.githubusercontent.com/u/10877466?v=4" width="100px;" alt="Stephen Kempin"/><br /><sub><b>Stephen Kempin</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=SKempin" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://www.linkedin.com/in/tscharke/"><img src="https://avatars0.githubusercontent.com/u/5890860?v=4" width="100px;" alt="Thomas Scharke"/><br /><sub><b>Thomas Scharke</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=tscharke" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=tscharke" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/felipemartim"><img src="https://avatars3.githubusercontent.com/u/570829?v=4" width="100px;" alt="felipemartim"/><br /><sub><b>felipemartim</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=felipemartim" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=felipemartim" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://WIP"><img src="https://avatars1.githubusercontent.com/u/16226376?v=4" width="100px;" alt="Mehdi A."/><br /><sub><b>Mehdi A.</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=maieonbrix" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.codecentric.de"><img src="https://avatars1.githubusercontent.com/u/1300393?v=4" width="100px;" alt=""/><br /><sub><b>Thomas Bosch</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=dickerpulli" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=dickerpulli" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://blog.cinan.sk"><img src="https://avatars2.githubusercontent.com/u/1828134?v=4" width="100px;" alt=""/><br /><sub><b>cinan</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=cinan" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/YKSing"><img src="https://avatars2.githubusercontent.com/u/3830084?v=4" width="100px;" alt=""/><br /><sub><b>Colon D</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=YKSing" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.stephenkempin.co.uk"><img src="https://avatars1.githubusercontent.com/u/10877466?v=4" width="100px;" alt=""/><br /><sub><b>Stephen Kempin</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=SKempin" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/tscharke/"><img src="https://avatars0.githubusercontent.com/u/5890860?v=4" width="100px;" alt=""/><br /><sub><b>Thomas Scharke</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=tscharke" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=tscharke" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/felipemartim"><img src="https://avatars3.githubusercontent.com/u/570829?v=4" width="100px;" alt=""/><br /><sub><b>felipemartim</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=felipemartim" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=felipemartim" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://WIP"><img src="https://avatars1.githubusercontent.com/u/16226376?v=4" width="100px;" alt=""/><br /><sub><b>Mehdi A.</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=maieonbrix" title="Code">💻</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/comur"><img src="https://avatars0.githubusercontent.com/u/1212381?v=4" width="100px;" alt="Can OMUR"/><br /><sub><b>Can OMUR</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=comur" title="Code">💻</a></td>
-    <td align="center"><a href="http://nijhuisenvanlagen.nl"><img src="https://avatars3.githubusercontent.com/u/5470392?v=4" width="100px;" alt="Mark van Lagen"/><br /><sub><b>Mark van Lagen</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=markvl91" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/gtfargo"><img src="https://avatars2.githubusercontent.com/u/2320535?v=4" width="100px;" alt="George Farro"/><br /><sub><b>George Farro</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=gtfargo" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/mleduque"><img src="https://avatars2.githubusercontent.com/u/444063?v=4" width="100px;" alt="Mickaël Leduque"/><br /><sub><b>Mickaël Leduque</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=mleduque" title="Code">💻</a></td>
-    <td align="center"><a href="https://stackoverflow.com/users/1152843/florent-roques?tab=profile"><img src="https://avatars3.githubusercontent.com/u/1901827?v=4" width="100px;" alt="Florent Roques"/><br /><sub><b>Florent Roques</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=florentroques" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/Krizzu"><img src="https://avatars2.githubusercontent.com/u/6444719?v=4" width="100px;" alt="Krzysztof Borowy"/><br /><sub><b>Krzysztof Borowy</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=Krizzu" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=Krizzu" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://www.thomasdeconinck.fr"><img src="https://avatars2.githubusercontent.com/u/1548421?v=4" width="100px;" alt="Thomas Deconinck"/><br /><sub><b>Thomas Deconinck</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=DCKT" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=DCKT" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/comur"><img src="https://avatars0.githubusercontent.com/u/1212381?v=4" width="100px;" alt=""/><br /><sub><b>Can OMUR</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=comur" title="Code">💻</a></td>
+    <td align="center"><a href="http://nijhuisenvanlagen.nl"><img src="https://avatars3.githubusercontent.com/u/5470392?v=4" width="100px;" alt=""/><br /><sub><b>Mark van Lagen</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=markvl91" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/gtfargo"><img src="https://avatars2.githubusercontent.com/u/2320535?v=4" width="100px;" alt=""/><br /><sub><b>George Farro</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=gtfargo" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mleduque"><img src="https://avatars2.githubusercontent.com/u/444063?v=4" width="100px;" alt=""/><br /><sub><b>Mickaël Leduque</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=mleduque" title="Code">💻</a></td>
+    <td align="center"><a href="https://stackoverflow.com/users/1152843/florent-roques?tab=profile"><img src="https://avatars3.githubusercontent.com/u/1901827?v=4" width="100px;" alt=""/><br /><sub><b>Florent Roques</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=florentroques" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Krizzu"><img src="https://avatars2.githubusercontent.com/u/6444719?v=4" width="100px;" alt=""/><br /><sub><b>Krzysztof Borowy</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=Krizzu" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=Krizzu" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://www.thomasdeconinck.fr"><img src="https://avatars2.githubusercontent.com/u/1548421?v=4" width="100px;" alt=""/><br /><sub><b>Thomas Deconinck</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=DCKT" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=DCKT" title="Documentation">📖</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://buymeacoff.ee/thymikee"><img src="https://avatars2.githubusercontent.com/u/5106466?v=4" width="100px;" alt="Michał Pierzchała"/><br /><sub><b>Michał Pierzchała</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=thymikee" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/imartingraham"><img src="https://avatars3.githubusercontent.com/u/119142?v=4" width="100px;" alt="Ian Graham"/><br /><sub><b>Ian Graham</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=imartingraham" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.pettersamuelsen.com"><img src="https://avatars2.githubusercontent.com/u/1244867?v=4" width="100px;" alt="Petter Samuelsen"/><br /><sub><b>Petter Samuelsen</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=pettersamuelsen" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/usrbowe"><img src="https://avatars1.githubusercontent.com/u/5339061?v=4" width="100px;" alt="Lukas Kurucz"/><br /><sub><b>Lukas Kurucz</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=usrbowe" title="Code">💻</a></td>
-    <td align="center"><a href="https://twitter.com/norris1z"><img src="https://avatars1.githubusercontent.com/u/18237132?v=4" width="100px;" alt="Norris Oduro"/><br /><sub><b>Norris Oduro</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=Norris1z" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/richardtks"><img src="https://avatars3.githubusercontent.com/u/43637878?v=4" width="100px;" alt="Richard Tan"/><br /><sub><b>Richard Tan</b></sub></a><br /><a href="#ideas-richardtks" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://twitter.com/tysh_pysh"><img src="https://avatars3.githubusercontent.com/u/17765105?v=4" width="100px;" alt="Oleg Kupriianov"/><br /><sub><b>Oleg Kupriianov</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=Jimbomaniak" title="Code">💻</a></td>
+    <td align="center"><a href="https://buymeacoff.ee/thymikee"><img src="https://avatars2.githubusercontent.com/u/5106466?v=4" width="100px;" alt=""/><br /><sub><b>Michał Pierzchała</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=thymikee" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/imartingraham"><img src="https://avatars3.githubusercontent.com/u/119142?v=4" width="100px;" alt=""/><br /><sub><b>Ian Graham</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=imartingraham" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.pettersamuelsen.com"><img src="https://avatars2.githubusercontent.com/u/1244867?v=4" width="100px;" alt=""/><br /><sub><b>Petter Samuelsen</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=pettersamuelsen" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/usrbowe"><img src="https://avatars1.githubusercontent.com/u/5339061?v=4" width="100px;" alt=""/><br /><sub><b>Lukas Kurucz</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=usrbowe" title="Code">💻</a></td>
+    <td align="center"><a href="https://twitter.com/norris1z"><img src="https://avatars1.githubusercontent.com/u/18237132?v=4" width="100px;" alt=""/><br /><sub><b>Norris Oduro</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=Norris1z" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/richardtks"><img src="https://avatars3.githubusercontent.com/u/43637878?v=4" width="100px;" alt=""/><br /><sub><b>Richard Tan</b></sub></a><br /><a href="#ideas-richardtks" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://twitter.com/tysh_pysh"><img src="https://avatars3.githubusercontent.com/u/17765105?v=4" width="100px;" alt=""/><br /><sub><b>Oleg Kupriianov</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=Jimbomaniak" title="Code">💻</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/reilem"><img src="https://avatars1.githubusercontent.com/u/11155505?v=4" width="100px;" alt="reilem"/><br /><sub><b>reilem</b></sub></a><br /><a href="#ideas-reilem" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/jozr"><img src="https://avatars1.githubusercontent.com/u/8154741?v=4" width="100px;" alt="Josephine Wright"/><br /><sub><b>Josephine Wright</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=jozr" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://umbrellait.com"><img src="https://avatars0.githubusercontent.com/u/16078455?v=4" width="100px;" alt="Kirill Karpov"/><br /><sub><b>Kirill Karpov</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=umbrella-kirill-karpov" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/LiquidSean"><img src="https://avatars3.githubusercontent.com/u/1811319?v=4" width="100px;" alt="Sean Luthjohn"/><br /><sub><b>Sean Luthjohn</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/cuttlas"><img src="https://avatars2.githubusercontent.com/u/1228574?v=4" width="100px;" alt="cuttlas"/><br /><sub><b>cuttlas</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=cuttlas" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/reilem"><img src="https://avatars1.githubusercontent.com/u/11155505?v=4" width="100px;" alt=""/><br /><sub><b>reilem</b></sub></a><br /><a href="#ideas-reilem" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/jozr"><img src="https://avatars1.githubusercontent.com/u/8154741?v=4" width="100px;" alt=""/><br /><sub><b>Josephine Wright</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=jozr" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://umbrellait.com"><img src="https://avatars0.githubusercontent.com/u/16078455?v=4" width="100px;" alt=""/><br /><sub><b>Kirill Karpov</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=umbrella-kirill-karpov" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/LiquidSean"><img src="https://avatars3.githubusercontent.com/u/1811319?v=4" width="100px;" alt=""/><br /><sub><b>Sean Luthjohn</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=LiquidSean" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/cuttlas"><img src="https://avatars2.githubusercontent.com/u/1228574?v=4" width="100px;" alt=""/><br /><sub><b>cuttlas</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=cuttlas" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/emanueleDiVizio"><img src="https://avatars0.githubusercontent.com/u/9089203?v=4" width="100px;" alt=""/><br /><sub><b>Emanuele</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=emanueleDiVizio" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=emanueleDiVizio" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://helder.dev"><img src="https://avatars3.githubusercontent.com/u/862575?v=4" width="100px;" alt=""/><br /><sub><b>Helder Burato Berto</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=helderburato" title="Documentation">📖</a></td>
   </tr>
 </table>
 
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!

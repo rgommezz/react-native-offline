@@ -8,6 +8,7 @@ import {
 import * as networkActionTypes from './actionTypes';
 import wait from '../utils/wait';
 import { NetworkState, EnqueuedAction } from '../types';
+import { SEMAPHORE_COLOR } from '../utils/constants';
 
 type State = {
   network: NetworkState;
@@ -17,12 +18,14 @@ type Arguments = {
   regexActionType: RegExp;
   actionTypes: ActionType;
   queueReleaseThrottle: number;
+  shouldDequeueSelector: (state: State) => boolean;
 };
 
 const DEFAULT_ARGUMENTS: Arguments = {
   actionTypes: [],
   regexActionType: /FETCH.*REQUEST/,
   queueReleaseThrottle: 50,
+  shouldDequeueSelector: () => true,
 };
 
 type AllActions = EnqueuedAction;
@@ -87,16 +90,29 @@ function didComeBackOnline(action: AllActions, wasConnected: boolean) {
   return false;
 }
 
+function didQueueResume(action: AllActions, isQueuePaused: boolean) {
+  if ('type' in action && 'payload' in action) {
+    return (
+      action.type === networkActionTypes.CHANGE_QUEUE_SEMAPHORE &&
+      isQueuePaused &&
+      action.payload === SEMAPHORE_COLOR.GREEN
+    );
+  }
+  return false;
+}
+
 type GetState = Pick<MiddlewareAPI<Dispatch, State>, 'getState'>['getState'];
 export const createReleaseQueue = (
   getState: GetState,
   next: StoreDispatch,
   delay: number,
+  shouldDequeueSelector: Arguments['shouldDequeueSelector'],
 ) => async (queue: EnqueuedAction[]) => {
   // eslint-disable-next-line
   for (const action of queue) {
-    const { isConnected } = getState().network;
-    if (isConnected) {
+    const state = getState();
+    const { isConnected, isQueuePaused } = state.network;
+    if (isConnected && !isQueuePaused && shouldDequeueSelector(state)) {
       next(removeActionFromQueue(action));
       next(action);
       // eslint-disable-next-line
@@ -110,18 +126,24 @@ export const createReleaseQueue = (
 function createNetworkMiddleware(
   args?: Partial<Arguments>,
 ): Middleware<{}, State, Dispatch> {
-  const { regexActionType, actionTypes, queueReleaseThrottle } = {
+  const {
+    regexActionType,
+    actionTypes,
+    queueReleaseThrottle,
+    shouldDequeueSelector,
+  } = {
     ...DEFAULT_ARGUMENTS,
     ...args,
   };
   return ({ getState }: MiddlewareAPI<Dispatch, State>) => (
     next: StoreDispatch,
   ) => (action: AllActions) => {
-    const { isConnected, actionQueue } = getState().network;
+    const { isConnected, actionQueue, isQueuePaused } = getState().network;
     const releaseQueue = createReleaseQueue(
       getState,
       next,
       queueReleaseThrottle,
+      shouldDequeueSelector,
     );
     validateParams(regexActionType, actionTypes);
 
@@ -138,9 +160,14 @@ function createNetworkMiddleware(
     }
 
     const isBackOnline = didComeBackOnline(action, isConnected);
-    if (isBackOnline) {
+    const hasQueueBeenResumed = didQueueResume(action, isQueuePaused);
+
+    const shouldDequeue =
+      (isBackOnline || (isConnected && hasQueueBeenResumed)) &&
+      shouldDequeueSelector(getState());
+
+    if (shouldDequeue) {
       // Dispatching queued actions in order of arrival (if we have any)
-      // because store doesn't know yet how to dispatch thunk
       next(action);
       return releaseQueue(actionQueue);
     }

@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import { EnqueuedAction } from '../types';
+import { EnqueuedAction, SemaphoreColor } from '../types';
 
 export const connectionChange = (isConnected: boolean) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
@@ -39,6 +39,11 @@ export const dismissActionsFromQueue = (actionTrigger: string) => ({
   payload: actionTrigger,
 });
 
+export const changeQueueSemaphore = (semaphoreColor: SemaphoreColor) => ({
+  type: actionTypes.CHANGE_QUEUE_SEMAPHORE,
+  payload: semaphoreColor,
+});
+
 export type ConnectionChangeType = ReturnType<typeof connectionChange>;
 export type FetchOfflineModeType = ReturnType<typeof fetchOfflineMode>;
 export type RemoveActionFromQueueType = ReturnType<
@@ -47,9 +52,11 @@ export type RemoveActionFromQueueType = ReturnType<
 export type DismissActionsFromQueueType = ReturnType<
   typeof dismissActionsFromQueue
 >;
+export type ChangeQueueSemaphoreType = ReturnType<typeof changeQueueSemaphore>;
 
 export type ActionCreatorTypes =
   | ConnectionChangeType
   | FetchOfflineModeType
   | RemoveActionFromQueueType
-  | DismissActionsFromQueueType;
+  | DismissActionsFromQueueType
+  | ChangeQueueSemaphoreType;

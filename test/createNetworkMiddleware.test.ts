@@ -6,6 +6,7 @@ import createNetworkMiddleware, {
 } from '../src/redux/createNetworkMiddleware';
 import * as actionCreators from '../src/redux/actionCreators';
 import wait from '../src/utils/wait';
+import { SEMAPHORE_COLOR } from '../src/utils/constants';
 
 type Thunk = ThunkDispatch<{}, undefined, AnyAction>;
 
@@ -98,6 +99,26 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
     store.dispatch(actionCreators.connectionChange(true));
     const actions = store.getActions();
     expect(actions).toEqual([actionCreators.connectionChange(true)]);
+  });
+
+  it('action ENQUEUED, queue PAUSED, status queue RESUMED', async () => {
+    const action1 = getFetchAction('FETCH_SOME_DATA_REQUEST');
+    const action2 = getFetchAction('FETCH_SOMETHING_ELSE_REQUEST');
+    const action3 = getFetchAction('FETCH_USER_REQUEST');
+    const prevActionQueue = [action1, action2, action3];
+    const initialState = {
+      network: {
+        isConnected: true,
+        isQueuePaused: true,
+        actionQueue: prevActionQueue,
+      },
+    };
+    const store = mockStore(initialState);
+    store.dispatch(actionCreators.changeQueueSemaphore(SEMAPHORE_COLOR.GREEN));
+    const actions = store.getActions();
+    expect(actions).toEqual([
+      actionCreators.changeQueueSemaphore(SEMAPHORE_COLOR.GREEN),
+    ]);
   });
 });
 
@@ -378,23 +399,57 @@ describe('createNetworkMiddleware with dismissing actions functionality', () => 
   });
 });
 
+describe('createNetworkMiddleware with queueDeselector', () => {
+  const mockDequeueSelector = jest.fn();
+  const networkMiddleware = createNetworkMiddleware({
+    shouldDequeueSelector: mockDequeueSelector,
+  });
+  const middlewares = [networkMiddleware];
+  const mockStore = configureStore(middlewares);
+
+  it('Proxies action to next middleware if deselector returns false', () => {
+    const initialState = {
+      network: {
+        isConnected: true,
+        actionQueue: [],
+      },
+    };
+    const store = mockStore(initialState);
+    const action = getFetchAction('REFRESH_DATA');
+    store.dispatch(action);
+
+    const actions = store.getActions();
+    expect(actions).toEqual([getFetchAction('REFRESH_DATA')]);
+  });
+});
+
 describe('createReleaseQueue', () => {
   const mockDispatch = jest.fn();
-  const mockGetState = jest.fn().mockImplementation(() => ({
-    network: {
-      isConnected: true,
-    },
-  }));
+  const mockGetState = jest.fn();
+  const mockDequeueSelector = jest.fn();
   const mockDelay = 50;
+
+  beforeEach(() => {
+    mockDequeueSelector.mockImplementation(() => true);
+    mockGetState.mockImplementation(() => ({
+      network: {
+        isConnected: true,
+        isQueuePaused: false,
+      },
+    }));
+  });
+
   afterEach(() => {
     mockDispatch.mockClear();
     mockGetState.mockClear();
   });
-  it('empties the queue if we are online', async () => {
+
+  it('empties the queue if we are online and queue is not halted', async () => {
     const releaseQueue = createReleaseQueue(
       mockGetState,
       mockDispatch,
       mockDelay,
+      mockDequeueSelector,
     );
     const foo = { type: 'foo', payload: {} };
     const bar = { type: 'bar', payload: {} };
@@ -413,6 +468,39 @@ describe('createReleaseQueue', () => {
     expect(mockDispatch).toHaveBeenNthCalledWith(4, bar);
   });
 
+  it('does not empty the queue if dequeue selector returns false', async () => {
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+      mockDequeueSelector,
+    );
+    const foo = { type: 'foo', payload: {} };
+    const bar = { type: 'bar', payload: {} };
+    const actionQueue = [foo, bar];
+    await releaseQueue(actionQueue);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
+  });
+
+  it('does not empty the queue if queue has been halted', async () => {
+    mockGetState.mockImplementation(() => ({
+      network: {
+        isQueuePaused: true,
+      },
+    }));
+    const releaseQueue = createReleaseQueue(
+      mockGetState,
+      mockDispatch,
+      mockDelay,
+      mockDequeueSelector,
+    );
+    const foo = { type: 'foo', payload: {} };
+    const bar = { type: 'bar', payload: {} };
+    const actionQueue = [foo, bar];
+    await releaseQueue(actionQueue);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
+  });
+
   it('dispatches only during the online window', async () => {
     const switchToOffline = () =>
       new Promise(async resolve => {
@@ -428,6 +516,7 @@ describe('createReleaseQueue', () => {
       mockGetState,
       mockDispatch,
       mockDelay,
+      mockDequeueSelector,
     );
     const foo = { type: 'foo', payload: {} };
     const bar = { type: 'bar', payload: {} };

@@ -13,6 +13,7 @@ const networkReducer = createReducer();
 const getState = (isConnected = false, ...actionQueue: EnqueuedAction[]) => ({
   isConnected,
   actionQueue,
+  isQueuePaused: false,
 });
 
 /** Actions used from now on to test different scenarios */
@@ -64,6 +65,7 @@ describe('CONNECTION_CHANGE action type', () => {
     expect(networkReducer(initialState, mockAction)).toEqual({
       isConnected: false,
       actionQueue: [],
+      isQueuePaused: false,
     });
   });
 });
@@ -107,6 +109,7 @@ describe('OFFLINE_ACTION action type', () => {
         expect(nextState).toEqual({
           isConnected: false,
           actionQueue: [prevActionToRetry1],
+          isQueuePaused: false,
         });
 
         const action2 = actionCreators.fetchOfflineMode(prevActionToRetry2);
@@ -232,6 +235,26 @@ describe('REMOVE_ACTION_FROM_QUEUE action type', () => {
         prevActionToRetry1WithDifferentPayload,
       ),
     );
+  });
+});
+
+describe('QUEUE_SEMAPHORE_CHANGE action type', () => {
+  it('Pauses the queue if semaphore is red', () => {
+    expect(
+      networkReducer(undefined, actionCreators.changeQueueSemaphore('RED')),
+    ).toEqual({
+      ...initialState,
+      isQueuePaused: true,
+    });
+  });
+
+  it('Resumes the queue if semaphore is green', () => {
+    expect(
+      networkReducer(undefined, actionCreators.changeQueueSemaphore('GREEN')),
+    ).toEqual({
+      ...initialState,
+      isQueuePaused: false,
+    });
   });
 });
 

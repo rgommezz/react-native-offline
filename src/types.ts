@@ -20,6 +20,7 @@ export interface FluxAction<T = any> extends AnyAction {
 }
 
 export type NetworkState = {
+  isQueuePaused: boolean;
   isConnected: boolean;
   actionQueue: EnqueuedAction[];
 };
@@ -44,3 +45,5 @@ export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export function nonNullable<T>(value: T): value is NonNullable<T> {
   return !!value;
 }
+
+export type SemaphoreColor = 'RED' | 'GREEN';

@@ -317,7 +317,27 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "emanueleDiVizio",
+      "name": "Emanuele",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/9089203?v=4",
+      "profile": "https://github.com/emanueleDiVizio",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "helderburato",
+      "name": "Helder Burato Berto",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/862575?v=4",
+      "profile": "https://helder.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }

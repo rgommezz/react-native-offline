@@ -1,6 +1,7 @@
 import { get, without } from 'lodash';
 import { AnyAction } from 'redux';
 import * as actionTypes from './actionTypes';
+import { SEMAPHORE_COLOR } from '../utils/constants';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import {
   NetworkState,
@@ -8,6 +9,7 @@ import {
   EnqueuedAction,
   FluxAction,
   Thunk,
+  SemaphoreColor,
 } from '../types';
 import { ActionCreatorTypes, FetchOfflineModeType } from './actionCreators';
 
@@ -15,6 +17,7 @@ const actionQueue: EnqueuedAction[] = [];
 export const initialState = {
   isConnected: true,
   actionQueue,
+  isQueuePaused: false,
 };
 
 function handleOfflineAction(
@@ -82,6 +85,16 @@ function handleDismissActionsFromQueue(
   };
 }
 
+function handleChangeQueueSemaphore(
+  state: NetworkState,
+  semaphoreColor: SemaphoreColor,
+): NetworkState {
+  return {
+    ...state,
+    isQueuePaused: semaphoreColor === SEMAPHORE_COLOR.RED,
+  };
+}
+
 type ComparisonFn = (
   action: any,
   actionQueue: EnqueuedAction[],
@@ -107,6 +120,8 @@ export default (comparisonFn: ComparisonFn = getSimilarActionInQueue) => (
       return handleRemoveActionFromQueue(state, action.payload);
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
       return handleDismissActionsFromQueue(state, action.payload);
+    case actionTypes.CHANGE_QUEUE_SEMAPHORE:
+      return handleChangeQueueSemaphore(state, action.payload);
     default:
       return state;
   }
