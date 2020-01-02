@@ -596,7 +596,7 @@ export default function configureStore(callback) {
   const store = createStore(rootReducer, applyMiddleware(networkMiddleware));
   const { connectionChange } = offlineActionCreators;
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
-  persistStore(store, { storage: AsyncStorage }, () => {
+  persistStore(store, null, () => {
     // After rehydration completes, we detect initial connection
     checkInternetConnection().then(isConnected => {
       store.dispatch(connectionChange(isConnected));
