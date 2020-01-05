@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { isEqual } from 'lodash';
 import * as actionCreators from '../src/redux/actionCreators';
-import { EnqueuedAction } from '../src/types';
+import { EnqueuedAction, NetworkState } from '../src/types';
 import createReducer, {
   initialState,
   networkSelector,
@@ -395,17 +395,19 @@ describe('dismiss feature', () => {
 
 describe('networkSelector', () => {
   it('returns the correct shape', () => {
-    const state = {
+    const state: { network: NetworkState } = {
       network: {
         isConnected: true,
         // actionQueue contains `EnqueuedAction` objects? Correct?
         // actionQueue: ["foo"]
         actionQueue: [{ type: 'foo', payload: {} }],
+        isQueuePaused: false,
       },
     };
     expect(networkSelector(state)).toEqual({
       isConnected: true,
       actionQueue: [{ type: 'foo', payload: {} }],
+      isQueuePaused: false,
     });
   });
 });

@@ -473,7 +473,7 @@ describe('createReleaseQueue', () => {
       mockGetState,
       mockDispatch,
       mockDelay,
-      mockDequeueSelector,
+      () => false,
     );
     const foo = { type: 'foo', payload: {} };
     const bar = { type: 'bar', payload: {} };

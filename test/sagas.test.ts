@@ -221,6 +221,7 @@ describe('sagas', () => {
         close: mockCloseFn,
         isConnected: false,
         actionQueue: [],
+        isQueuePaused: false,
       };
       const iterator = connectionIntervalSaga({
         ...params,
@@ -246,6 +247,7 @@ describe('sagas', () => {
         close: mockCloseFn,
         isConnected: false,
         actionQueue: [],
+        isQueuePaused: false,
       };
       const iterator = connectionIntervalSaga({
         ...params,
