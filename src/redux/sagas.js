@@ -25,7 +25,7 @@ type Arguments = {
 };
 
 export function netInfoEventChannelFn(emit: (param: boolean) => mixed) {
-  NetInfo.isConnected.addEventListener('connectionChange', emit);
+  NetInfo.addEventListener('connectionChange', emit);
   return () => {
     NetInfo.isConnected.removeEventListener('connectionChange', emit);
   };

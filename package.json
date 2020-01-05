@@ -69,7 +69,7 @@
     "redux-thunk": "^2.3.0"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^4.1.2",
+    "@react-native-community/netinfo": "^5.3.1",
     "lodash": "^4.17.11",
     "react-redux": "^6.0.0 || ^7.0.0",
     "redux": "4.x",
