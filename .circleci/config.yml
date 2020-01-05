@@ -17,14 +17,14 @@ jobs:
         command: nvm install 9.10.0 && nvm alias default 9.10.0
     - run: npm i
     # Restore the dependency cache
-    # - restore_cache:
-    #     keys:
-    #     # This branch if available
-    #     - v1-dep-{{ .Branch }}-
-    #     # Default branch if not
-    #     - v1-dep-master-
-    #     # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
-    #     - v1-dep-
+    - restore_cache:
+        keys:
+        # This branch if available
+        - v3-dep-{{ .Branch }}-
+        # Default branch if not
+        - v3-dep-master-
+        # Any branch if there are none on the default branch - this should be unnecessary if you have your default branch configured correctly
+        - v3-dep-
     # Save dependency cache
     - save_cache:
         key: v3-dep-{{ .Branch }}-{{ epoch }}
