@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts,.tsx {src,test}/**/*.{ts,tsx}",
     "test": "jest test",
-    "ts": "tsc -p ./tsconfig.json --noEmit",
+    "ts": "./node_modules/.bin/tsc -p ./tsconfig.json --noEmit",
     "format": "npm run lint -- --fix",
     "prettier": "prettier --write \"{src,test,example}/**/*.{ts,tsx}\"",
     "test:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
