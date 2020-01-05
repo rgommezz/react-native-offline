@@ -6,7 +6,7 @@
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rgommezz)",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint --ext .js,.ts,.tsx {src,test,example}/**/*.{ts,tsx}",
+    "lint": "eslint --ext .js,.ts,.tsx {src,test}/**/*.{ts,tsx}",
     "test": "jest test",
     "ts": "tsc -p ./tsconfig.json --noEmit",
     "format": "npm run lint -- --fix",
