@@ -16,7 +16,7 @@ export default async function checkInternetConnection(
   timeout: number = DEFAULT_TIMEOUT,
   shouldPing: boolean = true,
 ): Promise<boolean> {
-  return NetInfo.isConnected.fetch().then(async (isConnected: boolean) => {
+  return NetInfo.fetch().then(async ({ isConnected }) => {
     if (shouldPing) {
       const hasInternetAccess = await checkInternetAccess({ timeout, url });
       return hasInternetAccess;
