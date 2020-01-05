@@ -81,7 +81,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     const { pingInterval } = this.props;
     const handler = this.getConnectionChangeHandler();
 
-    NetInfo.isConnected.addEventListener('connectionChange', handler);
+    NetInfo.addEventListener('connectionChange', handler);
     // On Android the listener does not fire on startup
     if (Platform.OS === 'android') {
       const netConnected = await NetInfo.isConnected.fetch();
@@ -116,7 +116,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
       : this.handleConnectivityChange;
   }
 
-  handleNetInfoChange = (isConnected: boolean) => {
+  handleNetInfoChange = ({ isConnected }) => {
     if (!isConnected) {
       this.handleConnectivityChange(isConnected);
     } else {
@@ -151,7 +151,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     this.checkInternet();
   };
 
-  handleConnectivityChange = (isConnected: boolean) => {
+  handleConnectivityChange = ({ isConnected }) => {
     this.setState({
       isConnected,
     });
