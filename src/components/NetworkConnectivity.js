@@ -84,8 +84,8 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     NetInfo.addEventListener('connectionChange', handler);
     // On Android the listener does not fire on startup
     if (Platform.OS === 'android') {
-      const netConnected = await NetInfo.isConnected.fetch();
-      handler(netConnected);
+      const { isConnected } = await NetInfo.fetch();
+      handler(isConnected);
     }
     if (pingInterval > 0) {
       connectivityInterval.setup(this.intervalHandler, pingInterval);
@@ -105,7 +105,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
 
   componentWillUnmount() {
     const handler = this.getConnectionChangeHandler();
-    NetInfo.isConnected.removeEventListener('connectionChange', handler);
+    NetInfo.removeEventListener('connectionChange', handler);
     connectivityInterval.clear();
   }
 
