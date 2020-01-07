@@ -27,7 +27,7 @@ type Arguments = {
 export function netInfoEventChannelFn(emit: (param: boolean) => mixed) {
   NetInfo.addEventListener('connectionChange', emit);
   return () => {
-    NetInfo.isConnected.removeEventListener('connectionChange', emit);
+    NetInfo.removeEventListener('connectionChange', emit);
   };
 }
 
@@ -75,10 +75,10 @@ export function* netInfoChangeSaga({
   httpMethod,
 }): Generator<*, *, *> {
   if (Platform.OS === 'android') {
-    const initialConnection = yield call([NetInfo, NetInfo.isConnected.fetch]);
+    const initialConnection = yield call([NetInfo, NetInfo.fetch]);
     yield fork(connectionHandler, {
       shouldPing,
-      isConnected: initialConnection,
+      isConnected: initialConnection.isConnected,
       pingTimeout,
       pingServerUrl,
       httpMethod,
