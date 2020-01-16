@@ -29,7 +29,7 @@ module.exports = {
   get checkInternetConnection() {
     return require('./utils/checkInternetConnection').default;
   },
-  useNetwork() {
+  get useNetwork() {
     return require('./hooks/useNetwork').default;
   },
 };
