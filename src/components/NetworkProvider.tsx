@@ -6,12 +6,19 @@ import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
 
 type Props = {
   children: React.ReactNode;
-} & Partial<ConnectivityArgs>;
+} & ConnectivityArgs;
 
-NetworkProvider.defaultProps = DEFAULT_ARGS;
-
-function NetworkProvider(props: Props) {
-  const { children, ...rest } = props;
+function NetworkProvider({
+  httpMethod = DEFAULT_ARGS.httpMethod,
+  pingInBackground = DEFAULT_ARGS.pingInBackground,
+  pingInterval = DEFAULT_ARGS.pingInterval,
+  pingOnlyIfOffline = DEFAULT_ARGS.pingOnlyIfOffline,
+  pingServerUrl = DEFAULT_ARGS.pingServerUrl,
+  pingTimeout = DEFAULT_ARGS.pingTimeout,
+  shouldPing = DEFAULT_ARGS.shouldPing,
+  ...rest
+}: Props) {
+  const { children } = rest;
   return (
     <NetworkConnectivity {...rest}>
       {connectionState => (

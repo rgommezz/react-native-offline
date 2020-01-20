@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react';
-import NetworkContext, { ConnectivityState } from './NetworkContext';
+import NetworkContext from './NetworkContext';
+import { ConnectivityState } from '../types';
 
-type Children = {
+type Props = {
   children: (args: ConnectivityState) => ReactNode;
 };
 
-export default function NetworkConsumer({ children }: Children) {
+export default function NetworkConsumer({ children }: Props) {
   return (
     <NetworkContext.Consumer>
       {context => {

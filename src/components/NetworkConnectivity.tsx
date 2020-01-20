@@ -3,13 +3,12 @@ import { AppState, Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
-import { ConnectivityArgs } from '../types';
-import { ConnectivityState } from './NetworkContext';
+import { ConnectivityArgs, ConnectivityState } from '../types';
 import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
 
 export type RequiredProps = {
   children: (state: ConnectivityState) => React.ReactNode;
-} & Partial<DefaultProps>;
+} & DefaultProps;
 
 export type DefaultProps = ConnectivityArgs & {
   onConnectivityChange: (isConnected: boolean) => void;
@@ -44,15 +43,14 @@ function validateProps(props: RequiredProps) {
   }
 }
 
-const defaultProps = {
-  ...DEFAULT_ARGS,
-  onConnectivityChange: () => undefined,
-};
 class NetworkConnectivity extends React.PureComponent<
   RequiredProps,
   ConnectivityState
 > {
-  static defaultProps = defaultProps;
+  static defaultProps = {
+    ...DEFAULT_ARGS,
+    onConnectivityChange: () => undefined,
+  };
 
   constructor(props: RequiredProps) {
     super(props);
@@ -72,9 +70,8 @@ class NetworkConnectivity extends React.PureComponent<
       const netConnected = await NetInfo.isConnected.fetch();
       handler(netConnected);
     }
-    if (pingInterval && pingInterval > 0) {
-      connectivityInterval.setup(this.intervalHandler, pingInterval);
-    }
+
+    connectivityInterval.setup(this.intervalHandler, pingInterval);
   }
 
   componentDidUpdate(prevProps: RequiredProps, prevState: ConnectivityState) {
@@ -83,7 +80,7 @@ class NetworkConnectivity extends React.PureComponent<
     if (prevProps.pingServerUrl !== pingServerUrl) {
       this.checkInternet();
     }
-    if (onConnectivityChange && prevState.isConnected !== isConnected) {
+    if (prevState.isConnected !== isConnected) {
       onConnectivityChange(isConnected);
     }
   }
