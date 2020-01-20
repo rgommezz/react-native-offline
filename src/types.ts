@@ -19,10 +19,13 @@ export interface FluxAction<T = any> extends AnyAction {
   meta?: MetaProps;
 }
 
-export type NetworkState = {
+export interface NetworkState extends ConnectivityState {
   isQueuePaused: boolean;
-  isConnected: boolean;
   actionQueue: EnqueuedAction[];
+}
+
+export type ConnectivityState = {
+  isConnected: boolean;
 };
 
 export type HTTPMethod = 'HEAD' | 'OPTIONS';

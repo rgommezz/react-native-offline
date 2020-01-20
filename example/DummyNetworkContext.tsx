@@ -1,9 +1,9 @@
 import React from 'react';
-type Context = {
+
+interface Context {
   toggleConnection: () => void;
   pingUrl: string;
-};
-const DummyNetworkContext = React.createContext<Context>(
-  ({} as unknown) as Context,
-);
+}
+
+const DummyNetworkContext = React.createContext<Context>(undefined);
 export default DummyNetworkContext;

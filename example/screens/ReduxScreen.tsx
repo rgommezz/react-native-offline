@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform, View, StyleSheet, Image } from 'react-native';
 import { Provider } from 'react-redux';
-import { ReduxNetworkProvider } from '../../src';
+import { ReduxNetworkProvider } from 'react-native-offline';
 
 import ConnectionToggler from '../components/ConnectionToggler';
 import DummyNetworkContext from '../DummyNetworkContext';

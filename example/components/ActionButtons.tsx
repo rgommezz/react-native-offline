@@ -12,10 +12,10 @@ import {
   subOne,
   other,
   cancelOther,
-  addOneType,
-  subOneType,
-  otherType,
-  cancelOtherType,
+  AddOneType,
+  SubOneType,
+  OtherType,
+  CancelOtherType,
 } from '../redux/actions';
 
 const Touchable = TouchableHighlight;
@@ -52,18 +52,19 @@ const showInfo = (actionType: string) => () => {
     cancelable: false,
   });
 };
-type ActionTypes = {
-  addOneAction: addOneType;
-  subOneAction: subOneType;
-  otherAction: otherType;
-  cancelOtherAction: cancelOtherType;
+type Props = {
+  addOneAction: AddOneType;
+  subOneAction: SubOneType;
+  otherAction: OtherType;
+  cancelOtherAction: CancelOtherType;
 };
+
 function ActionButtons({
   addOneAction,
   subOneAction,
   otherAction,
   cancelOtherAction,
-}: ActionTypes) {
+}: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Actions to dispatch</Text>

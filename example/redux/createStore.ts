@@ -3,7 +3,10 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 // TODO: removed require and imported it from file system,
 // I hope this is okay
 import createSagaMiddleware from 'redux-saga';
-import { reducer as network, createNetworkMiddleware } from '../../src/index';
+import {
+  reducer as network,
+  createNetworkMiddleware,
+} from 'react-native-offline';
 
 import counter from './reducer';
 import rootSaga from './sagas';

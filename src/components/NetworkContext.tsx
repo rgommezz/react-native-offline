@@ -1,8 +1,5 @@
 import { createContext } from 'react';
-
-export type ConnectivityState = {
-  isConnected: boolean;
-};
+import { ConnectivityState } from '../types';
 
 const NetworkContext = createContext<ConnectivityState>(undefined as any);
 

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { MonoText } from './StyledText';
 import { AppState } from '../redux/createStore';
 
-const Counter: FunctionComponent<{ counter: number }> = ({ counter }) => {
+const Counter: React.FC<{ counter: number }> = ({ counter }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Counter state:</Text>

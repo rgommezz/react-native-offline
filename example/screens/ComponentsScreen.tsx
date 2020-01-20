@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
-import { NetworkProvider, NetworkConsumer } from '../../src';
+import { NetworkProvider, NetworkConsumer } from 'react-native-offline';
 
 import { MonoText } from '../components/StyledText';
 import ConnectionToggler from '../components/ConnectionToggler';
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabBarInfoContainer: {
-    position: 'absolute' as 'absolute',
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
         elevation: 20,
       },
     }),
-    alignItems: 'center' as 'center',
+    alignItems: 'center',
     backgroundColor: '#fbfbfb',
     paddingVertical: 20,
   },

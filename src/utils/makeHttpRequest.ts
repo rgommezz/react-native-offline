@@ -2,6 +2,7 @@ import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
+  CACHE_HEADER_VALUE,
 } from './constants';
 
 type Options = {
@@ -21,7 +22,6 @@ type ResolvedValue = {
   status: number;
 };
 
-const CACHE_HEADER_VALUE = 'no-cache, no-store, must-revalidate';
 export const headers = {
   'Cache-Control': CACHE_HEADER_VALUE,
   Pragma: 'no-cache' as 'no-cache',
