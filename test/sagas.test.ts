@@ -22,7 +22,7 @@ import { connectionChange } from '../src/redux/actionCreators';
 import { networkSelector } from '../src/redux/createReducer';
 
 import checkInternetAccess from '../src/utils/checkInternetAccess';
-import DEFAULT_ARGS from '../src/utils/defaultConnectivityArgs';
+import { DEFAULT_ARGS } from '../src/utils/constants';
 
 const args = DEFAULT_ARGS;
 

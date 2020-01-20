@@ -191,7 +191,7 @@ describe('createNetworkMiddleware with thunks', () => {
       }, 1000);
     });
 
-  const fetchData = (dispatch: Thunk) => {
+  const fetchData = (dispatch: Dispatch) => {
     dispatch({ type: 'FETCH_DATA_REQUEST' });
     return fetchMockData(dispatch);
   };

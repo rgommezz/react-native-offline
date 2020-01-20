@@ -5,13 +5,18 @@ import { SEMAPHORE_COLOR } from '../utils/constants';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
 import {
   NetworkState,
-  nonNullable,
   EnqueuedAction,
   FluxAction,
   Thunk,
   SemaphoreColor,
 } from '../types';
-import { ActionCreatorTypes, FetchOfflineModeType } from './actionCreators';
+import { ReduxActions, FetchOfflineModeType } from './actionCreators';
+import nonNullable from '../utils/nonNullable';
+
+type ComparisonFn = (
+  action: any,
+  actionQueue: EnqueuedAction[],
+) => FluxAction<any> | Thunk | undefined;
 
 const actionQueue: EnqueuedAction[] = [];
 export const initialState = {
@@ -42,12 +47,12 @@ function handleOfflineAction(
       actionWithMetaData,
       state.actionQueue,
     );
-    const actions = similarActionQueued
+    const newActionQueue = similarActionQueued
       ? [...without(state.actionQueue, similarActionQueued), actionWithMetaData]
       : [...state.actionQueue, actionWithMetaData];
     return {
       ...state,
-      actionQueue: actions.filter(nonNullable),
+      actionQueue: newActionQueue.filter(nonNullable),
     };
   }
   return state;
@@ -95,13 +100,9 @@ function handleChangeQueueSemaphore(
   };
 }
 
-type ComparisonFn = (
-  action: any,
-  actionQueue: EnqueuedAction[],
-) => FluxAction<any> | Thunk | undefined;
 export default (comparisonFn: ComparisonFn = getSimilarActionInQueue) => (
   state: NetworkState = initialState,
-  action: ActionCreatorTypes | AnyAction,
+  action: ReduxActions | AnyAction,
 ): NetworkState => {
   switch (action.type) {
     case actionTypes.CONNECTION_CHANGE:

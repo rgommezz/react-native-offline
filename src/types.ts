@@ -42,11 +42,4 @@ export type ConnectivityArgs = {
   httpMethod: HTTPMethod;
 };
 
-export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-
-// https://stackoverflow.com/a/58110124/2615091
-export function nonNullable<T>(value: T): value is NonNullable<T> {
-  return !!value;
-}
-
 export type SemaphoreColor = 'RED' | 'GREEN';

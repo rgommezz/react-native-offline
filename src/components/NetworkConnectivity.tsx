@@ -4,7 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { ConnectivityArgs, ConnectivityState } from '../types';
-import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
+import { DEFAULT_ARGS } from '../utils/constants';
 
 export type RequiredProps = {
   children: (state: ConnectivityState) => React.ReactNode;

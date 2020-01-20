@@ -1,20 +1,20 @@
-import _NetworkProvider from './components/NetworkProvider';
-import _ReduxNetworkProvider from './components/ReduxNetworkProvider';
-import _NetworkConsumer from './components/NetworkConsumer';
 import _reducer from './redux/createReducer';
-import _createNetworkMiddleware from './redux/createNetworkMiddleware';
-import * as _offlineActionTypes from './redux/actionTypes';
-import _networkSaga from './redux/sagas';
-import _checkInternetConnection from './utils/checkInternetConnection';
-import * as _offlineActionCreators from './redux/actionCreators';
+export { default as NetworkProvider } from './components/NetworkProvider';
+export {
+  default as ReduxNetworkProvider,
+} from './components/ReduxNetworkProvider';
+export { default as NetworkConsumer } from './components/NetworkConsumer';
 
-export const NetworkProvider = _NetworkProvider;
-export const ReduxNetworkProvider = _ReduxNetworkProvider;
-export const NetworkConsumer = _NetworkConsumer;
+export {
+  default as createNetworkMiddleware,
+} from './redux/createNetworkMiddleware';
+export * as offlineActionTypes  from './redux/actionTypes';
+export { default as networkSaga } from './redux/sagas';
+export {
+  default as checkInternetConnection,
+} from './utils/checkInternetConnection';
+export * as offlineActionCreators  from './redux/actionCreators';
+
+export const createReducer = _reducer;
 export const reducer = _reducer();
-export const createReducer = reducer;
-export const createNetworkMiddleware = _createNetworkMiddleware;
-export const offlineActionTypes = _offlineActionTypes;
-export const offlineActionCreators = _offlineActionCreators;
-export const networkSaga = _networkSaga;
-export const checkInternetConnection = _checkInternetConnection;
+

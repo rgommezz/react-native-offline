@@ -5,12 +5,12 @@ import NetInfo from '@react-native-community/netinfo';
 import { networkSelector } from './createReducer';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
-import DEFAULT_ARGS from '../utils/defaultConnectivityArgs';
 import { ConnectivityArgs, NetworkState } from '../types';
 import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_HTTP_METHOD,
+  DEFAULT_ARGS,
 } from '../utils/constants';
 
 type NetInfoChangeArgs = Omit<

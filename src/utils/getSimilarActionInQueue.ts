@@ -1,5 +1,4 @@
-// TODO import directly to reduce bundle-size?
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { EnqueuedAction } from '../types';
 
 /**

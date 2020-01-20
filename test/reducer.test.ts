@@ -398,8 +398,6 @@ describe('networkSelector', () => {
     const state: { network: NetworkState } = {
       network: {
         isConnected: true,
-        // actionQueue contains `EnqueuedAction` objects? Correct?
-        // actionQueue: ["foo"]
         actionQueue: [{ type: 'foo', payload: {} }],
         isQueuePaused: false,
       },

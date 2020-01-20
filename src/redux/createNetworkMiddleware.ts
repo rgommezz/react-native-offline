@@ -10,6 +10,7 @@ import wait from '../utils/wait';
 import { NetworkState, EnqueuedAction } from '../types';
 import { SEMAPHORE_COLOR } from '../utils/constants';
 
+type GetState = MiddlewareAPI<Dispatch, State>['getState'];
 type State = {
   network: NetworkState;
 };
@@ -27,8 +28,6 @@ const DEFAULT_ARGUMENTS: Arguments = {
   queueReleaseThrottle: 50,
   shouldDequeueSelector: () => true,
 };
-
-type AllActions = EnqueuedAction;
 
 // because I don't know how many middlewares would be added, thunk, oberservable etc
 type StoreDispatch = (...args: any[]) => any;
@@ -52,7 +51,7 @@ function findActionToBeDismissed(
 }
 
 function isObjectAndShouldBeIntercepted(
-  action: AllActions,
+  action: EnqueuedAction,
   regexActionType: RegExp,
   actionTypes: ActionType,
 ) {
@@ -64,12 +63,12 @@ function isObjectAndShouldBeIntercepted(
   return false;
 }
 
-function isThunkAndShouldBeIntercepted(action: AllActions) {
+function isThunkAndShouldBeIntercepted(action: EnqueuedAction) {
   return typeof action === 'function' && action.interceptInOffline === true;
 }
 
 function checkIfActionShouldBeIntercepted(
-  action: AllActions,
+  action: EnqueuedAction,
   regexActionType: RegExp,
   actionTypes: ActionType,
 ): boolean {
@@ -79,7 +78,7 @@ function checkIfActionShouldBeIntercepted(
   );
 }
 
-function didComeBackOnline(action: AllActions, wasConnected: boolean) {
+function didComeBackOnline(action: EnqueuedAction, wasConnected: boolean) {
   if ('type' in action && 'payload' in action) {
     return (
       action.type === networkActionTypes.CONNECTION_CHANGE &&
@@ -90,7 +89,7 @@ function didComeBackOnline(action: AllActions, wasConnected: boolean) {
   return false;
 }
 
-function didQueueResume(action: AllActions, isQueuePaused: boolean) {
+function didQueueResume(action: EnqueuedAction, isQueuePaused: boolean) {
   if ('type' in action && 'payload' in action) {
     return (
       action.type === networkActionTypes.CHANGE_QUEUE_SEMAPHORE &&
@@ -101,7 +100,6 @@ function didQueueResume(action: AllActions, isQueuePaused: boolean) {
   return false;
 }
 
-type GetState = Pick<MiddlewareAPI<Dispatch, State>, 'getState'>['getState'];
 export const createReleaseQueue = (
   getState: GetState,
   next: StoreDispatch,
@@ -123,21 +121,15 @@ export const createReleaseQueue = (
   }
 };
 
-function createNetworkMiddleware(
-  args?: Partial<Arguments>,
-): Middleware<{}, State, Dispatch> {
-  const {
-    regexActionType,
-    actionTypes,
-    queueReleaseThrottle,
-    shouldDequeueSelector,
-  } = {
-    ...DEFAULT_ARGUMENTS,
-    ...args,
-  };
+function createNetworkMiddleware({
+  regexActionType = DEFAULT_ARGUMENTS.regexActionType,
+  actionTypes = DEFAULT_ARGUMENTS.actionTypes,
+  queueReleaseThrottle = DEFAULT_ARGUMENTS.queueReleaseThrottle,
+  shouldDequeueSelector = DEFAULT_ARGUMENTS.shouldDequeueSelector,
+}: Arguments): Middleware<{}, State, Dispatch> {
   return ({ getState }: MiddlewareAPI<Dispatch, State>) => (
     next: StoreDispatch,
-  ) => (action: AllActions) => {
+  ) => (action: EnqueuedAction) => {
     const { isConnected, actionQueue, isQueuePaused } = getState().network;
     const releaseQueue = createReleaseQueue(
       getState,

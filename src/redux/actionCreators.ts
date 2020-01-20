@@ -54,7 +54,7 @@ export type DismissActionsFromQueueType = ReturnType<
 >;
 export type ChangeQueueSemaphoreType = ReturnType<typeof changeQueueSemaphore>;
 
-export type ActionCreatorTypes =
+export type ReduxActions =
   | ConnectionChangeType
   | FetchOfflineModeType
   | RemoveActionFromQueueType
