@@ -10,6 +10,12 @@ import { setup, clear } from '../src/utils/checkConnectivityInterval';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 import entries from '../src/utils/objectEntries';
 
+type OptionalProps = Omit<RequiredProps, 'children'>;
+type GetElementParams<P = any> = {
+  props?: Pick<RequiredProps, 'children'> & Partial<OptionalProps>;
+  Component?: React.ComponentType<P>;
+};
+
 interface MethodsMap {
   getConnectionChangeHandler?: any;
   intervalHandler?: any;
@@ -53,11 +59,6 @@ const ChildrenComponent = () => <View />;
 
 const initialProps = {
   children: ChildrenComponent,
-};
-
-type GetElementParams<P = any> = {
-  props?: RequiredProps;
-  Component?: React.ComponentType<P>;
 };
 
 const getElement = ({
