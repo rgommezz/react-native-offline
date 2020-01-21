@@ -10,6 +10,7 @@ import {
   mapStateToProps,
 } from '../src/components/ReduxNetworkProvider';
 import { connectionChange } from '../src/redux/actionCreators';
+import { NetworkState } from '../src/types';
 
 const dispatch = jest.fn();
 const props = {
@@ -69,8 +70,10 @@ describe('ReduxNetworkProvider', () => {
 
 describe('mapStateToProps', () => {
   it('maps isConnected and actionQueue state to props', () => {
-    const networkState = {
+    const networkState: NetworkState = {
       isConnected: false,
+      actionQueue: [],
+      isQueuePaused: false,
     };
     const state = {
       network: networkState,

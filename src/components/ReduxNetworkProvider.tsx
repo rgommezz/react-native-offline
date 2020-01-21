@@ -42,8 +42,8 @@ class ReduxNetworkProvider extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: AppState, _?: OwnProps) => ({
-  isConnected: !!state.network.isConnected,
+const mapStateToProps = (state: AppState) => ({
+  isConnected: state.network.isConnected,
 });
 
 const ConnectedReduxNetworkProvider = connect(mapStateToProps)(

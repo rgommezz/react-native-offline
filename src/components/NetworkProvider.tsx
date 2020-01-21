@@ -16,11 +16,20 @@ function NetworkProvider({
   pingServerUrl = DEFAULT_ARGS.pingServerUrl,
   pingTimeout = DEFAULT_ARGS.pingTimeout,
   shouldPing = DEFAULT_ARGS.shouldPing,
-  ...rest
-}: Props) {
-  const { children } = rest;
+  children,
+}: Partial<Props>) {
   return (
-    <NetworkConnectivity {...rest}>
+    <NetworkConnectivity
+      {...{
+        httpMethod,
+        pingInBackground,
+        pingInterval,
+        pingOnlyIfOffline,
+        pingServerUrl,
+        pingTimeout,
+        shouldPing,
+      }}
+    >
       {connectionState => (
         <NetworkContext.Provider value={connectionState}>
           {children}
