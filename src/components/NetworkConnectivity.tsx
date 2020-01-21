@@ -70,8 +70,9 @@ class NetworkConnectivity extends React.PureComponent<
       const netConnected = await NetInfo.isConnected.fetch();
       handler(netConnected);
     }
-
-    connectivityInterval.setup(this.intervalHandler, pingInterval);
+    if (pingInterval > 0) {
+      connectivityInterval.setup(this.intervalHandler, pingInterval);
+    }
   }
 
   componentDidUpdate(prevProps: RequiredProps, prevState: ConnectivityState) {

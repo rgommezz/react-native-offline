@@ -3,10 +3,10 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { AppState } from '../redux/createStore';
 
-type Props = {
+interface Props {
   queue: string[];
   title: string;
-};
+}
 const OfflineQueue: FunctionComponent<Props> = ({ queue, title }) => {
   return (
     <View style={{ height: 90, marginVertical: 8 }}>
