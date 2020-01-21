@@ -126,7 +126,7 @@ function createNetworkMiddleware({
   actionTypes = DEFAULT_ARGUMENTS.actionTypes,
   queueReleaseThrottle = DEFAULT_ARGUMENTS.queueReleaseThrottle,
   shouldDequeueSelector = DEFAULT_ARGUMENTS.shouldDequeueSelector,
-}: Arguments): Middleware<{}, State, Dispatch> {
+}: Partial<Arguments> = {}): Middleware<{}, State, Dispatch> {
   return ({ getState }: MiddlewareAPI<Dispatch, State>) => (
     next: StoreDispatch,
   ) => (action: EnqueuedAction) => {
