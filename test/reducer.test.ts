@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import * as actionCreators from '../src/redux/actionCreators';
 import { EnqueuedAction, NetworkState } from '../src/types';
 import createReducer, {

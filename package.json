@@ -2,10 +2,14 @@
   "name": "react-native-offline",
   "version": "5.2.0",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
-  "main": "./src/index.js",
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rgommezz)",
   "license": "MIT",
+  "source": "src/index.ts",
+  "main": "dist/react-native-offline.js",
+  "module": "dist/react-native-offline.esm.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
+    "build": "rimraf dist && rollup -c",
     "lint": "eslint --ext .js,.ts,.tsx {src,test}/**/*.{ts,tsx}",
     "test": "jest test",
     "ts": "./node_modules/.bin/tsc --noEmit",
@@ -28,7 +32,8 @@
     "redux"
   ],
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "bugs": {
     "url": "https://github.com/rgommezz/react-native-offline/issues"
@@ -79,6 +84,11 @@
     "redux-mock-store": "^1.5.3",
     "redux-saga-test-plan": "4.0.0-beta.2",
     "redux-thunk": "^2.3.0",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.29.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.25.3",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
   },

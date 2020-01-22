@@ -7,7 +7,7 @@ export interface Thunk {
 }
 export type EnqueuedAction = FluxAction | Thunk;
 
-interface MetaProps {
+export interface MetaProps {
   retry?: boolean;
   dismiss?: string[];
   [x: string]: any;

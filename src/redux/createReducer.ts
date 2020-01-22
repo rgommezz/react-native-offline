@@ -1,4 +1,5 @@
-import { get, without } from 'lodash';
+import get from 'lodash/get';
+import without from 'lodash/without';
 import { AnyAction } from 'redux';
 import * as actionTypes from './actionTypes';
 import { SEMAPHORE_COLOR } from '../utils/constants';

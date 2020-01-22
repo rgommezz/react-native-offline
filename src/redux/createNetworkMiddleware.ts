@@ -1,4 +1,5 @@
-import { find, get } from 'lodash';
+import find from 'lodash/find';
+import get from 'lodash/get';
 import { Middleware, MiddlewareAPI, Dispatch, AnyAction } from 'redux';
 import {
   fetchOfflineMode,
