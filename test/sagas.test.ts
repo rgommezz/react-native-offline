@@ -28,32 +28,49 @@ const args = DEFAULT_ARGS;
 
 describe('sagas', () => {
   describe('networkSaga', () => {
-    it.skip('forks netInfoChangeSaga with the right params', () => {
+    it('forks netInfoChangeSaga with the right params', () => {
       const { pingInterval, ...params } = args;
+      const { pingInBackground, pingOnlyIfOffline, ...rest } = params;
       testSaga(networkSaga, params)
         .next()
-        .fork(netInfoChangeSaga, params)
+        .fork(netInfoChangeSaga, rest)
         .next()
         .isDone();
     });
 
-    it.skip(`forks netInfoChangeSaga AND sets an interval 
+    it(`forks netInfoChangeSaga AND sets an interval 
     if pingInterval is higher than 0`, () => {
-      const { shouldPing, pingInterval, ...params } = args;
+      const { pingInterval, ...params } = args;
+      const {
+        pingInBackground,
+        pingOnlyIfOffline,
+        shouldPing,
+        ...rest
+      } = params;
       testSaga(networkSaga, { ...args, pingInterval: 3000 })
         .next()
-        .fork(netInfoChangeSaga, { ...params, shouldPing })
+        .fork(netInfoChangeSaga, { ...rest, shouldPing })
         .next()
-        .fork(connectionIntervalSaga, { ...params, pingInterval: 3000 })
+        .fork(connectionIntervalSaga, {
+          ...rest,
+          pingInterval: 3000,
+          pingOnlyIfOffline,
+          pingInBackground,
+        })
         .next()
         .isDone();
     });
 
-    it.skip('default parameters', () => {
-      const { shouldPing, pingInterval, ...params } = args;
+    it('default parameters', () => {
+      const {
+        pingOnlyIfOffline,
+        pingInterval,
+        pingInBackground,
+        ...params
+      } = args;
       testSaga(networkSaga)
         .next()
-        .fork(netInfoChangeSaga, { ...params, shouldPing })
+        .fork(netInfoChangeSaga, { ...params })
         .next()
         .isDone();
     });
@@ -148,7 +165,7 @@ describe('sagas', () => {
       httpMethod: args.httpMethod,
       isConnected: true,
     };
-    it.skip('forks checkInternetAccessSaga if shouldPing AND isConnected are true', () => {
+    it('forks checkInternetAccessSaga if shouldPing AND isConnected are true', () => {
       const saga = testSaga(connectionHandler, params);
       saga
         .next()
@@ -156,6 +173,7 @@ describe('sagas', () => {
           pingTimeout: args.pingTimeout,
           pingServerUrl: args.pingServerUrl,
           httpMethod: args.httpMethod,
+          pingInBackground: args.pingInBackground,
         })
         .next()
         .isDone();
