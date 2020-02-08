@@ -28,16 +28,14 @@ describe('checkInternetAccess', () => {
   it('resolves to true if there is Internet access', async () => {
     const timeout = 2000;
     const url = 'foo.com';
-    const method = 'HEAD';
     const hasInternetAccess = await checkInternetAccess({
       url,
       timeout,
-      method,
     });
     expect(makeHttpRequest).toHaveBeenCalledWith({
       url,
       timeout,
-      method,
+      method: DEFAULT_HTTP_METHOD,
     });
     expect(hasInternetAccess).toBe(true);
   });

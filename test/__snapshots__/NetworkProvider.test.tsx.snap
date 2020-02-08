@@ -4,11 +4,11 @@ exports[`NetworkProvider has the correct structure and default props 1`] = `
 <NetworkConnectivity
   httpMethod="HEAD"
   onConnectivityChange={[Function]}
-  pingInBackground={false}
-  pingInterval={0}
-  pingOnlyIfOffline={false}
-  pingServerUrl="https://www.google.com/"
-  pingTimeout={10000}
+  pingInBackground={true}
+  pingInterval={2000}
+  pingOnlyIfOffline={true}
+  pingServerUrl="whatever"
+  pingTimeout={1000}
   shouldPing={true}
 >
   [Function]

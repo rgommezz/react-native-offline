@@ -30,10 +30,10 @@ class ReduxNetworkProvider extends React.Component<Props> {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, ...rest } = this.props;
     return (
       <NetworkConnectivity
-        {...this.props}
+        {...rest}
         onConnectivityChange={this.handleConnectivityChange}
       >
         {() => children}

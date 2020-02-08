@@ -72,7 +72,7 @@
     "jest-enzyme": "^7.0.1",
     "jsdom": "^13.1.0",
     "metro-react-native-babel-preset": "^0.56.0",
-    "prettier": "^1.15.3",
+    "prettier": "^1.19.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
@@ -90,7 +90,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-typescript2": "^0.25.3",
     "ts-jest": "^24.1.0",
-    "typescript": "^3.6.3"
+    "typescript": "3.7.5"
   },
   "dependencies": {
     "@react-native-community/netinfo": "^4.1.2",

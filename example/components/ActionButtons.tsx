@@ -18,8 +18,6 @@ import {
   CancelOtherType,
 } from '../redux/actions';
 
-const Touchable = TouchableHighlight;
-
 const showInfo = (actionType: string) => () => {
   const message = (() => {
     switch (actionType) {
@@ -70,36 +68,36 @@ function ActionButtons({
       <Text style={styles.title}>Actions to dispatch</Text>
       <Text style={styles.subtitle}>Long tap on each action for more info</Text>
       <View style={styles.row}>
-        <Touchable
+        <TouchableHighlight
           onPress={addOneAction}
           onLongPress={showInfo('ADD_1')}
           style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>ADD_1</Text>
-        </Touchable>
-        <Touchable
+        </TouchableHighlight>
+        <TouchableHighlight
           onPress={subOneAction}
           onLongPress={showInfo('SUB_1')}
           style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>SUB_1</Text>
-        </Touchable>
+        </TouchableHighlight>
       </View>
       <View style={styles.row}>
-        <Touchable
+        <TouchableHighlight
           onPress={otherAction}
           onLongPress={showInfo('OTHER')}
           style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>OTHER</Text>
-        </Touchable>
-        <Touchable
+        </TouchableHighlight>
+        <TouchableHighlight
           onPress={cancelOtherAction}
           onLongPress={showInfo('CANCEL_OTHER')}
           style={{ justifyContent: 'center' }}
         >
           <Text style={styles.button}>CANCEL_OTHER</Text>
-        </Touchable>
+        </TouchableHighlight>
       </View>
     </View>
   );
