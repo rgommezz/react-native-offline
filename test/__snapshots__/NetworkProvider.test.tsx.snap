@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NetworkProvider has the correct structure and default props 1`] = `
+<NetworkConnectivity
+  httpMethod="HEAD"
+  onConnectivityChange={[Function]}
+  pingInBackground={true}
+  pingInterval={2000}
+  pingOnlyIfOffline={true}
+  pingServerUrl="whatever"
+  pingTimeout={1000}
+  shouldPing={true}
+>
+  [Function]
+</NetworkConnectivity>
+`;

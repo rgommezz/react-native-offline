@@ -1,18 +1,21 @@
 {
   "extends": [
     "airbnb",
-    "plugin:flowtype/recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "prettier",
-    "prettier/flowtype",
-    "prettier/react"
+    "prettier/react",
+    "prettier/@typescript-eslint"
   ],
-  "parser": "babel-eslint",
-  "plugins": [
-    "flowtype",
-    "react",
-    "prettier"
-  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["react", "@typescript-eslint", "prettier"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
@@ -37,28 +40,18 @@
     "import/extensions": 0,
     "no-use-before-define": 0,
     "import/no-extraneous-dependencies": 0,
+    "import/prefer-default-export": 0,
     "global-require": 0,
     "prefer-promise-reject-errors": 0,
     "react/prop-types": 0,
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": 0,
     "react/require-default-props": 0,
-    "flowtype/boolean-style": [
-      2,
-      "boolean"
-    ],
-    "flowtype/no-weak-types": 1,
-    "flowtype/require-parameter-type": 0,
-    "flowtype/require-return-type": [
-      0,
-      "always",
-      {
-        "annotateUndefined": "never"
-      }
-    ],
-    "flowtype/require-valid-file-annotation": 2,
-    "flowtype/use-flow-type": 1,
-    "flowtype/valid-syntax": 1,
-    "react/display-name": 0
+    "react/display-name": 0,
+    "react/destructuring-assignment": 0,
+    "@typescript-eslint/no-use-before-define": 0,
+    "no-return-assign": 0,
+    "no-undef": 0,
+    "@typescript-eslint/ban-ts-ignore": 1
   },
   "globals": {
     "jest": true

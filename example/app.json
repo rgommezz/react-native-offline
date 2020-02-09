@@ -4,7 +4,7 @@
     "slug": "react-native-offline-example",
     "description": "Example application that showcases all the different modules that react-native-offline has to offer",
     "privacy": "public",
-    "sdkVersion": "32.0.0",
+    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android"
