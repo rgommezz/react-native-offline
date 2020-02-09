@@ -5,7 +5,7 @@ import {
   TestApiWithEffectsTesters,
 } from 'redux-saga-test-plan';
 import { Platform, AppState } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import networkSaga, {
   netInfoChangeSaga,
   connectionIntervalSaga,
@@ -99,16 +99,18 @@ describe('sagas', () => {
     }
     it('iOS', () => {
       Platform.OS = 'ios';
+      // @ts-ignore
       const saga = testSaga(netInfoChangeSaga, params);
       channelLoop(saga);
     });
 
     it('Android', () => {
       Platform.OS = 'android';
+      // @ts-ignore
       const saga = testSaga(netInfoChangeSaga, params)
         .next()
-        .call([NetInfo, NetInfo.isConnected.fetch])
-        .next(false)
+        .call([NetInfo, NetInfo.fetch])
+        .next({ isConnected: false })
         .fork(connectionHandler, {
           ...params,
           isConnected: false,
@@ -128,9 +130,9 @@ describe('sagas', () => {
       // This will make take(mockChannel) throw an error, since it's not a valid
       // channel or a valid pattern for take() inside the infinite loop,
       // hence executing the finally block.
-      iterator.next(mockChannel);
+      iterator.next((mockChannel as unknown) as NetInfoState);
       try {
-        iterator.next(true);
+        iterator.next({ isConnected: true } as NetInfoState);
         expect(mockCloseFn).toHaveBeenCalled();
         // eslint-disable-next-line
       } catch (e) {}
@@ -148,9 +150,9 @@ describe('sagas', () => {
       // This will make take(mockChannel) throw an error, since it's not a valid
       // channel or a valid pattern for take() inside the infinite loop,
       // hence executing the finally block.
-      iterator.next(mockChannel);
+      iterator.next((mockChannel as unknown) as NetInfoState);
       try {
-        iterator.next(false);
+        iterator.next({ isConnected: false } as NetInfoState);
         expect(mockCloseFn).not.toHaveBeenCalled();
         // eslint-disable-next-line
       } catch (e) {}

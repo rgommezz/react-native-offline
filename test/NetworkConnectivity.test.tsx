@@ -1,12 +1,12 @@
 import * as React from 'react';
-import NetInfo from '@react-native-community/netinfo';
-import { View, Platform, AppState } from 'react-native';
+import NetInfo, { NetInfoStateType } from '@react-native-community/netinfo';
+import { AppState, Platform, View } from 'react-native';
 import { shallow } from 'enzyme';
 import { render } from 'react-native-testing-library';
 import NetworkConnectivity, {
   RequiredProps,
 } from '../src/components/NetworkConnectivity';
-import { setup, clear } from '../src/utils/checkConnectivityInterval';
+import { clear, setup } from '../src/utils/checkConnectivityInterval';
 import checkInternetAccess from '../src/utils/checkInternetAccess';
 import entries from '../src/utils/objectEntries';
 
@@ -30,10 +30,9 @@ const mockHandleNetInfoChange = jest.fn();
 const mockHandleConnectivityChange = jest.fn();
 const mockCheckInternet = jest.fn();
 
-const addEventListener = NetInfo.isConnected.addEventListener as jest.Mock;
-const removeEventListener = NetInfo.isConnected
-  .removeEventListener as jest.Mock;
-const fetch = NetInfo.isConnected.fetch as jest.Mock;
+const addEventListener = NetInfo.addEventListener as jest.Mock;
+const unsubscribe = jest.fn();
+const fetch = NetInfo.fetch as jest.Mock;
 jest.mock('../src/utils/checkConnectivityInterval');
 jest.mock('../src/utils/checkInternetAccess', () =>
   jest.fn().mockResolvedValue(true),
@@ -72,7 +71,6 @@ const getElement = ({
 describe('NetworkConnectivity', () => {
   afterEach(() => {
     addEventListener.mockClear();
-    removeEventListener.mockClear();
     fetch.mockClear();
     mockConnectionChangeHandler.mockClear();
     mockGetConnectionChangeHandler.mockClear();
@@ -105,9 +103,8 @@ describe('NetworkConnectivity', () => {
             Component: MockedNetworkConnectivity,
           }),
         );
-        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledTimes(1);
-        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
-          'connectionChange',
+        expect(NetInfo.addEventListener).toHaveBeenCalledTimes(1);
+        expect(NetInfo.addEventListener).toHaveBeenCalledWith(
           mockConnectionChangeHandler,
         );
         expect(setup).not.toHaveBeenCalled();
@@ -129,12 +126,11 @@ describe('NetworkConnectivity', () => {
             Component: MockedNetworkConnectivity,
           }),
         );
-        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledTimes(1);
-        expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
-          'connectionChange',
+        expect(NetInfo.addEventListener).toHaveBeenCalledTimes(1);
+        expect(NetInfo.addEventListener).toHaveBeenCalledWith(
           mockConnectionChangeHandler,
         );
-        expect(NetInfo.isConnected.fetch).toHaveBeenCalledTimes(1);
+        expect(NetInfo.fetch).toHaveBeenCalledTimes(1);
         process.nextTick(() => {
           expect(mockConnectionChangeHandler).toHaveBeenCalledWith(false);
           expect(setup).not.toHaveBeenCalled();
@@ -165,6 +161,7 @@ describe('NetworkConnectivity', () => {
   describe('componentWillUnmount', () => {
     it(`removes the NetInfo listener with the right parameters
       AND call connectivityInterval.clear`, () => {
+      (NetInfo.addEventListener as jest.Mock).mockReturnValueOnce(unsubscribe);
       const MockedNetworkConnectivity = mockPrototypeMethods({
         getConnectionChangeHandler: mockGetConnectionChangeHandler,
       });
@@ -174,11 +171,7 @@ describe('NetworkConnectivity', () => {
         }),
       );
       wrapper.unmount();
-      expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledTimes(1);
-      expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledWith(
-        'connectionChange',
-        mockConnectionChangeHandler,
-      );
+      expect(unsubscribe).toHaveBeenCalledTimes(1);
       expect(clear).toHaveBeenCalled();
     });
   });
@@ -220,8 +213,18 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow<NetworkConnectivity>(getElement());
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       wrapper.instance().checkInternet = mockCheckInternet;
-      wrapper.instance().handleNetInfoChange(false);
-      expect(mockHandleConnectivityChange).toHaveBeenCalledWith(false);
+      wrapper.instance().handleNetInfoChange({
+        type: 'none' as NetInfoStateType.none,
+        isConnected: false,
+        isInternetReachable: false,
+        details: null,
+      });
+      expect(mockHandleConnectivityChange).toHaveBeenCalledWith({
+        type: 'none' as NetInfoStateType.none,
+        isConnected: false,
+        isInternetReachable: false,
+        details: null,
+      });
       expect(mockCheckInternet).not.toHaveBeenCalled();
     });
 
@@ -229,7 +232,15 @@ describe('NetworkConnectivity', () => {
       const wrapper = shallow<NetworkConnectivity>(getElement());
       wrapper.instance().handleConnectivityChange = mockHandleConnectivityChange;
       wrapper.instance().checkInternet = mockCheckInternet;
-      wrapper.instance().handleNetInfoChange(true);
+      wrapper.instance().handleNetInfoChange({
+        type: 'other' as NetInfoStateType.other,
+        isConnected: true,
+        isInternetReachable: true,
+        details: {
+          cellularGeneration: null,
+          isConnectionExpensive: false,
+        },
+      });
       expect(mockHandleConnectivityChange).not.toHaveBeenCalled();
       expect(mockCheckInternet).toHaveBeenCalled();
     });
@@ -273,7 +284,9 @@ describe('NetworkConnectivity', () => {
         timeout: props.pingTimeout,
         method: props.httpMethod,
       });
-      expect(mockHandleConnectivityChange).toHaveBeenCalledWith(true);
+      expect(mockHandleConnectivityChange).toHaveBeenCalledWith({
+        isConnected: true,
+      });
     });
   });
 
@@ -325,10 +338,23 @@ describe('NetworkConnectivity', () => {
         }),
       );
 
-      wrapper.instance().handleConnectivityChange(true);
+      wrapper.instance().handleConnectivityChange({
+        type: 'other' as NetInfoStateType.other,
+        isConnected: true,
+        isInternetReachable: true,
+        details: {
+          cellularGeneration: null,
+          isConnectionExpensive: false,
+        },
+      });
       expect(mockSetState).toHaveBeenCalledWith({ isConnected: true });
 
-      wrapper.instance().handleConnectivityChange(false);
+      wrapper.instance().handleConnectivityChange({
+        type: 'none' as NetInfoStateType.none,
+        isConnected: false,
+        isInternetReachable: false,
+        details: null,
+      });
       expect(mockSetState).toHaveBeenCalledWith({ isConnected: false });
     });
   });
