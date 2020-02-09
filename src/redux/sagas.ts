@@ -1,7 +1,7 @@
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel, Subscribe } from 'redux-saga';
 import { AppState, Platform } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { networkSelector } from './createReducer';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
@@ -21,11 +21,8 @@ type CheckInternetArgs = Omit<NetInfoChangeArgs, 'shouldPing'> & {
   pingInBackground: boolean;
 };
 
-export function netInfoEventChannelFn(emit: (param: boolean) => unknown) {
-  NetInfo.isConnected.addEventListener('connectionChange', emit);
-  return () => {
-    NetInfo.isConnected.removeEventListener('connectionChange', emit);
-  };
+export function netInfoEventChannelFn(emit: (param: NetInfoState) => unknown) {
+  return NetInfo.addEventListener(emit);
 }
 
 export function intervalChannelFn(interval: number) {
@@ -75,10 +72,10 @@ export function* netInfoChangeSaga({
   httpMethod,
 }: NetInfoChangeArgs) {
   if (Platform.OS === 'android') {
-    const initialConnection = yield call([NetInfo, NetInfo.isConnected.fetch]);
+    const networkState: NetInfoState = yield call([NetInfo, NetInfo.fetch]);
     yield fork(connectionHandler, {
       shouldPing,
-      isConnected: initialConnection,
+      isConnected: networkState.isConnected,
       pingTimeout,
       pingServerUrl,
       httpMethod,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AppState, Platform } from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { ConnectivityArgs, ConnectivityState } from '../types';
@@ -47,6 +47,8 @@ class NetworkConnectivity extends React.PureComponent<
   RequiredProps,
   ConnectivityState
 > {
+  private unsubscribe: () => void = () => undefined;
+
   static defaultProps = {
     ...DEFAULT_ARGS,
     onConnectivityChange: () => undefined,
@@ -64,11 +66,11 @@ class NetworkConnectivity extends React.PureComponent<
     const { pingInterval } = this.props;
     const handler = this.getConnectionChangeHandler();
 
-    NetInfo.isConnected.addEventListener('connectionChange', handler);
+    this.unsubscribe = NetInfo.addEventListener(handler);
     // On Android the listener does not fire on startup
     if (Platform.OS === 'android') {
-      const netConnected = await NetInfo.isConnected.fetch();
-      handler(netConnected);
+      const netInfoState = await NetInfo.fetch();
+      handler(netInfoState);
     }
     if (pingInterval > 0) {
       connectivityInterval.setup(this.intervalHandler, pingInterval);
@@ -87,8 +89,7 @@ class NetworkConnectivity extends React.PureComponent<
   }
 
   componentWillUnmount() {
-    const handler = this.getConnectionChangeHandler();
-    NetInfo.isConnected.removeEventListener('connectionChange', handler);
+    this.unsubscribe();
     connectivityInterval.clear();
   }
 
@@ -99,9 +100,9 @@ class NetworkConnectivity extends React.PureComponent<
       : this.handleConnectivityChange;
   }
 
-  handleNetInfoChange = (isConnected: boolean) => {
-    if (!isConnected) {
-      this.handleConnectivityChange(isConnected);
+  handleNetInfoChange = (connectionState: NetInfoState) => {
+    if (!connectionState.isConnected) {
+      this.handleConnectivityChange(connectionState);
     } else {
       this.checkInternet();
     }
@@ -117,12 +118,19 @@ class NetworkConnectivity extends React.PureComponent<
     if (pingInBackground === false && AppState.currentState !== 'active') {
       return; // <-- Return early as we don't care about connectivity if app is not in foreground.
     }
-    const hasInternetAccess = await checkInternetAccess({
-      url: pingServerUrl,
-      timeout: pingTimeout,
-      method: httpMethod,
-    });
-    this.handleConnectivityChange(hasInternetAccess);
+    const [hasInternetAccess, netInfoState] = await Promise.all([
+      checkInternetAccess({
+        url: pingServerUrl,
+        timeout: pingTimeout,
+        method: httpMethod,
+      }),
+      NetInfo.fetch(),
+    ]);
+
+    this.handleConnectivityChange({
+      ...netInfoState,
+      isConnected: hasInternetAccess,
+    } as NetInfoState);
   };
 
   intervalHandler = () => {
@@ -134,7 +142,7 @@ class NetworkConnectivity extends React.PureComponent<
     this.checkInternet();
   };
 
-  handleConnectivityChange = (isConnected: boolean) => {
+  handleConnectivityChange = ({ isConnected }: NetInfoState) => {
     this.setState({
       isConnected,
     });

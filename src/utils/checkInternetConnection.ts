@@ -14,11 +14,11 @@ export default async function checkInternetConnection(
   timeout: number = DEFAULT_TIMEOUT,
   shouldPing = true,
 ): Promise<boolean> {
-  return NetInfo.isConnected.fetch().then(async (isConnected: boolean) => {
+  return NetInfo.fetch().then(async connectionState => {
     if (shouldPing) {
       const hasInternetAccess = await checkInternetAccess({ timeout, url });
       return hasInternetAccess;
     }
-    return isConnected;
+    return connectionState.isConnected;
   });
 }

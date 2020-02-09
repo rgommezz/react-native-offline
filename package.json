@@ -94,7 +94,7 @@
     "typescript": "3.7.5"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^4.1.2",
+    "@react-native-community/netinfo": "^5.3.3",
     "lodash": "^4.17.11",
     "react-redux": "^6.0.0 || ^7.0.0",
     "redux": "4.x",
