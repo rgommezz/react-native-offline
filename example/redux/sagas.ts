@@ -1,6 +1,6 @@
 import { all, fork, takeEvery, call } from 'redux-saga/effects';
 import { Alert } from 'react-native';
-import { networkSaga } from '../../src/index';
+import { networkSaga } from 'react-native-offline';
 
 function* doSideEffect({ type }: { type: string }) {
   yield call(

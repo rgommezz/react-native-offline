@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from 'expo';
+import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../constants/Colors';
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const TabBarIcon: React.FC<Props> = ({ focused, name }) => (
-  <Icon.Ionicons
+  <Ionicons
     name={name}
     size={26}
     style={{ marginBottom: -3 }}

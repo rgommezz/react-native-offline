@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Font, Icon } from 'expo';
+import {Ionicons} from '@expo/vector-icons';
+import * as Font from 'expo-font';
 import AppNavigator from './navigation/AppNavigator';
 import DummyNetworkContext from './DummyNetworkContext';
 
@@ -29,6 +30,14 @@ export default class App extends React.Component<Props, State> {
     };
   }
 
+  async componentDidMount() {
+    await Font.loadAsync({
+      ...Ionicons.font,
+      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+    });
+    this.setState({ isLoadingComplete: true });
+  }
+
   toggleConnection = () => {
     this.setState(prevState => ({
       network: {
@@ -39,26 +48,11 @@ export default class App extends React.Component<Props, State> {
     }));
   };
 
-  loadResourcesAsync = async () =>
-    Font.loadAsync({
-      ...Icon.Ionicons.font,
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-    });
-
-  handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
-  };
-
   render() {
     const { isLoadingComplete, network } = this.state;
     const { skipLoadingScreen } = this.props;
     if (!isLoadingComplete && !skipLoadingScreen) {
-      return (
-        <AppLoading
-          startAsync={this.loadResourcesAsync}
-          onFinish={this.handleFinishLoading}
-        />
-      );
+      return null;
     }
     return (
       <DummyNetworkContext.Provider value={network}>

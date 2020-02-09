@@ -5,5 +5,8 @@ interface Context {
   pingUrl: string;
 }
 
-const DummyNetworkContext = React.createContext<Partial<Context>>({});
+const DummyNetworkContext = React.createContext<Context>({
+  pingUrl: 'https://google.com',
+  toggleConnection: () => {},
+});
 export default DummyNetworkContext;

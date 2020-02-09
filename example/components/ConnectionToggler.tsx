@@ -8,7 +8,7 @@ function ConnectionToggler() {
       {({ toggleConnection }) => (
         <View style={{ marginBottom: 20 }}>
           <Button
-            onPress={toggleConnection}
+            onPress={() => toggleConnection()}
             title="Toggle Internet connection"
             color="#841584"
           />

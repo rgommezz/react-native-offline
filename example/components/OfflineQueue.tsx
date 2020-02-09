@@ -16,8 +16,9 @@ const OfflineQueue: FunctionComponent<Props> = ({ queue, title }) => {
         contentContainerStyle={styles.queue}
         horizontal
       >
-        {queue.map(item => (
-          <Text style={styles.queueItem} key={`${item}`}>
+        {queue.map((item, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <Text style={styles.queueItem} key={`${item}-${index}`}>
             {item}
           </Text>
         ))}

@@ -1,10 +1,10 @@
-import { subOneType, addOneType } from './actions';
+import { SubOneType, AddOneType } from './actions';
 
 const initialCount = 0;
 
 const countReducer = (
   state = initialCount,
-  action: ReturnType<subOneType> | ReturnType<addOneType>,
+  action: ReturnType<SubOneType> | ReturnType<AddOneType>,
 ) => {
   if (action.type === 'ADD_ONE') {
     return state + 1;
