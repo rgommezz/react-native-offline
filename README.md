@@ -831,6 +831,9 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
     <td align="center"><a href="https://github.com/emanueleDiVizio"><img src="https://avatars0.githubusercontent.com/u/9089203?v=4" width="100px;" alt=""/><br /><sub><b>Emanuele</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=emanueleDiVizio" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=emanueleDiVizio" title="Documentation">📖</a></td>
     <td align="center"><a href="https://helder.dev"><img src="https://avatars3.githubusercontent.com/u/862575?v=4" width="100px;" alt=""/><br /><sub><b>Helder Burato Berto</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=helderburato" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="http://ankeetmaini.github.io/"><img src="https://avatars1.githubusercontent.com/u/6652823?v=4" width="100px;" alt=""/><br /><sub><b>Ankeet Maini</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=ankeetmaini" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
