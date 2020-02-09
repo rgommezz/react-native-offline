@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import AppNavigator from './navigation/AppNavigator';
 import DummyNetworkContext from './DummyNetworkContext';
