@@ -4,6 +4,7 @@ module.exports = {
   ...tsjPreset,
   preset: "react-native",
   collectCoverage: true,
+  setupFiles: ["<rootDir>/test/setupMocks.ts"],
   setupFilesAfterEnv: ["<rootDir>/test/setupTestEnv.ts"],
   modulePathIgnorePatterns: ["<rootDir>/example/"],
   transform: {

@@ -9,7 +9,7 @@ import {
 } from '../src/redux/sagas';
 
 jest.mock('redux-saga');
-jest.mock('@react-native-community/netinfo');
+const netInfoUnsubscribe = jest.fn();
 
 describe('createNetInfoConnectionChangeChannel', () => {
   it('returns a redux-saga channel', () => {
@@ -24,16 +24,14 @@ describe('createNetInfoConnectionChangeChannel', () => {
 
   it('netInfoEventChannelFn adheres to eventChannel cb interface', () => {
     const emitMock = jest.fn();
+    (NetInfo.addEventListener as jest.Mock).mockReturnValueOnce(
+      netInfoUnsubscribe,
+    );
     const unsubscribe = netInfoEventChannelFn(emitMock);
-    expect(NetInfo.isConnected.addEventListener).toHaveBeenCalledWith(
-      'connectionChange',
-      emitMock,
-    );
+
+    expect(NetInfo.addEventListener).toHaveBeenCalledWith(emitMock);
     unsubscribe();
-    expect(NetInfo.isConnected.removeEventListener).toHaveBeenCalledWith(
-      'connectionChange',
-      emitMock,
-    );
+    expect(netInfoUnsubscribe).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -11,7 +11,7 @@ jest.mock('../src/utils/checkInternetAccess');
 
 mocked(checkInternetAccess).mockResolvedValue(true);
 
-const fetch = NetInfo.isConnected.fetch as jest.Mock;
+const fetch = NetInfo.fetch as jest.Mock;
 
 describe('checkInternetConnection', () => {
   afterEach(() => {
@@ -30,7 +30,9 @@ describe('checkInternetConnection', () => {
 
   describe('shouldPing = false', () => {
     it(`does NOT call checkInternetAccess and directly resolves the promise with a boolean`, async () => {
-      fetch.mockImplementationOnce(() => Promise.resolve(false));
+      fetch.mockImplementationOnce(() =>
+        Promise.resolve({ isConnected: false }),
+      );
       const isConnected = await checkInternetConnection('foo.com', 3000, false);
       expect(checkInternetAccess).not.toHaveBeenCalled();
       expect(isConnected).toBe(false);
@@ -38,7 +40,7 @@ describe('checkInternetConnection', () => {
   });
 
   it('default parameters', async () => {
-    fetch.mockImplementationOnce(() => Promise.resolve(true));
+    fetch.mockImplementationOnce(() => Promise.resolve({ isConnected: true }));
     const isConnected = await checkInternetConnection();
     expect(checkInternetAccess).toHaveBeenCalledWith({
       timeout: DEFAULT_TIMEOUT,
