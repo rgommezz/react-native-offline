@@ -327,7 +327,26 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "helderburato",
+      "name": "Helder Burato Berto",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/862575?v=4",
+      "profile": "https://helder.dev",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ankeetmaini",
+      "name": "Ankeet Maini",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6652823?v=4",
+      "profile": "http://ankeetmaini.github.io/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }

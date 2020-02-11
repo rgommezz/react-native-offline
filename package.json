@@ -1,20 +1,25 @@
 {
   "name": "react-native-offline",
-  "version": "5.2.0",
+  "version": "5.4.0",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
-  "main": "./src/index.js",
   "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rgommezz)",
   "license": "MIT",
+  "source": "src/index.ts",
+  "main": "dist/react-native-offline.js",
+  "module": "dist/react-native-offline.esm.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
-    "lint": "eslint src",
+    "build": "rimraf dist && rollup -c",
+    "lint": "eslint --ext .js,.ts,.tsx {src,test}/**/*.{ts,tsx}",
     "test": "jest test",
-    "flow": "flow src",
-    "format": "eslint --fix js/**/",
-    "prettier": "prettier --single-quote --trailing-comma all --write \"src/**/*.js\"",
+    "ts": "./node_modules/.bin/tsc --noEmit",
+    "format": "npm run lint -- --fix",
+    "prettier": "prettier --write \"{src,test,example}/**/*.{ts,tsx}\"",
     "test:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "precommit": "npm run lint",
     "contributors:add": "all-contributors add",
-    "contributors:generate": "all-contributors generate"
+    "contributors:generate": "all-contributors generate",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -28,62 +33,71 @@
     "redux"
   ],
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "bugs": {
     "url": "https://github.com/rgommezz/react-native-offline/issues"
   },
   "homepage": "https://github.com/rgommezz/react-native-offline#readme",
   "devDependencies": {
+    "@types/enzyme": "^3.10.3",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
+    "@types/jest": "^24.0.18",
+    "@types/jsdom": "^12.2.4",
+    "@types/lodash": "^4.14.138",
+    "@types/node": "^12.7.5",
+    "@types/react": "^16.9.2",
+    "@types/react-native": "^0.60.21",
+    "@types/react-redux": "^7.1.2",
+    "@types/react-test-renderer": "^16.9.0",
+    "@types/redux-mock-store": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
     "all-contributors-cli": "^5.4.0",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.6.0",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^24.9.0",
     "babel-preset-react-native": "^4.0.1",
     "coveralls": "^3.0.6",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.7.1",
     "eslint": "^5.11.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^3.3.0",
-    "eslint-plugin-flowtype": "^3.2.0",
+    "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.11.1",
-    "flow-bin": "^0.89.0",
     "husky": "^0.14.3",
-    "jest": "^23.6.0",
+    "jest": "^24.9.0",
     "jest-enzyme": "^7.0.1",
     "jsdom": "^13.1.0",
-    "prettier": "^1.15.3",
+    "metro-react-native-babel-preset": "^0.56.0",
+    "prettier": "^1.19.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-native": "^0.60.5",
+    "react-native": "^0.61.2",
     "react-native-testing-library": "^1.5.0",
+    "react-native-typescript-transformer": "^1.2.13",
     "react-test-renderer": "^16.6.3",
     "redux": "^4.0.1",
     "redux-mock-store": "^1.5.3",
     "redux-saga-test-plan": "4.0.0-beta.2",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.29.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "ts-jest": "^24.1.0",
+    "typescript": "3.7.5"
   },
   "dependencies": {
-    "@react-native-community/netinfo": "^4.1.2",
+    "@react-native-community/netinfo": "^5.3.3",
     "lodash": "^4.17.11",
     "react-redux": "^6.0.0 || ^7.0.0",
     "redux": "4.x",
     "redux-saga": "^1.0.2"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "preset": "react-native",
-    "setupTestFrameworkScriptFile": "<rootDir>/test/setupTestEnv.js",
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    },
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/"
-    ]
   }
 }
