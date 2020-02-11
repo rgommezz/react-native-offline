@@ -79,7 +79,7 @@ $ yarn add react-native-offline
 $ npm i --save react-native-offline
 ```
 
-This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using. 
+This library uses `@react-native-community/netinfo@4.x.x` version underneath the hood. You then need to link the native parts of the library for the platforms you are using.
 
 If you are on React Native v0.60, you don't need to do anything else, since it supports autolinking. For iOS, just go to the `ios` folder and run `pod install`. However, autolinking might not pick up and install the `@react-native-community/netinfo` dependency. If that happens, first install `@react-native-community/netinfo` directly, then run `pod install`, then install `react-native-offline` and finish with `pod install`.
 
@@ -469,7 +469,7 @@ const store = createStore(rootReducer);
 export default store;
 ```
 
-The comparison function receives the action dispatched when offline and the current `actionQueue`. The result of the function will be either `undefined`, meaning no match found, or the action that matches the passed in action. So basically, you need to return the upcoming action if you wish to replace an existing one. An example of how to use it can be found [here](https://github.com/rgommezz/react-native-offline/blob/master/test/reducer.test.js#L121).
+The comparison function receives the action dispatched when offline and the current `actionQueue`. The result of the function will be either `undefined`, meaning no match found, or the action that matches the passed in action. So basically, you need to return the upcoming action if you wish to replace an existing one. An example of how to use it can be found [here](https://github.com/rgommezz/react-native-offline/blob/master/test/reducer.test.ts#L124).
 
 ```js
 function comparisonFn(
@@ -691,10 +691,10 @@ export const fetchUser = (url) => {
   };
 
   thunk.interceptInOffline = true;
-  
+
   // Add these
   thunk.meta = {
-    retry: true, 
+    retry: true,
     name: 'fetchUser', // This should be the name of your function
     args: [url], // These are the arguments for the function. Add more as needed.
   };
@@ -752,7 +752,7 @@ const networkTransform = createTransform(
   },
   // The 'network' key may change depending on what you
   // named your network reducer.
-  { whitelist: ['network'] }, 
+  { whitelist: ['network'] },
 );
 
 const persistConfig = {
