@@ -469,7 +469,7 @@ const store = createStore(rootReducer);
 export default store;
 ```
 
-The comparison function receives the action dispatched when offline and the current `actionQueue`. The result of the function will be either `undefined`, meaning no match found, or the action that matches the passed in action. So basically, you need to return the upcoming action if you wish to replace an existing one. An example of how to use it can be found [here](https://github.com/rgommezz/react-native-offline/blob/master/test/reducer.test.js#L121).
+The comparison function receives the action dispatched when offline and the current `actionQueue`. The result of the function will be either `undefined`, meaning no match found, or the action that matches the passed in action. So basically, you need to return the upcoming action if you wish to replace an existing one. An example of how to use it can be found [here](https://github.com/rgommezz/react-native-offline/blob/master/test/reducer.test.ts#L124).
 
 ```js
 function comparisonFn(
