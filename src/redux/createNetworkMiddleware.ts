@@ -101,34 +101,39 @@ function didQueueResume(action: EnqueuedAction, isQueuePaused: boolean) {
   return false;
 }
 
+let isReleaseQueueRunning = false;
+
 export const createReleaseQueue = (
   getState: GetState,
   next: StoreDispatch,
   delay: number,
   shouldDequeueSelector: Arguments['shouldDequeueSelector'],
 ) => async () => {
-  releaseActions(getState,next,delay,shouldDequeueSelector);
+      if(!isReleaseQueueRunning) {
+            isReleaseQueueRunning = true;
+            await releaseActions(getState,next,delay,shouldDequeueSelector);
+            isReleaseQueueRunning = false;
+      }
 };
 async function releaseActions(
       getState: GetState,
       next: StoreDispatch,
       delay: number,
       shouldDequeueSelector: Arguments['shouldDequeueSelector'],
-) {
+): Promise<boolean> {
       const state = getState();
       const queue = state.network.actionQueue;
       if(queue && queue.length) {
             const action = queue[0];
             const { isConnected, isQueuePaused } = state.network;
             if (isConnected && !isQueuePaused && shouldDequeueSelector(state)) {
-              next(removeActionFromQueue(action));
-              next(action);
-              // eslint-disable-next-line
-              await wait(delay);
-
-              releaseActions(getState,next,delay,shouldDequeueSelector);
-        }
+                  next(removeActionFromQueue(action));
+                  next(action);
+                  await wait(delay);
+                  return releaseActions(getState,next,delay,shouldDequeueSelector);
+            }
       }
+      return new Promise<boolean>(resolve => {resolve(true);});
 }
 
 function createNetworkMiddleware({
@@ -155,13 +160,11 @@ function createNetworkMiddleware({
       actionTypes,
     );
 
-    // if offline (or queuedEvenIfOnline = true) put action in queue
-    if( shouldInterceptAction && (
-            isConnected === false
-            || (actionQueue.length && get(action, 'meta.queuedEvenIfOnline', false))
-      ) ) {
-            return next(fetchOfflineMode(action));
-      }
+    if (shouldInterceptAction && isConnected === false) {
+      // Offline, preventing the original action from being dispatched.
+      // Dispatching an internal action instead.
+      return next(fetchOfflineMode(action));
+    }
 
     const isBackOnline = didComeBackOnline(action, isConnected);
     const hasQueueBeenResumed = didQueueResume(action, isQueuePaused);
@@ -187,6 +190,13 @@ function createNetworkMiddleware({
         next(dismissActionsFromQueue(action.type));
       }
     }
+
+    // if online mode and queuedEvenIfOnline = true then put the action in the queue
+    // (perform the action when the queue is finished)
+    if( shouldInterceptAction && actionQueue.length && get(action, 'meta.queuedEvenIfOnline', false) ) {
+            next(fetchOfflineMode(action));
+            return releaseQueue();
+      }
 
     // Proxy the original action to the next middleware on the chain or final dispatch
     return next(action);
