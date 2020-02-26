@@ -109,31 +109,31 @@ export const createReleaseQueue = (
   delay: number,
   shouldDequeueSelector: Arguments['shouldDequeueSelector'],
 ) => async () => {
-      if(!isReleaseQueueRunning) {
-            isReleaseQueueRunning = true;
-            await releaseActions(getState,next,delay,shouldDequeueSelector);
-            isReleaseQueueRunning = false;
-      }
+  if (!isReleaseQueueRunning) {
+    isReleaseQueueRunning = true;
+    await releaseActions(getState, next, delay, shouldDequeueSelector);
+    isReleaseQueueRunning = false;
+  }
 };
 async function releaseActions(
-      getState: GetState,
-      next: StoreDispatch,
-      delay: number,
-      shouldDequeueSelector: Arguments['shouldDequeueSelector'],
+  getState: GetState,
+  next: StoreDispatch,
+  delay: number,
+  shouldDequeueSelector: Arguments['shouldDequeueSelector'],
 ): Promise<boolean> {
-      const state = getState();
-      const queue = state.network.actionQueue;
-      if(queue && queue.length) {
-            const action = queue[0];
-            const { isConnected, isQueuePaused } = state.network;
-            if (isConnected && !isQueuePaused && shouldDequeueSelector(state)) {
-                  next(removeActionFromQueue(action));
-                  next(action);
-                  await wait(delay);
-                  return releaseActions(getState,next,delay,shouldDequeueSelector);
-            }
-      }
-      return new Promise<boolean>(resolve => {resolve(true);});
+  const state = getState();
+  const queue = state.network.actionQueue;
+  if (queue && queue.length) {
+    const action = queue[0];
+    const { isConnected, isQueuePaused } = state.network;
+    if (isConnected && !isQueuePaused && shouldDequeueSelector(state)) {
+      next(removeActionFromQueue(action));
+      next(action);
+      await wait(delay);
+      return releaseActions(getState, next, delay, shouldDequeueSelector);
+    }
+  }
+  return new Promise<boolean>(resolve => resolve(true));
 }
 
 function createNetworkMiddleware({
@@ -193,10 +193,14 @@ function createNetworkMiddleware({
 
     // if online mode and queuedEvenIfOnline = true then put the action in the queue
     // (perform the action when the queue is finished)
-    if( shouldInterceptAction && actionQueue.length && get(action, 'meta.queuedEvenIfOnline', false) ) {
-            next(fetchOfflineMode(action));
-            return releaseQueue();
-      }
+    if (
+      shouldInterceptAction &&
+      actionQueue.length &&
+      get(action, 'meta.queuedEvenIfOnline', false)
+    ) {
+      next(fetchOfflineMode(action));
+      return releaseQueue();
+    }
 
     // Proxy the original action to the next middleware on the chain or final dispatch
     return next(action);

@@ -48,12 +48,12 @@ function handleOfflineAction(
       actionWithMetaData,
       state.actionQueue,
     );
-    if(Array.isArray(similarActionQueued)) {
+    if (Array.isArray(similarActionQueued)) {
       return {
-         ...state,
-         actionQueue: similarActionQueued
+        ...state,
+        actionQueue: similarActionQueued,
       };
-   }
+    }
     const newActionQueue = similarActionQueued
       ? [...without(state.actionQueue, similarActionQueued), actionWithMetaData]
       : [...state.actionQueue, actionWithMetaData];
