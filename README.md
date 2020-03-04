@@ -833,6 +833,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
   </tr>
   <tr>
     <td align="center"><a href="http://ankeetmaini.github.io/"><img src="https://avatars1.githubusercontent.com/u/6652823?v=4" width="100px;" alt=""/><br /><sub><b>Ankeet Maini</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=ankeetmaini" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.nipuna777.com"><img src="https://avatars0.githubusercontent.com/u/5859290?v=4" width="100px;" alt=""/><br /><sub><b>Nipuna Gunathilake</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=nipuna777" title="Documentation">📖</a></td>
   </tr>
 </table>
 
