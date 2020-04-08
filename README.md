@@ -68,8 +68,10 @@ This gives you the power to prioritize our work and support the project contribu
 
 [![issuehunt-image](https://camo.githubusercontent.com/f5f88939f6c627454b7c5d0eaef9f7cc40cc9586/68747470733a2f2f697373756568756e742e696f2f7374617469632f656d6265642f697373756568756e742d627574746f6e2d76312e737667)](https://issuehunt.io/repos/86369462)
 
-## Installation, RN >= 0.60
-This library uses @react-native-community/netinfo behind the scenes, which contains native code, so you need to install it and link it as well. Follow the next steps in order:
+## Installation
+
+###  RN >= 0.60
+This library uses [@react-native-community/netinfo](https://github.com/react-native-community/react-native-netinfo) behind the scenes, which contains native code, so you need to install it and link it as well. Follow the next steps in order:
 ```bash
 $ yarn add react-native-offline
 $ yarn add @react-native-community/netinfo
@@ -89,6 +91,14 @@ On RN 0.60, for Android, you may need to use [jetifier](https://github.com/mikeh
 To request network info in Android an extra step is required, so you should add the following line to your app's `AndroidManifest.xml` as well:
 
 `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
+
+### Expo >= 35
+```bash
+$ yarn add react-native-offline
+
+# Or if you use npm
+$ npm i react-native-offline
+```
 
 ## API
 
