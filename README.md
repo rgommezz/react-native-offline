@@ -93,6 +93,7 @@ To request network info in Android an extra step is required, so you should add 
 `<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />`
 
 ### Expo >= 35
+If you are using the [managed workflow](https://docs.expo.io/versions/latest/introduction/managed-vs-bare/#managed-workflow), you don't need to install any extra dependency. Expo SDK already ships in with `NetInfo`.
 ```bash
 $ yarn add react-native-offline
 
