@@ -548,7 +548,8 @@ Utility function that allows you to query for internet connectivity on demand. I
 checkInternetConnection(
   url?: string = 'https://www.google.com/',
   pingTimeout?: number = 10000,
-  shouldPing?: boolean = true
+  shouldPing?: boolean = true,
+  method?: HTTPMethod = 'HEAD'
 ): Promise<boolean>
 ```
 
