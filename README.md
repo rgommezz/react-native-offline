@@ -298,7 +298,7 @@ type MiddlewareConfig = {
 This is the setup you need to put in place for libraries such as `redux-saga` or `redux-observable`, which rely on plain actions being dispatched to trigger async flow:
 
 `regexActionType`: regular expression to indicate the action types to be intercepted in offline mode.
-By default it's configured to intercept actions for fetching data following the Redux [convention](https://redux.js.org/docs/advanced/AsyncActions.html). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
+By default it's configured to intercept actions for fetching data following the Redux [convention](https://redux.js.org/advanced/async-actions). That means that it will intercept actions with types such as `FETCH_USER_ID_REQUEST`, `FETCH_PRODUCTS_REQUEST` etc.
 
 `actionTypes`: array with additional action types to intercept that don't fulfil the RegExp criteria. For instance, it's useful for actions that carry along refreshing data, such as `REFRESH_LIST`.
 
