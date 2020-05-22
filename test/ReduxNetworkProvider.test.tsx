@@ -49,7 +49,9 @@ describe('ReduxNetworkProvider', () => {
   describe('handleConnectivityChange', () => {
     it(`dispatches a CONNECTION_CHANGE action with the new connection`, () => {
       const wrapper = shallow<ReduxNetworkProvider>(
-        <ReduxNetworkProvider {...props} />,
+        <ReduxNetworkProvider {...props}>
+          <View />
+        </ReduxNetworkProvider>,
       );
       wrapper.instance().handleConnectivityChange(true);
       expect(props.dispatch).toHaveBeenCalledWith(connectionChange(true));
@@ -59,7 +61,9 @@ describe('ReduxNetworkProvider', () => {
     it(`does NOT dispatch a CONNECTION_CHANGE action if the connection
     did not change`, () => {
       const wrapper = shallow<ReduxNetworkProvider>(
-        <ReduxNetworkProvider {...getProps({ isConnected: true })} />,
+        <ReduxNetworkProvider {...getProps({ isConnected: true })}>
+          <View />
+        </ReduxNetworkProvider>,
       );
       wrapper.instance().handleConnectivityChange(true);
       expect(props.dispatch).not.toHaveBeenCalled();
