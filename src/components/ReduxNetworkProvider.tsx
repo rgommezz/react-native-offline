@@ -18,7 +18,10 @@ interface StateProps {
   dispatch: Dispatch;
 }
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps &
+  StateProps & {
+    children: React.ReactNode;
+  };
 class ReduxNetworkProvider extends React.Component<Props> {
   static defaultProps = DEFAULT_ARGS;
 
