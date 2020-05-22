@@ -363,6 +363,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "JH108",
+      "name": "Jesse Hill",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/14010157?v=4",
+      "profile": "https://github.com/JH108",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
