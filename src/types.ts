@@ -40,6 +40,7 @@ export type ConnectivityArgs = {
   pingOnlyIfOffline: boolean;
   pingInBackground: boolean;
   httpMethod: HTTPMethod;
+  customHeaders: {};
 };
 
 export type SemaphoreColor = 'RED' | 'GREEN';

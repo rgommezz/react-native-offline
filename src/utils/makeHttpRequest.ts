@@ -16,6 +16,7 @@ type Options = {
     | 'onload/5xx'
     | 'onerror'
     | 'ontimeout';
+  customHeaders?: {};
 };
 
 type ResolvedValue = {
@@ -34,6 +35,7 @@ export const headers = {
  * @param url
  * @param timeout -> Timeout for rejecting the promise and aborting the API request
  * @param testMethod: for testing purposes
+ * @param customHeaders: headers received from user configuration.
  * @returns {Promise}
  */
 
@@ -42,12 +44,14 @@ const DEFAULT_OPTIONS: Options = {
   method: DEFAULT_HTTP_METHOD,
   url: DEFAULT_PING_SERVER_URL,
   timeout: DEFAULT_TIMEOUT,
+  customHeaders: {},
 };
 export default function makeHttpRequest(args?: Options) {
   const {
     method = DEFAULT_HTTP_METHOD,
     url = DEFAULT_PING_SERVER_URL,
     timeout = DEFAULT_TIMEOUT,
+    customHeaders = {},
     testMethod,
   } = args || DEFAULT_OPTIONS;
   return new Promise((resolve: PromiseHandler, reject: PromiseHandler) => {
@@ -78,7 +82,7 @@ export default function makeHttpRequest(args?: Options) {
       });
     };
 
-    Object.keys(headers).forEach(key => {
+    Object.keys({ ...headers, ...customHeaders }).forEach(key => {
       const k = key as keyof typeof headers;
       xhr.setRequestHeader(k, headers[k]);
     });

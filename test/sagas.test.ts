@@ -82,6 +82,7 @@ describe('sagas', () => {
       pingServerUrl: args.pingServerUrl,
       shouldPing: args.shouldPing,
       httpMethod: args.httpMethod,
+      customHeaders: args.customHeaders,
     };
     function channelLoop(saga: TestApi) {
       return saga
@@ -166,6 +167,7 @@ describe('sagas', () => {
       shouldPing: true,
       httpMethod: args.httpMethod,
       isConnected: true,
+      customHeaders: args.customHeaders,
     };
     it('forks checkInternetAccessSaga if shouldPing AND isConnected are true', () => {
       const saga = testSaga(connectionHandler, params);
@@ -176,6 +178,7 @@ describe('sagas', () => {
           pingServerUrl: args.pingServerUrl,
           httpMethod: args.httpMethod,
           pingInBackground: args.pingInBackground,
+          customHeaders: args.customHeaders,
         })
         .next()
         .isDone();
@@ -218,6 +221,7 @@ describe('sagas', () => {
           pingServerUrl: params.pingServerUrl,
           httpMethod: params.httpMethod,
           pingInBackground: params.pingInBackground,
+          customHeaders: args.customHeaders,
         })
         .next()
         .take('channel');
@@ -294,6 +298,7 @@ describe('sagas', () => {
       pingTimeout: args.pingTimeout,
       httpMethod: args.httpMethod,
       pingInBackground: false,
+      customHeaders: args.customHeaders,
     };
     it('returns early if pingInBackground is false AND app state is NOT active', () => {
       AppState.currentState = 'inactive';
@@ -310,6 +315,7 @@ describe('sagas', () => {
           url: params.pingServerUrl,
           timeout: params.pingTimeout,
           method: params.httpMethod,
+          customHeaders: params.customHeaders,
         })
         .next(true)
         .call(handleConnectivityChange, true)

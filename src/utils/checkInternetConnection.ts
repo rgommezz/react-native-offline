@@ -4,6 +4,7 @@ import {
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
   DEFAULT_HTTP_METHOD,
+  DEFAULT_CUSTOM_HEADERS,
 } from './constants';
 import { HTTPMethod } from '../types';
 
@@ -20,6 +21,7 @@ export default async function checkInternetConnection(
   timeout: number = DEFAULT_TIMEOUT,
   shouldPing = true,
   method: HTTPMethod = DEFAULT_HTTP_METHOD,
+  customHeaders: {} = DEFAULT_CUSTOM_HEADERS,
 ): Promise<boolean> {
   return NetInfo.fetch().then(async connectionState => {
     if (shouldPing) {
@@ -27,6 +29,7 @@ export default async function checkInternetConnection(
         timeout,
         url,
         method,
+        customHeaders,
       });
       return hasInternetAccess;
     }

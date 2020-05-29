@@ -2,6 +2,7 @@
 
 exports[`NetworkProvider has the correct structure and default props 1`] = `
 <NetworkConnectivity
+  customHeaders={Object {}}
   httpMethod="HEAD"
   onConnectivityChange={[Function]}
   pingInBackground={true}
