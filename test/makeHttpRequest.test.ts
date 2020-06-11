@@ -88,6 +88,7 @@ describe('makeHttpRequest', () => {
     mockOpen.mockClear();
     mockSend.mockClear();
     mockSetTimeout.mockClear();
+    mockSetRequestHeader.mockClear();
     mockOnLoad.mockClear();
     mockOnError.mockClear();
     mockOnTimeout.mockClear();
@@ -115,6 +116,11 @@ describe('makeHttpRequest', () => {
       );
     });
     expect(mockSend).toHaveBeenCalledWith(null);
+  });
+
+  it('accepts custom headers', () => {
+    makeHttpRequest({ ...params, customHeaders: { foo: 'bar' } });
+    expect(mockSetRequestHeader).toHaveBeenNthCalledWith(4, 'foo', 'bar');
   });
 
   it('default parameters', () => {

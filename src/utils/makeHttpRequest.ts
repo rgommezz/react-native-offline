@@ -3,7 +3,9 @@ import {
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
   CACHE_HEADER_VALUE,
+  DEFAULT_CUSTOM_HEADERS,
 } from './constants';
+import { HTTPHeaders } from '../types';
 
 type Options = {
   method?: 'HEAD' | 'OPTIONS';
@@ -16,6 +18,7 @@ type Options = {
     | 'onload/5xx'
     | 'onerror'
     | 'ontimeout';
+  customHeaders?: HTTPHeaders;
 };
 
 type ResolvedValue = {
@@ -34,6 +37,7 @@ export const headers = {
  * @param url
  * @param timeout -> Timeout for rejecting the promise and aborting the API request
  * @param testMethod: for testing purposes
+ * @param customHeaders: headers received from user configuration.
  * @returns {Promise}
  */
 
@@ -42,12 +46,14 @@ const DEFAULT_OPTIONS: Options = {
   method: DEFAULT_HTTP_METHOD,
   url: DEFAULT_PING_SERVER_URL,
   timeout: DEFAULT_TIMEOUT,
+  customHeaders: DEFAULT_CUSTOM_HEADERS,
 };
 export default function makeHttpRequest(args?: Options) {
   const {
     method = DEFAULT_HTTP_METHOD,
     url = DEFAULT_PING_SERVER_URL,
     timeout = DEFAULT_TIMEOUT,
+    customHeaders = DEFAULT_CUSTOM_HEADERS,
     testMethod,
   } = args || DEFAULT_OPTIONS;
   return new Promise((resolve: PromiseHandler, reject: PromiseHandler) => {
@@ -78,9 +84,10 @@ export default function makeHttpRequest(args?: Options) {
       });
     };
 
-    Object.keys(headers).forEach(key => {
+    const combinedHeaders = { ...headers, ...customHeaders };
+    Object.keys(combinedHeaders).forEach(key => {
       const k = key as keyof typeof headers;
-      xhr.setRequestHeader(k, headers[k]);
+      xhr.setRequestHeader(k, combinedHeaders[k]);
     });
     xhr.send(null);
   });

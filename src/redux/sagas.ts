@@ -63,6 +63,7 @@ export function createIntervalChannel(interval: number, channelFn: Function) {
  * @param pingServerUrl
  * @param shouldPing
  * @param httpMethod
+ * @param customHeaders
  */
 
 export function* netInfoChangeSaga({
@@ -70,6 +71,7 @@ export function* netInfoChangeSaga({
   pingServerUrl,
   shouldPing,
   httpMethod,
+  customHeaders,
 }: NetInfoChangeArgs) {
   if (Platform.OS === 'android') {
     const networkState: NetInfoState = yield call([NetInfo, NetInfo.fetch]);
@@ -79,6 +81,7 @@ export function* netInfoChangeSaga({
       pingTimeout,
       pingServerUrl,
       httpMethod,
+      customHeaders,
     });
   }
   const chan = yield call(
@@ -94,6 +97,7 @@ export function* netInfoChangeSaga({
         pingTimeout,
         pingServerUrl,
         httpMethod,
+        customHeaders,
       });
     }
   } finally {
@@ -110,6 +114,7 @@ export function* netInfoChangeSaga({
  * @param pingTimeout
  * @param pingServerUrl
  * @param httpMethod
+ * @param customHeaders
  * @returns {IterableIterator<ForkEffect | *>}
  */
 
@@ -119,6 +124,7 @@ export function* connectionHandler({
   pingTimeout,
   pingServerUrl,
   httpMethod,
+  customHeaders,
 }: NetInfoChangeArgs & { isConnected: boolean }) {
   if (shouldPing && isConnected) {
     yield fork(checkInternetAccessSaga, {
@@ -126,6 +132,7 @@ export function* connectionHandler({
       pingServerUrl,
       httpMethod,
       pingInBackground: false,
+      customHeaders,
     });
   } else {
     yield fork(handleConnectivityChange, isConnected);
@@ -140,6 +147,7 @@ export function* connectionHandler({
  * @param pingOnlyIfOffline
  * @param pingInBackground
  * @param httpMethod
+ * @param customHeaders
  * @returns {IterableIterator<*>}
  */
 export function* connectionIntervalSaga({
@@ -149,6 +157,7 @@ export function* connectionIntervalSaga({
   pingOnlyIfOffline,
   pingInBackground,
   httpMethod,
+  customHeaders,
 }: Omit<ConnectivityArgs, 'shouldPing'>) {
   const chan = yield call(
     createIntervalChannel,
@@ -165,6 +174,7 @@ export function* connectionIntervalSaga({
           pingServerUrl,
           httpMethod,
           pingInBackground,
+          customHeaders,
         });
       }
     }
@@ -181,6 +191,7 @@ export function* connectionIntervalSaga({
  * @param pingTimeout
  * @param httpMethod
  * @param pingInBackground
+ * @param customHeaders
  */
 
 export function* checkInternetAccessSaga({
@@ -188,6 +199,7 @@ export function* checkInternetAccessSaga({
   pingTimeout,
   httpMethod,
   pingInBackground,
+  customHeaders,
 }: CheckInternetArgs) {
   if (pingInBackground === false && AppState.currentState !== 'active') {
     return; // <-- Return early as we don't care about connectivity if app is not in foreground.
@@ -196,6 +208,7 @@ export function* checkInternetAccessSaga({
     url: pingServerUrl,
     timeout: pingTimeout,
     method: httpMethod,
+    customHeaders,
   });
   yield call(handleConnectivityChange, hasInternetAccess);
 }
@@ -224,6 +237,7 @@ export function* handleConnectivityChange(hasInternetAccess: boolean) {
  * @param pingOnlyIfOffline
  * @param pingInBackground
  * @param httpMethod
+ * @param customHeaders
  */
 export default function* networkSaga(args?: ConnectivityArgs) {
   const {
@@ -234,6 +248,7 @@ export default function* networkSaga(args?: ConnectivityArgs) {
     pingOnlyIfOffline = false,
     pingInBackground = false,
     httpMethod = DEFAULT_HTTP_METHOD,
+    customHeaders,
   } = args || DEFAULT_ARGS;
 
   yield fork(netInfoChangeSaga, {
@@ -241,6 +256,7 @@ export default function* networkSaga(args?: ConnectivityArgs) {
     pingServerUrl,
     shouldPing,
     httpMethod,
+    customHeaders,
   });
   if (pingInterval > 0) {
     yield fork(connectionIntervalSaga, {
@@ -250,6 +266,7 @@ export default function* networkSaga(args?: ConnectivityArgs) {
       pingOnlyIfOffline,
       pingInBackground,
       httpMethod,
+      customHeaders,
     });
   }
 }

@@ -120,6 +120,7 @@ type Props = {
     pingOnlyIfOffline?: boolean = false,
     pingInBackground?: boolean = false,
     httpMethod?: HTTPMethod = 'HEAD',
+    customHeaders?: HTTPHeaders = {},
 }
 ```
 
@@ -139,6 +140,8 @@ type Props = {
 `pingInBackground`: whether or not to check connectivity when app isn't in the foreground. Defaults to `false`.
 
 `httpMethod`: http method used to ping the server. Supports HEAD or OPTIONS. Defaults to `HEAD`.
+
+`customHeaders`: optional custom headers to add for ping request.
 
 ##### Usage
 ```js

@@ -114,6 +114,7 @@ class NetworkConnectivity extends React.PureComponent<
       pingTimeout,
       pingServerUrl,
       httpMethod,
+      customHeaders,
     } = this.props;
     if (pingInBackground === false && AppState.currentState !== 'active') {
       return; // <-- Return early as we don't care about connectivity if app is not in foreground.
@@ -123,6 +124,7 @@ class NetworkConnectivity extends React.PureComponent<
         url: pingServerUrl,
         timeout: pingTimeout,
         method: httpMethod,
+        customHeaders,
       }),
       NetInfo.fetch(),
     ]);
