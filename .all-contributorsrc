@@ -372,6 +372,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ugurakkurt",
+      "name": "ugur akkurt",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/12188837?v=4",
+      "profile": "https://github.com/ugurakkurt",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
