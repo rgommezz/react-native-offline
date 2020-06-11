@@ -2,6 +2,7 @@
 
 exports[`ReduxNetworkProvider render has the correct structure 1`] = `
 <NetworkConnectivity
+  customHeaders={Object {}}
   dispatch={[MockFunction]}
   httpMethod="HEAD"
   isConnected={false}

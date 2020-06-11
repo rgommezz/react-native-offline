@@ -2,6 +2,7 @@
 
 exports[`NetworkConnectivity defaultProps 1`] = `
 Object {
+  "customHeaders": Object {},
   "httpMethod": "HEAD",
   "onConnectivityChange": [Function],
   "pingInBackground": false,
