@@ -48,7 +48,7 @@ describe('checkInternetAccess', () => {
     const timeout = 2000;
     const url = 'foo123321.com';
     const method = 'FAIL';
-    const customHeaders = {};
+    const customHeaders = DEFAULT_CUSTOM_HEADERS;
     const hasInternetAccess = await checkInternetAccess({
       timeout,
       url,
@@ -80,7 +80,6 @@ describe('checkInternetAccess', () => {
       timeout,
       method: DEFAULT_HTTP_METHOD,
       customHeaders: customHeadersToAdd,
-
     });
     expect(hasInternetAccess).toBe(true);
   });

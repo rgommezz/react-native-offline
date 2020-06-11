@@ -120,7 +120,7 @@ type Props = {
     pingOnlyIfOffline?: boolean = false,
     pingInBackground?: boolean = false,
     httpMethod?: HTTPMethod = 'HEAD',
-    customHeaders?: {} = {},
+    customHeaders?: HTTPHeaders = {},
 }
 ```
 

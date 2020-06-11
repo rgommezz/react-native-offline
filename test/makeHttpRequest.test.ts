@@ -120,7 +120,7 @@ describe('makeHttpRequest', () => {
 
   it('accepts custom headers', () => {
     makeHttpRequest({ ...params, customHeaders: { foo: 'bar' } });
-    expect(mockSetRequestHeader).toHaveBeenCalledTimes(4);
+    expect(mockSetRequestHeader).toHaveBeenNthCalledWith(4, 'foo', 'bar');
   });
 
   it('default parameters', () => {

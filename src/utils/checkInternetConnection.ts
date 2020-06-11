@@ -6,7 +6,7 @@ import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_CUSTOM_HEADERS,
 } from './constants';
-import { HTTPMethod } from '../types';
+import { HTTPMethod, HTTPHeaders } from '../types';
 
 /**
  * Utility that allows to query for internet connectivity on demand
@@ -21,7 +21,7 @@ export default async function checkInternetConnection(
   timeout: number = DEFAULT_TIMEOUT,
   shouldPing = true,
   method: HTTPMethod = DEFAULT_HTTP_METHOD,
-  customHeaders: {} = DEFAULT_CUSTOM_HEADERS,
+  customHeaders: HTTPHeaders = DEFAULT_CUSTOM_HEADERS,
 ): Promise<boolean> {
   return NetInfo.fetch().then(async connectionState => {
     if (shouldPing) {
