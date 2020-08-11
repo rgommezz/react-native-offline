@@ -598,7 +598,7 @@ It works in the following way: if a `changeQueueSemaphore('RED')` action is disp
 ```js
 import { offlineActionCreators } from 'react-native-offline';
 ...
-async function weHaltQeueeReleaseHere(){
+async function weHaltQueueReleaseHere(){
   const { changeQueueSemaphore } = offlineActionCreators;
   dispatch(changeQueueSemaphore('RED')) // The queue is now halted and it won't continue dispatching actions
   await somePromise();
