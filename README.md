@@ -784,6 +784,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
     <td align="center"><a href="https://github.com/1ike"><img src="https://avatars1.githubusercontent.com/u/10694949?v=4" width="100px;" alt=""/><br /><sub><b>1ike</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=1ike" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/JH108"><img src="https://avatars1.githubusercontent.com/u/14010157?v=4" width="100px;" alt=""/><br /><sub><b>Jesse Hill</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=JH108" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/ugurakkurt"><img src="https://avatars0.githubusercontent.com/u/12188837?v=4" width="100px;" alt=""/><br /><sub><b>ugur akkurt</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=ugurakkurt" title="Code">💻</a> <a href="https://github.com/rgommezz/react-native-offline/commits?author=ugurakkurt" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/caiangums"><img src="https://avatars2.githubusercontent.com/u/7551787?v=4" width="100px;" alt=""/><br /><sub><b>Ilê Caian</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=caiangums" title="Documentation">📖</a></td>
   </tr>
 </table>
 
