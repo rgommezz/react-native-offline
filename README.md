@@ -618,6 +618,31 @@ fetch('someurl/data').catch(error => {
 );
 ```
 
+##### A sample using redux-thunk
+```js
+const fetchApi = (params) => {
+  function thunk(dispatch, getState) {
+    YourService.save(params)
+      .then(response => {
+        console.log('[success]:', response)
+      })
+      .catch(error => {
+        console.error('[error]:', error);
+        dispatch(offlineActionCreators.fetchOfflineMode(thunk));
+      });
+  }
+
+  thunk.interceptInOffline = true;
+
+  thunk.meta = {
+    retry: true,
+    name: 'fetchApi',
+    args: [params],
+  };
+  return thunk;
+};
+```
+
 #### How to persist and rehydrate thunks in the offline queue with Redux Persist
 
 Due to the way Redux Persist serializes the store, persisting and rehydrating thunks will return an invalid action. Fortunately, there is a workaround.
