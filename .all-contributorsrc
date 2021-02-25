@@ -391,6 +391,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "sbelzile-nexapp",
+      "name": "Sébastien Belzile",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67745993?v=4",
+      "profile": "https://github.com/sbelzile-nexapp",
+      "contributions": [
+        "doc",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
