@@ -3,6 +3,7 @@ import * as offlineActionCreators from './redux/actionCreators';
 import _reducer from './redux/createReducer';
 
 export { default as NetworkProvider } from './components/NetworkProvider';
+export { default as NetworkContext } from './components/NetworkContext';
 export { default as ReduxNetworkProvider } from './components/ReduxNetworkProvider';
 export { default as NetworkConsumer } from './components/NetworkConsumer';
 
