@@ -88,7 +88,7 @@ describe('NetworkConnectivity', () => {
   it('passes the connection state into the FACC', () => {
     const children = jest.fn();
     shallow(getElement({ props: { children } }));
-    expect(children).toHaveBeenCalledWith({ isConnected: true });
+    expect(children).toHaveBeenCalledWith({ isConnected: null });
   });
 
   describe('componentDidMount', () => {

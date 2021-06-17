@@ -11,7 +11,7 @@ export type RequiredProps = {
 } & DefaultProps;
 
 export type DefaultProps = ConnectivityArgs & {
-  onConnectivityChange: (isConnected: boolean) => void;
+  onConnectivityChange: (isConnected: boolean | null) => void;
 };
 
 function validateProps(props: RequiredProps) {
@@ -58,7 +58,7 @@ class NetworkConnectivity extends React.PureComponent<
     super(props);
     validateProps(props);
     this.state = {
-      isConnected: true,
+      isConnected: null,
     };
   }
 

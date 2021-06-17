@@ -25,7 +25,7 @@ export interface NetworkState extends ConnectivityState {
 }
 
 export type ConnectivityState = {
-  isConnected: boolean;
+  isConnected: boolean | null;
 };
 
 export type HTTPMethod = 'HEAD' | 'OPTIONS';
