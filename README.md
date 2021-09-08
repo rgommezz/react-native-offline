@@ -899,6 +899,9 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
     <td align="center"><a href="https://github.com/caiangums"><img src="https://avatars2.githubusercontent.com/u/7551787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ilê Caian</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=caiangums" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/sbelzile-nexapp"><img src="https://avatars.githubusercontent.com/u/67745993?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sébastien Belzile</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=sbelzile-nexapp" title="Documentation">📖</a> <a href="#ideas-sbelzile-nexapp" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/colmbrady"><img src="https://avatars.githubusercontent.com/u/10607960?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Colm</b></sub></a><br /><a href="https://github.com/rgommezz/react-native-offline/commits?author=colmbrady" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
