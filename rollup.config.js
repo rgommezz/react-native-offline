@@ -5,7 +5,14 @@ import pkg from './package.json';
 
 export default {
   input: 'src/index.ts',
-  external: ['react', 'react-native', 'redux', 'react-redux', 'redux-saga'],
+  external: [
+    'react',
+    'react-native',
+    'redux',
+    'react-redux',
+    'redux-saga',
+    '@react-native-community/netinfo',
+  ],
   plugins: [resolve(), commonjs(), typescript()],
   output: [
     { file: pkg.main, format: 'cjs' },
