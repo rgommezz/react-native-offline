@@ -22,7 +22,7 @@ export default async function checkInternetConnection(
   shouldPing = true,
   method: HTTPMethod = DEFAULT_HTTP_METHOD,
   customHeaders: HTTPHeaders = DEFAULT_CUSTOM_HEADERS,
-): Promise<boolean> {
+): Promise<boolean | null> {
   return NetInfo.fetch().then(async connectionState => {
     if (shouldPing) {
       const hasInternetAccess = await checkInternetAccess({

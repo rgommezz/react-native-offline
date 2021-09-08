@@ -34,6 +34,6 @@ describe.only('NetworkConsumer', () => {
   it('receives isConnected prop from Provider using context', () => {
     const { getByTestId } = render(getElement({ children: <Consumer /> }));
     const textChild = getByTestId('connectionText');
-    expect(textChild.props.children).toBe('Connected: true');
+    expect(textChild.props.children).toBe('Connected: null');
   });
 });

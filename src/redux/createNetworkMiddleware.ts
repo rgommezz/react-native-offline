@@ -79,7 +79,10 @@ function checkIfActionShouldBeIntercepted(
   );
 }
 
-function didComeBackOnline(action: EnqueuedAction, wasConnected: boolean) {
+function didComeBackOnline(
+  action: EnqueuedAction,
+  wasConnected: boolean | null,
+) {
   if ('type' in action && 'payload' in action) {
     return (
       action.type === networkActionTypes.CONNECTION_CHANGE &&
@@ -146,7 +149,7 @@ function createNetworkMiddleware({
       actionTypes,
     );
 
-    if (shouldInterceptAction && isConnected === false) {
+    if (shouldInterceptAction && isConnected !== true) {
       // Offline, preventing the original action from being dispatched.
       // Dispatching an internal action instead.
       return next(fetchOfflineMode(action));

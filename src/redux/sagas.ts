@@ -125,7 +125,7 @@ export function* connectionHandler({
   pingServerUrl,
   httpMethod,
   customHeaders,
-}: NetInfoChangeArgs & { isConnected: boolean }) {
+}: NetInfoChangeArgs & { isConnected: boolean | null }) {
   if (shouldPing && isConnected) {
     yield fork(checkInternetAccessSaga, {
       pingTimeout,
@@ -219,7 +219,7 @@ export function* checkInternetAccessSaga({
  * - Flushes the queue of pending actions if we are connected back to the internet
  * @param hasInternetAccess
  */
-export function* handleConnectivityChange(hasInternetAccess: boolean) {
+export function* handleConnectivityChange(hasInternetAccess: boolean | null) {
   const state: NetworkState = yield select(networkSelector);
   if (state.isConnected !== hasInternetAccess) {
     yield put(connectionChange(hasInternetAccess));

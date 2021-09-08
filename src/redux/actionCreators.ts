@@ -1,7 +1,7 @@
 import * as actionTypes from './actionTypes';
 import { EnqueuedAction, SemaphoreColor } from '../types';
 
-export const connectionChange = (isConnected: boolean) => ({
+export const connectionChange = (isConnected: boolean | null) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
   payload: isConnected,
 });

@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/rgommezz/react-native-offline#readme",
   "devDependencies": {
-    "@react-native-community/netinfo": "^5.3.3",
+    "@react-native-community/netinfo": "^6.0.0",
     "@types/enzyme": "^3.10.3",
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/jest": "^24.0.18",
@@ -103,7 +103,7 @@
     "redux-saga": "^1.0.2"
   },
   "peerDependencies": {
-    "@react-native-community/netinfo": ">= 4.6 < 6",
+    "@react-native-community/netinfo": ">= 6",
     "react-native": ">=0.60",
     "react-redux": ">=7.x",
     "redux": ">=3",

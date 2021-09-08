@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import NetworkContext from '../components/NetworkContext';
 
-export default function useIsConnected(): boolean {
+export default function useIsConnected(): boolean | null {
   const context = useContext(NetworkContext);
 
   if (!context) {
