@@ -401,6 +401,15 @@
         "doc",
         "ideas"
       ]
+    },
+    {
+      "login": "colmbrady",
+      "name": "Colm",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10607960?v=4",
+      "profile": "https://github.com/colmbrady",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
