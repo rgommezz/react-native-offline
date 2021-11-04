@@ -96,9 +96,11 @@ describe('createNetworkMiddleware with actionTypes in config', () => {
       },
     };
     const store = mockStore(initialState);
-    store.dispatch(actionCreators.connectionChange(true));
+    store.dispatch(actionCreators.connectionChange({ isConnected: true }));
     const actions = store.getActions();
-    expect(actions).toEqual([actionCreators.connectionChange(true)]);
+    expect(actions).toEqual([
+      actionCreators.connectionChange({ isConnected: true }),
+    ]);
   });
 
   it('action ENQUEUED, queue PAUSED, status queue RESUMED', async () => {
@@ -184,7 +186,7 @@ describe('createNetworkMiddleware with different REGEX config', () => {
 describe('createNetworkMiddleware with thunks', () => {
   // Helper to simulate a network request
   const fetchMockData = (dispatch: Dispatch) =>
-    new Promise(resolve => {
+    new Promise<void>(resolve => {
       setTimeout(() => {
         dispatch({ type: 'FETCH_DATA_SUCCESS' });
         resolve();
@@ -503,7 +505,7 @@ describe('createReleaseQueue', () => {
 
   it('dispatches only during the online window', async () => {
     const switchToOffline = () =>
-      new Promise(async resolve => {
+      new Promise<void>(async resolve => {
         await wait(30);
         mockGetState.mockImplementation(() => ({
           network: {

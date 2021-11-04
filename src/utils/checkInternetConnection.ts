@@ -6,7 +6,7 @@ import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_CUSTOM_HEADERS,
 } from './constants';
-import { HTTPMethod, HTTPHeaders } from '../types';
+import { HTTPMethod, HTTPHeaders, ConnectivityState } from '../types';
 
 /**
  * Utility that allows to query for internet connectivity on demand
@@ -14,7 +14,7 @@ import { HTTPMethod, HTTPHeaders } from '../types';
  * @param timeout
  * @param shouldPing
  * @param method
- * @returns {Promise<boolean>}
+ * @returns {Promise<ConnectivityState>}
  */
 export default async function checkInternetConnection(
   url: string = DEFAULT_PING_SERVER_URL,
@@ -22,8 +22,8 @@ export default async function checkInternetConnection(
   shouldPing = true,
   method: HTTPMethod = DEFAULT_HTTP_METHOD,
   customHeaders: HTTPHeaders = DEFAULT_CUSTOM_HEADERS,
-): Promise<boolean | null> {
-  return NetInfo.fetch().then(async connectionState => {
+): Promise<ConnectivityState> {
+  return NetInfo.fetch().then(async ({ isConnected, type }) => {
     if (shouldPing) {
       const hasInternetAccess = await checkInternetAccess({
         timeout,
@@ -31,8 +31,8 @@ export default async function checkInternetConnection(
         method,
         customHeaders,
       });
-      return hasInternetAccess;
+      return { isConnected: hasInternetAccess, type };
     }
-    return connectionState.isConnected;
+    return { isConnected, type };
   });
 }

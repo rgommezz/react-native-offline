@@ -21,7 +21,14 @@ describe('checkInternetConnection', () => {
   });
   describe('shouldPing = true', () => {
     it(`calls checkInternetAccess and resolves the promise with its returned value`, async () => {
-      const isConnected = await checkInternetConnection('foo.com', 3000, true);
+      fetch.mockImplementationOnce(() =>
+        Promise.resolve({ isConnected: false }),
+      );
+      const { isConnected } = await checkInternetConnection(
+        'foo.com',
+        3000,
+        true,
+      );
       expect(checkInternetAccess).toHaveBeenCalledWith({
         method: DEFAULT_HTTP_METHOD,
         timeout: 3000,
@@ -37,7 +44,11 @@ describe('checkInternetConnection', () => {
       fetch.mockImplementationOnce(() =>
         Promise.resolve({ isConnected: false }),
       );
-      const isConnected = await checkInternetConnection('foo.com', 3000, false);
+      const { isConnected } = await checkInternetConnection(
+        'foo.com',
+        3000,
+        false,
+      );
       expect(checkInternetAccess).not.toHaveBeenCalled();
       expect(isConnected).toBe(false);
     });
@@ -45,7 +56,7 @@ describe('checkInternetConnection', () => {
 
   it('default parameters', async () => {
     fetch.mockImplementationOnce(() => Promise.resolve({ isConnected: true }));
-    const isConnected = await checkInternetConnection();
+    const { isConnected } = await checkInternetConnection();
     expect(checkInternetAccess).toHaveBeenCalledWith({
       method: DEFAULT_HTTP_METHOD,
       timeout: DEFAULT_TIMEOUT,

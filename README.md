@@ -579,11 +579,11 @@ import {
 } from 'react-native-offline';
 
 async function internetChecker(dispatch) {
-  const isConnected = await checkInternetConnection();
+  const { isConnected } = await checkInternetConnection();
   const { connectionChange } = offlineActionCreators;
   // Dispatching can be done inside a connected component, a thunk (where dispatch is injected), saga, or any sort of middleware
   // In this example we are using a thunk
-  dispatch(connectionChange(isConnected));
+  dispatch(connectionChange({ isConnected }));
 }
 ```
 
@@ -626,8 +626,8 @@ export default function configureStore(callback) {
   // https://github.com/rt2zz/redux-persist#persiststorestore-config-callback
   persistStore(store, null, () => {
     // After rehydration completes, we detect initial connection
-    checkInternetConnection().then(isConnected => {
-      store.dispatch(connectionChange(isConnected));
+    checkInternetConnection().then({ isConnected } => {
+      store.dispatch(connectionChange({ isConnected }));
       callback(); // Notify our root component we are good to go, so that we can render our app
     });
   });

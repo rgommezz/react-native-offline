@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { AppState, Platform } from 'react-native';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import NetInfo, {
+  NetInfoState,
+  NetInfoStateType,
+} from '@react-native-community/netinfo';
 import * as connectivityInterval from '../utils/checkConnectivityInterval';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { ConnectivityArgs, ConnectivityState } from '../types';
@@ -11,7 +14,7 @@ export type RequiredProps = {
 } & DefaultProps;
 
 export type DefaultProps = ConnectivityArgs & {
-  onConnectivityChange: (isConnected: boolean | null) => void;
+  onConnectivityChange: (state: ConnectivityState) => void;
 };
 
 function validateProps(props: RequiredProps) {
@@ -59,6 +62,7 @@ class NetworkConnectivity extends React.PureComponent<
     validateProps(props);
     this.state = {
       isConnected: null,
+      type: 'unknown' as NetInfoStateType.unknown,
     };
   }
 
@@ -79,12 +83,12 @@ class NetworkConnectivity extends React.PureComponent<
 
   componentDidUpdate(prevProps: RequiredProps, prevState: ConnectivityState) {
     const { pingServerUrl, onConnectivityChange } = this.props;
-    const { isConnected } = this.state;
+    const { isConnected, type } = this.state;
     if (prevProps.pingServerUrl !== pingServerUrl) {
       this.checkInternet();
     }
-    if (prevState.isConnected !== isConnected) {
-      onConnectivityChange(isConnected);
+    if (prevState.isConnected !== isConnected || prevState.type !== type) {
+      onConnectivityChange({ isConnected, type });
     }
   }
 
@@ -144,9 +148,10 @@ class NetworkConnectivity extends React.PureComponent<
     this.checkInternet();
   };
 
-  handleConnectivityChange = ({ isConnected }: NetInfoState) => {
+  handleConnectivityChange = ({ isConnected, type }: NetInfoState) => {
     this.setState({
       isConnected,
+      type,
     });
   };
 

@@ -1,5 +1,6 @@
 import { Dispatch } from 'redux';
 import isEqual from 'lodash/isEqual';
+import { NetInfoStateType } from '@react-native-community/netinfo';
 import * as actionCreators from '../src/redux/actionCreators';
 import { EnqueuedAction, NetworkState } from '../src/types';
 import createReducer, {
@@ -14,6 +15,7 @@ const getState = (isConnected = false, ...actionQueue: EnqueuedAction[]) => ({
   isConnected,
   actionQueue,
   isQueuePaused: false,
+  type: 'unknown' as NetInfoStateType.unknown,
 });
 
 /** Actions used from now on to test different scenarios */
@@ -61,11 +63,15 @@ describe('unknown action type', () => {
 
 describe('CONNECTION_CHANGE action type', () => {
   it('changes isConnected state properly', () => {
-    const mockAction = actionCreators.connectionChange(false);
+    const mockAction = actionCreators.connectionChange({
+      isConnected: false,
+      type: 'unknown' as NetInfoStateType.unknown,
+    });
     expect(networkReducer(initialState, mockAction)).toEqual({
       isConnected: false,
       actionQueue: [],
       isQueuePaused: false,
+      type: 'unknown' as NetInfoStateType.unknown,
     });
   });
 });
@@ -100,7 +106,10 @@ describe('OFFLINE_ACTION action type', () => {
   describe('meta.retry === true', () => {
     describe('actions with DIFFERENT type', () => {
       it('actions are pushed into the queue in order of arrival', () => {
-        const preAction = actionCreators.connectionChange(false);
+        const preAction = actionCreators.connectionChange({
+          isConnected: false,
+          type: 'unknown' as NetInfoStateType.unknown,
+        });
         const action1 = actionCreators.fetchOfflineMode(prevActionToRetry1);
         const prevState = networkReducer(initialState, preAction);
 
@@ -110,6 +119,7 @@ describe('OFFLINE_ACTION action type', () => {
           isConnected: false,
           actionQueue: [prevActionToRetry1],
           isQueuePaused: false,
+          type: 'unknown' as NetInfoStateType.unknown,
         });
 
         const action2 = actionCreators.fetchOfflineMode(prevActionToRetry2);
@@ -286,7 +296,7 @@ describe('thunks', () => {
         );
       });
 
-      it(`should remove the thunk and add it back at the end of the queue 
+      it(`should remove the thunk and add it back at the end of the queue
       if it presents the same shape`, () => {
         const thunkFactory = (param: any) => {
           function thunk1(dispatch: Dispatch) {
@@ -400,12 +410,14 @@ describe('networkSelector', () => {
         isConnected: true,
         actionQueue: [{ type: 'foo', payload: {} }],
         isQueuePaused: false,
+        type: 'unknown' as NetInfoStateType.unknown,
       },
     };
     expect(networkSelector(state)).toEqual({
       isConnected: true,
       actionQueue: [{ type: 'foo', payload: {} }],
       isQueuePaused: false,
+      type: 'unknown' as NetInfoStateType.unknown,
     });
   });
 });

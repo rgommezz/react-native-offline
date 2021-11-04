@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import without from 'lodash/without';
 import { AnyAction } from 'redux';
+import { NetInfoStateType } from '@react-native-community/netinfo';
 import * as actionTypes from './actionTypes';
 import { SEMAPHORE_COLOR } from '../utils/constants';
 import getSimilarActionInQueue from '../utils/getSimilarActionInQueue';
@@ -24,6 +25,7 @@ export const initialState = {
   isConnected: true,
   actionQueue,
   isQueuePaused: false,
+  type: 'unknown' as NetInfoStateType.unknown,
 };
 
 function handleOfflineAction(
@@ -109,7 +111,7 @@ export default (comparisonFn: ComparisonFn = getSimilarActionInQueue) => (
     case actionTypes.CONNECTION_CHANGE:
       return {
         ...state,
-        isConnected: action.payload,
+        ...action.payload,
       };
     case actionTypes.FETCH_OFFLINE_MODE:
       return handleOfflineAction(

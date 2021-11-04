@@ -5,7 +5,10 @@ import {
   TestApiWithEffectsTesters,
 } from 'redux-saga-test-plan';
 import { Platform, AppState } from 'react-native';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import NetInfo, {
+  NetInfoState,
+  NetInfoStateType,
+} from '@react-native-community/netinfo';
 import networkSaga, {
   netInfoChangeSaga,
   connectionIntervalSaga,
@@ -38,7 +41,7 @@ describe('sagas', () => {
         .isDone();
     });
 
-    it(`forks netInfoChangeSaga AND sets an interval 
+    it(`forks netInfoChangeSaga AND sets an interval
     if pingInterval is higher than 0`, () => {
       const { pingInterval, ...params } = args;
       const {
@@ -94,6 +97,7 @@ describe('sagas', () => {
         .fork(connectionHandler, {
           ...params,
           isConnected: true,
+          type: 'unknown' as NetInfoStateType.unknown,
         })
         .next()
         .take('channel');
@@ -115,6 +119,7 @@ describe('sagas', () => {
         .fork(connectionHandler, {
           ...params,
           isConnected: false,
+          type: undefined,
         });
       channelLoop(saga);
     });
@@ -188,7 +193,10 @@ describe('sagas', () => {
       const saga = testSaga(connectionHandler, params);
       saga
         .next()
-        .fork(handleConnectivityChange, false)
+        .fork(handleConnectivityChange, {
+          isConnected: false,
+          type: undefined,
+        })
         .next()
         .isDone();
     });
@@ -227,7 +235,7 @@ describe('sagas', () => {
         .take('channel');
     });
 
-    it(`does NOT fork checkInternetAccessSaga if it's connected 
+    it(`does NOT fork checkInternetAccessSaga if it's connected
     AND pingOnlyIfOffline is true`, () => {
       // @ts-ignore
       let saga: TestApiWithEffectsTesters = testSaga(connectionIntervalSaga, {
@@ -317,8 +325,8 @@ describe('sagas', () => {
           method: params.httpMethod,
           customHeaders: params.customHeaders,
         })
-        .next(true)
-        .call(handleConnectivityChange, true)
+        .next({ isConnected: true })
+        .call(handleConnectivityChange, { isConnected: true })
         .next()
         .isDone();
     });
@@ -328,12 +336,12 @@ describe('sagas', () => {
     it('dispatches a CONNECTION_CHANGE action if the connection changed ', () => {
       const actionQueue = ['foo', 'bar'];
       // @ts-ignore
-      const saga = testSaga(handleConnectivityChange, false);
+      const saga = testSaga(handleConnectivityChange, { isConnected: false });
       saga
         .next()
         .select(networkSelector)
         .next({ actionQueue, isConnected: true })
-        .put(connectionChange(false))
+        .put(connectionChange({ isConnected: false }))
         .next()
         .isDone();
     });
@@ -341,7 +349,7 @@ describe('sagas', () => {
     it('does NOT dispatch if connection did NOT change and we are offline', () => {
       const actionQueue = ['foo', 'bar'];
       // @ts-ignore
-      const saga = testSaga(handleConnectivityChange, false);
+      const saga = testSaga(handleConnectivityChange, { isConnected: false });
       saga
         .next()
         .select(networkSelector)

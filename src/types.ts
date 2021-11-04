@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux';
+import { NetInfoStateType } from '@react-native-community/netinfo';
 
 export interface Thunk {
   (...args: any[]): any;
@@ -26,6 +27,7 @@ export interface NetworkState extends ConnectivityState {
 
 export type ConnectivityState = {
   isConnected: boolean | null;
+  type?: NetInfoStateType;
 };
 
 export type HTTPMethod = 'HEAD' | 'OPTIONS';

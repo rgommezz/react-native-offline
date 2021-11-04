@@ -88,12 +88,15 @@ describe('NetworkConnectivity', () => {
   it('passes the connection state into the FACC', () => {
     const children = jest.fn();
     shallow(getElement({ props: { children } }));
-    expect(children).toHaveBeenCalledWith({ isConnected: null });
+    expect(children).toHaveBeenCalledWith({
+      isConnected: null,
+      type: 'unknown' as NetInfoStateType.unknown,
+    });
   });
 
   describe('componentDidMount', () => {
     describe('iOS, pingInterval = 0', () => {
-      it(`sets up a NetInfo.isConnected listener for connectionChange 
+      it(`sets up a NetInfo.isConnected listener for connectionChange
       AND does NOT call setupConnectivityCheckInterval`, () => {
         Platform.OS = 'ios';
         const MockedNetworkConnectivity = mockPrototypeMethods({
@@ -264,7 +267,7 @@ describe('NetworkConnectivity', () => {
       expect(mockHandleConnectivityChange).not.toHaveBeenCalled();
     });
 
-    it(`calls checkInternetAccess AND handleConnectivityChange 
+    it(`calls checkInternetAccess AND handleConnectivityChange
     with the right arguments if app is in foreground`, async () => {
       const props = {
         pingTimeout: 2000,
@@ -350,7 +353,10 @@ describe('NetworkConnectivity', () => {
           isConnectionExpensive: false,
         },
       });
-      expect(mockSetState).toHaveBeenCalledWith({ isConnected: true });
+      expect(mockSetState).toHaveBeenCalledWith({
+        isConnected: true,
+        type: 'other' as NetInfoStateType.other,
+      });
 
       wrapper.instance().handleConnectivityChange({
         type: 'none' as NetInfoStateType.none,
@@ -358,7 +364,10 @@ describe('NetworkConnectivity', () => {
         isInternetReachable: false,
         details: null,
       });
-      expect(mockSetState).toHaveBeenCalledWith({ isConnected: false });
+      expect(mockSetState).toHaveBeenCalledWith({
+        isConnected: false,
+        type: 'none' as NetInfoStateType.none,
+      });
     });
   });
 

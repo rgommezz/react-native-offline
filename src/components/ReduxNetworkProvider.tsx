@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { NetInfoStateType } from '@react-native-community/netinfo';
 import NetworkConnectivity from './NetworkConnectivity';
 import { connectionChange } from '../redux/actionCreators';
 
-import { NetworkState, ConnectivityArgs } from '../types';
+import { NetworkState, ConnectivityArgs, ConnectivityState } from '../types';
 import { DEFAULT_ARGS } from '../utils/constants';
 
 interface AppState {
@@ -15,6 +16,7 @@ type OwnProps = ConnectivityArgs;
 
 interface StateProps {
   isConnected: boolean | null;
+  type?: NetInfoStateType;
   dispatch: Dispatch;
 }
 
@@ -25,10 +27,10 @@ type Props = OwnProps &
 class ReduxNetworkProvider extends React.Component<Props> {
   static defaultProps = DEFAULT_ARGS;
 
-  handleConnectivityChange = (isConnected: boolean | null) => {
-    const { isConnected: wasConnected, dispatch } = this.props;
-    if (isConnected !== wasConnected) {
-      dispatch(connectionChange(isConnected));
+  handleConnectivityChange = ({ isConnected, type }: ConnectivityState) => {
+    const { isConnected: wasConnected, type: prevType, dispatch } = this.props;
+    if (isConnected !== wasConnected || type !== prevType) {
+      dispatch(connectionChange({ isConnected, type }));
     }
   };
 
@@ -47,6 +49,7 @@ class ReduxNetworkProvider extends React.Component<Props> {
 
 const mapStateToProps = (state: AppState) => ({
   isConnected: state.network.isConnected,
+  type: state.network.type,
 });
 
 const ConnectedReduxNetworkProvider = connect(mapStateToProps)(

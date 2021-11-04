@@ -1,9 +1,9 @@
 import * as actionTypes from './actionTypes';
-import { EnqueuedAction, SemaphoreColor } from '../types';
+import { ConnectivityState, EnqueuedAction, SemaphoreColor } from '../types';
 
-export const connectionChange = (isConnected: boolean | null) => ({
+export const connectionChange = ({ isConnected, type }: ConnectivityState) => ({
   type: actionTypes.CONNECTION_CHANGE as typeof actionTypes.CONNECTION_CHANGE,
-  payload: isConnected,
+  payload: { isConnected, type },
 });
 
 export const fetchOfflineMode = (action: EnqueuedAction) => {

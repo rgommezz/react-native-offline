@@ -5,6 +5,7 @@ import {
   render as rnRender,
 } from 'react-native-testing-library';
 import { shallow } from 'enzyme';
+import { NetInfoStateType } from '@react-native-community/netinfo';
 import {
   ReduxNetworkProvider,
   mapStateToProps,
@@ -53,19 +54,32 @@ describe('ReduxNetworkProvider', () => {
           <View />
         </ReduxNetworkProvider>,
       );
-      wrapper.instance().handleConnectivityChange(true);
-      expect(props.dispatch).toHaveBeenCalledWith(connectionChange(true));
+      wrapper.instance().handleConnectivityChange({
+        isConnected: true,
+        type: 'unknown' as NetInfoStateType.unknown,
+      });
+      expect(props.dispatch).toHaveBeenCalledWith(
+        connectionChange({
+          isConnected: true,
+          type: 'unknown' as NetInfoStateType.unknown,
+        }),
+      );
       expect(props.dispatch).toHaveBeenCalledTimes(1);
     });
 
     it(`does NOT dispatch a CONNECTION_CHANGE action if the connection
     did not change`, () => {
       const wrapper = shallow<ReduxNetworkProvider>(
-        <ReduxNetworkProvider {...getProps({ isConnected: true })}>
+        <ReduxNetworkProvider
+          {...getProps({ isConnected: true, type: 'unknown' })}
+        >
           <View />
         </ReduxNetworkProvider>,
       );
-      wrapper.instance().handleConnectivityChange(true);
+      wrapper.instance().handleConnectivityChange({
+        isConnected: true,
+        type: 'unknown' as NetInfoStateType.unknown,
+      });
       expect(props.dispatch).not.toHaveBeenCalled();
     });
   });
@@ -73,7 +87,10 @@ describe('ReduxNetworkProvider', () => {
 
 describe('mapStateToProps', () => {
   it('maps isConnected and actionQueue state to props', () => {
-    const expected = { isConnected: false };
+    const expected = {
+      isConnected: false,
+      type: 'unknown' as NetInfoStateType.unknown,
+    };
     const state = {
       network: {
         actionQueue: [],

@@ -1,11 +1,14 @@
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel, Subscribe } from 'redux-saga';
 import { AppState, Platform } from 'react-native';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import NetInfo, {
+  NetInfoState,
+  NetInfoStateType,
+} from '@react-native-community/netinfo';
 import { networkSelector } from './createReducer';
 import checkInternetAccess from '../utils/checkInternetAccess';
 import { connectionChange } from './actionCreators';
-import { ConnectivityArgs, NetworkState } from '../types';
+import { ConnectivityArgs, ConnectivityState, NetworkState } from '../types';
 import {
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
@@ -78,6 +81,7 @@ export function* netInfoChangeSaga({
     yield fork(connectionHandler, {
       shouldPing,
       isConnected: networkState.isConnected,
+      type: networkState.type,
       pingTimeout,
       pingServerUrl,
       httpMethod,
@@ -94,6 +98,7 @@ export function* netInfoChangeSaga({
       yield fork(connectionHandler, {
         shouldPing,
         isConnected,
+        type: 'unknown' as NetInfoStateType.unknown,
         pingTimeout,
         pingServerUrl,
         httpMethod,
@@ -111,6 +116,7 @@ export function* netInfoChangeSaga({
  * Either checks internet by pinging a server or calls the store handler function
  * @param shouldPing
  * @param isConnected
+ * @param type
  * @param pingTimeout
  * @param pingServerUrl
  * @param httpMethod
@@ -121,11 +127,12 @@ export function* netInfoChangeSaga({
 export function* connectionHandler({
   shouldPing,
   isConnected,
+  type,
   pingTimeout,
   pingServerUrl,
   httpMethod,
   customHeaders,
-}: NetInfoChangeArgs & { isConnected: boolean | null }) {
+}: NetInfoChangeArgs & ConnectivityState) {
   if (shouldPing && isConnected) {
     yield fork(checkInternetAccessSaga, {
       pingTimeout,
@@ -135,7 +142,7 @@ export function* connectionHandler({
       customHeaders,
     });
   } else {
-    yield fork(handleConnectivityChange, isConnected);
+    yield fork(handleConnectivityChange, { isConnected, type });
   }
 }
 
@@ -217,12 +224,15 @@ export function* checkInternetAccessSaga({
  * Takes action under the new network connection value:
  * - Dispatches a '@@network-connectivity/CONNECTION_CHANGE' action type
  * - Flushes the queue of pending actions if we are connected back to the internet
- * @param hasInternetAccess
+ * @param connectivityState
  */
-export function* handleConnectivityChange(hasInternetAccess: boolean | null) {
+export function* handleConnectivityChange({
+  isConnected,
+  type,
+}: ConnectivityState) {
   const state: NetworkState = yield select(networkSelector);
-  if (state.isConnected !== hasInternetAccess) {
-    yield put(connectionChange(hasInternetAccess));
+  if (state.isConnected !== isConnected || state.type !== type) {
+    yield put(connectionChange({ isConnected, type }));
   }
 }
 
