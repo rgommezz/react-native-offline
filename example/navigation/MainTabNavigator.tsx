@@ -8,7 +8,6 @@ import ComponentsScreen from '../screens/ComponentsScreen';
 import ReduxScreen from '../screens/ReduxScreen';
 import SagasScreen from '../screens/SagasScreen';
 
-
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -16,11 +15,14 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused}) => {
+          tabBarIcon: ({ focused }) => {
             let iconName;
 
             if (route.name === 'Components') {
-              iconName = Platform.OS === 'ios' ? `ios-information-circle${focused ? '' : '-outline'}` : 'md-information-circle';
+              iconName =
+                Platform.OS === 'ios'
+                  ? `ios-information-circle${focused ? '' : '-outline'}`
+                  : 'md-information-circle';
             } else if (route.name === 'Redux') {
               iconName = Platform.OS === 'ios' ? 'ios-link' : 'md-link';
             } else if (route.name === 'Sagas') {
@@ -40,5 +42,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-

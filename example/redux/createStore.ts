@@ -12,7 +12,7 @@ import counter from './reducer';
 import rootSaga from './sagas';
 
 type GetReducerState<T> = {
-  [P in keyof T]: T[P] extends (...args: any[]) => infer Q ? Q : never
+  [P in keyof T]: T[P] extends (...args: any[]) => infer Q ? Q : never;
 };
 
 const reducers = {

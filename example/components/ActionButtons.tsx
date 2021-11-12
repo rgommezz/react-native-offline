@@ -103,15 +103,12 @@ function ActionButtons({
   );
 }
 
-export default connect(
-  null,
-  {
-    addOneAction: addOne,
-    subOneAction: subOne,
-    otherAction: other,
-    cancelOtherAction: cancelOther,
-  },
-)(ActionButtons);
+export default connect(null, {
+  addOneAction: addOne,
+  subOneAction: subOne,
+  otherAction: other,
+  cancelOtherAction: cancelOther,
+})(ActionButtons);
 
 const styles = StyleSheet.create({
   container: {
