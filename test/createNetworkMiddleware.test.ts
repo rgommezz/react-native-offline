@@ -437,6 +437,8 @@ describe('createReleaseQueue', () => {
         isQueuePaused: false,
       },
     }));
+
+    jest.setTimeout(10000);
   });
 
   afterEach(() => {
