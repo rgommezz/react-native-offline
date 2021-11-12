@@ -13,3 +13,6 @@ dist/
 
 #IntelliJ
 .idea
+
+#VS Code
+.history
