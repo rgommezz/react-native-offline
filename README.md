@@ -1,3 +1,7 @@
+<p align="center">
+  <img alt="Dashvar Logo Banner" src="assets/cover_rn_offline.png" />
+</p>
+
 # react-native-offline
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors)
