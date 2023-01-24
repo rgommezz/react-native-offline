@@ -1,8 +1,8 @@
 {
   "name": "react-native-offline",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
-  "author": "Raul Gomez Acuña <raulgdeveloper@gmail.com> (https://github.com/rgommezz)",
+  "author": "rgommezz <hello@raulgomez.io> (https://github.com/rgommezz)",
   "license": "MIT",
   "source": "src/index.ts",
   "main": "dist/react-native-offline.js",
@@ -103,9 +103,9 @@
     "redux-saga": "^1.0.2"
   },
   "peerDependencies": {
-    "@react-native-community/netinfo": ">= 6",
+    "@react-native-community/netinfo": ">=6",
     "react-native": ">=0.60",
-    "react-redux": ">=7.x",
+    "react-redux": ">=7",
     "redux": ">=3",
     "redux-saga": ">=1.x"
   }
