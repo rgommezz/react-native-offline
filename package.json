@@ -2,7 +2,7 @@
   "name": "react-native-offline",
   "version": "6.0.1",
   "description": "Handy toolbelt to deal with offline mode in React Native applications. Cross-platform, provides a smooth redux integration.",
-  "author": "rgommezz <hello@raulgomez.io> (https://github.com/rgommezz)",
+  "author": "Raul Gomez Acuna <hello@raulgomez.io> (https://github.com/rgommezz)",
   "license": "MIT",
   "source": "src/index.ts",
   "main": "dist/react-native-offline.js",
