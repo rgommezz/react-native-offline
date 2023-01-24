@@ -42,7 +42,7 @@ A comprehensive [example app](/example) is available within Expo to play with th
     - [Intercept and queue actions based off server errors](#how-to-intercept-and-queue-actions-when-the-server-responds-with-client-4xx-or-server-5xx-errors)
     - [Persist and rehydrate thunks in the offline queue](#how-to-persist-and-rehydrate-thunks-in-the-offline-queue-with-redux-persist)
     - [Using redux-saga 1.0.0-beta.x](#using-redux-saga-100-betax)
-  - [Inspiration](#inspiration)
+  - [Credits](#credits)
   - [License](#license)
   - [Contributors](#contributors)
 
@@ -833,13 +833,15 @@ If you are using a `1.0.0-beta.x` version for redux-saga in your application, yo
   },
 ```
 
-### Inspiration
+### Credits
 
 Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.
 
 ### License
 
-MIT
+MIT © [Raul Gomez Acuna](https://raulgomez.io/)
+
+If you found this project interesting, please consider following me on [twitter](https://twitter.com/rgommezz)
 
 ## Contributors
 
