@@ -63,24 +63,24 @@ export default function makeHttpRequest(args?: Options) {
     xhr.timeout = timeout;
     xhr.onload = function onLoad() {
       // 3xx is a valid response for us, since the server was reachable
-      if (this.status >= 200 && this.status < 400) {
+      if (xhr.status >= 200 && xhr.status < 400) {
         resolve({
-          status: this.status,
+          status: xhr.status,
         });
       } else {
         reject({
-          status: this.status,
+          status: xhr.status,
         });
       }
     };
     xhr.onerror = function onError() {
       reject({
-        status: this.status,
+        status: xhr.status,
       });
     };
     xhr.ontimeout = function onTimeOut() {
       reject({
-        status: this.status,
+        status: xhr.status,
       });
     };
 
