@@ -7,8 +7,8 @@ You need to have `expo-cli` installed.
 
 ```bash
 cd example
-yarn install
-expo start
+npm ci
+npm run start
 ```
 
 ### Snapshots
