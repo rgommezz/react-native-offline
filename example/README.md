@@ -1,19 +1,28 @@
 ## Example app
 
-This application showcases component utilities, redux, sagas integration and the offline queue with different configurations. You can try it out in Expo by using [this link](https://exp.host/@rgommezz/react-native-offline-example).
+This application showcases component utilities, Redux, sagas integration, and the offline queue with different configurations.
 
-### Runing it locally
-You need to have `expo-cli` installed.
+It targets **Expo SDK 54**, which matches the Expo Go build currently distributed on the Apple App Store (as of 2025–2026). Open it with Expo Go from the store, or install a matching build from [expo.dev/go](https://expo.dev/go).
+
+### Running locally
 
 ```bash
 cd example
-yarn install
-expo start
+npm install
+npx expo start
 ```
 
-### Snapshots
-<div>
-   <img align="left" src="https://user-images.githubusercontent.com/4982414/52172165-f3605b00-2761-11e9-87f3-bca71b0d3918.png" width="400">
+Then scan the QR code with Expo Go (SDK 54) on your device, or press `i` / `a` for the iOS Simulator / Android emulator.
 
-  <img align="right" src="https://user-images.githubusercontent.com/4982414/52172166-f52a1e80-2761-11e9-8d9b-aa5a7caa24e2.png" width="400"> 
-</div>
+### What it demos
+
+| Tab | Focus |
+| --- | --- |
+| **Components** | `NetworkProvider` / `NetworkConsumer` |
+| **Redux** | `ReduxNetworkProvider` + offline action queue |
+| **Sagas** | `networkSaga` (disconnect the device manually) |
+
+### Notes
+
+- Use the **Toggle Internet connection** button on the Components and Redux tabs to simulate offline mode via a fake ping URL.
+- For the Sagas tab, turn off device networking manually so the saga-driven queue can be observed.

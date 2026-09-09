@@ -1,4 +1,4 @@
-import { all, fork, takeEvery, call } from 'redux-saga/effects';
+import { all, fork, takeEvery, call, AllEffect, ForkEffect } from 'redux-saga/effects';
 import { Alert } from 'react-native';
 import { networkSaga } from 'react-native-offline';
 
@@ -10,9 +10,13 @@ function* doSideEffect({ type }: { type: string }) {
   );
 }
 
-export default function* rootSaga() {
+export default function* rootSaga(): Generator<
+  AllEffect<ForkEffect<unknown>>,
+  void,
+  unknown
+> {
   yield all([
-    yield takeEvery(['ADD_ONE', 'SUB_ONE'], doSideEffect),
+    takeEvery(['ADD_ONE', 'SUB_ONE'], doSideEffect),
     fork(networkSaga),
   ]);
 }
