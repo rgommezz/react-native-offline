@@ -6,85 +6,72 @@ import { MonoText } from '../components/StyledText';
 import ConnectionToggler from '../components/ConnectionToggler';
 import DummyNetworkContext from '../DummyNetworkContext';
 
-export default class ComponentsScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Components',
-  };
+export default function ComponentsScreen() {
+  return (
+    <DummyNetworkContext.Consumer>
+      {({ pingUrl }) => (
+        <NetworkProvider pingServerUrl={pingUrl}>
+          <View style={styles.container}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={require('../assets/images/robot-dev.png')}
+                style={styles.image}
+              />
+            </View>
+            <View style={{ marginHorizontal: 50 }}>
+              <ConnectionToggler />
+            </View>
+            <View style={styles.firstSectionContainer}>
+              <Text style={styles.firstSectionText}>
+                Connected to Internet:
+              </Text>
 
-  render() {
-    return (
-      <DummyNetworkContext.Consumer>
-        {({ pingUrl }) => (
-          <NetworkProvider pingServerUrl={pingUrl}>
-            <View style={styles.container}>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={require('../assets/images/robot-dev.png')}
-                  style={styles.image}
-                />
-              </View>
-              <View style={{ marginHorizontal: 50 }}>
-                <ConnectionToggler />
-              </View>
-              <View style={styles.firstSectionContainer}>
-                <Text style={styles.firstSectionText}>
-                  Connected to Internet:
-                </Text>
-
-                <NetworkConsumer>
-                  {({ isConnected }) => (
-                    <View
-                      style={[styles.codeHighlightContainer, styles.filename]}
+              <NetworkConsumer>
+                {({ isConnected }) => (
+                  <View
+                    style={[styles.codeHighlightContainer, styles.filename]}
+                  >
+                    <MonoText
+                      style={[
+                        styles.codeHighlightText,
+                        { color: isConnected ? 'green' : 'red' },
+                      ]}
                     >
-                      <MonoText
-                        style={[
-                          styles.codeHighlightText,
-                          { color: isConnected ? 'green' : 'red' },
-                        ]}
-                      >
-                        {isConnected ? 'YES' : 'NO'}
-                      </MonoText>
-                    </View>
-                  )}
-                </NetworkConsumer>
-              </View>
+                      {isConnected ? 'YES' : 'NO'}
+                    </MonoText>
+                  </View>
+                )}
+              </NetworkConsumer>
+            </View>
 
-              <View style={styles.tabBarInfoContainer}>
-                <Text style={styles.tabBarInfoText}>
-                  An example using merely components from
-                </Text>
+            <View style={styles.tabBarInfoContainer}>
+              <Text style={styles.tabBarInfoText}>
+                An example using merely components from
+              </Text>
 
-                <View
-                  style={[
-                    styles.codeHighlightContainer,
-                    styles.navigationFilename,
-                  ]}
-                >
-                  <MonoText style={styles.codeHighlightText}>
-                    react-native-offline
-                  </MonoText>
-                </View>
+              <View
+                style={[
+                  styles.codeHighlightContainer,
+                  styles.navigationFilename,
+                ]}
+              >
+                <MonoText style={styles.codeHighlightText}>
+                  react-native-offline
+                </MonoText>
               </View>
             </View>
-          </NetworkProvider>
-        )}
-      </DummyNetworkContext.Consumer>
-    );
-  }
+          </View>
+        </NetworkProvider>
+      )}
+    </DummyNetworkContext.Consumer>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 30,
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+    paddingTop: 10,
   },
   imageContainer: {
     alignItems: 'center',
@@ -149,16 +136,5 @@ const styles = StyleSheet.create({
   },
   navigationFilename: {
     marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
 });
