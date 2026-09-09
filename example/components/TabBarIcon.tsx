@@ -4,16 +4,23 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
 interface Props {
-  name: string;
+  name: React.ComponentProps<typeof Ionicons>['name'];
   focused: boolean;
+  color?: string;
+  size?: number;
 }
 
-const TabBarIcon: React.FC<Props> = ({ focused, name }) => (
+const TabBarIcon: React.FC<Props> = ({
+  focused,
+  name,
+  color,
+  size = 26,
+}) => (
   <Ionicons
     name={name}
-    size={26}
+    size={size}
     style={{ marginBottom: -3 }}
-    color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    color={color ?? (focused ? Colors.tabIconSelected : Colors.tabIconDefault)}
   />
 );
 

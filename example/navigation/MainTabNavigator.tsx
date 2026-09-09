@@ -1,67 +1,58 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import {
-  createStackNavigator,
-  createBottomTabNavigator,
-} from 'react-navigation';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
 import ComponentsScreen from '../screens/ComponentsScreen';
 import ReduxScreen from '../screens/ReduxScreen';
 import SagasScreen from '../screens/SagasScreen';
+import Colors from '../constants/Colors';
 
-const ComponentsStack = createStackNavigator({
-  Components: ComponentsScreen,
-});
-
-type TabBarIconArgs = {
-  focused: boolean;
+export type RootTabParamList = {
+  Components: undefined;
+  Redux: undefined;
+  Sagas: undefined;
 };
 
-ComponentsStack.navigationOptions = {
-  tabBarLabel: 'Components',
-  tabBarIcon: ({ focused }: TabBarIconArgs) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
-  ),
-};
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
-const ReduxStack = createStackNavigator({
-  Redux: ReduxScreen,
-});
-
-ReduxStack.navigationOptions = {
-  tabBarLabel: 'Redux',
-  tabBarIcon: ({ focused }: TabBarIconArgs) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
-    />
-  ),
-};
-
-const SagasStack = createStackNavigator({
-  Sagas: SagasScreen,
-});
-
-SagasStack.navigationOptions = {
-  tabBarLabel: 'Sagas',
-  tabBarIcon: ({ focused }: TabBarIconArgs) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-    />
-  ),
-};
-
-export default createBottomTabNavigator({
-  ComponentsStack,
-  ReduxStack,
-  SagasStack,
-});
+export default function MainTabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerTitleAlign: 'center',
+        tabBarActiveTintColor: Colors.tabIconSelected,
+        tabBarInactiveTintColor: Colors.tabIconDefault,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: React.ComponentProps<typeof TabBarIcon>['name'] =
+            'information-circle';
+          if (route.name === 'Components') {
+            iconName = focused
+              ? 'information-circle'
+              : 'information-circle-outline';
+          } else if (route.name === 'Redux') {
+            iconName = 'link';
+          } else {
+            iconName = focused ? 'options' : 'options-outline';
+          }
+          return <TabBarIcon focused={focused} name={iconName} color={color} size={size} />;
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Components"
+        component={ComponentsScreen}
+        options={{ title: 'Components' }}
+      />
+      <Tab.Screen
+        name="Redux"
+        component={ReduxScreen}
+        options={{ title: 'Redux' }}
+      />
+      <Tab.Screen
+        name="Sagas"
+        component={SagasScreen}
+        options={{ title: 'Sagas' }}
+      />
+    </Tab.Navigator>
+  );
+}

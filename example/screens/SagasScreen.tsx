@@ -9,53 +9,47 @@ import createStore from '../redux/createStore';
 
 const store = createStore({ withSaga: true, queueReleaseThrottle: 250 });
 
-export default class SettingsScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Sagas',
-  };
-
-  render() {
-    return (
-      <Provider store={store}>
-        <View style={styles.container}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require('../assets/images/redux-saga.png')}
-              style={styles.image}
-            />
-          </View>
-          <View style={styles.firstSection}>
-            <Text
-              style={{
-                marginTop: 10,
-                fontSize: 17,
-                color: 'purple',
-                marginBottom: 30,
-                textAlign: 'center',
-              }}
-            >
-              For sagas example, you have to disconnect your Internet manually
-            </Text>
-            <ReduxNetworkReader />
-            <Counter />
-          </View>
-          <View style={styles.secondSection}>
-            <ActionButtons />
-            <View style={styles.offlineQueue}>
-              <OfflineQueue title="Offline Queue (FIFO), throttle = 250ms" />
-            </View>
+export default function SagasScreen() {
+  return (
+    <Provider store={store}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={require('../assets/images/redux-saga.png')}
+            style={styles.image}
+          />
+        </View>
+        <View style={styles.firstSection}>
+          <Text
+            style={{
+              marginTop: 10,
+              fontSize: 17,
+              color: 'purple',
+              marginBottom: 30,
+              textAlign: 'center',
+            }}
+          >
+            For sagas example, you have to disconnect your Internet manually
+          </Text>
+          <ReduxNetworkReader />
+          <Counter />
+        </View>
+        <View style={styles.secondSection}>
+          <ActionButtons />
+          <View style={styles.offlineQueue}>
+            <OfflineQueue title="Offline Queue (FIFO), throttle = 250ms" />
           </View>
         </View>
-      </Provider>
-    );
-  }
+      </View>
+    </Provider>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 30,
+    paddingTop: 10,
   },
   imageContainer: {
     alignItems: 'center',

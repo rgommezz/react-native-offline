@@ -1,68 +1,67 @@
-import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import 'react-native-gesture-handler';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import * as Font from 'expo-font';
+
 import AppNavigator from './navigation/AppNavigator';
 import DummyNetworkContext from './DummyNetworkContext';
 
+SplashScreen.preventAutoHideAsync().catch(() => {
+  /* already prevented or not available in this environment */
+});
+
 const onlineUrl = 'https://www.google.com/';
-const offlineUrl = 'https://www.weifhweopfhwioehfiwoephfpweoifhewifhpewoif.com';
-interface Props {
-  skipLoadingScreen?: boolean;
-}
+const offlineUrl =
+  'https://www.weifhweopfhwioehfiwoephfpweoifhewifhpewoif.com';
 
-interface State {
-  isLoadingComplete: boolean;
-  network: {
-    pingUrl: string;
-    toggleConnection: () => void;
-  };
-}
-export default class App extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isLoadingComplete: false,
-      network: {
-        pingUrl: onlineUrl,
-        toggleConnection: this.toggleConnection,
-      },
-    };
-  }
+export default function App() {
+  const [pingUrl, setPingUrl] = useState(onlineUrl);
+  const [fontsLoaded] = useFonts({
+    ...Ionicons.font,
+    'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+  });
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      ...Ionicons.font,
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-    });
-    this.setState({ isLoadingComplete: true });
-  }
-
-  toggleConnection = () => {
-    this.setState(prevState => ({
-      network: {
-        ...prevState.network,
-        pingUrl:
-          prevState.network.pingUrl === onlineUrl ? offlineUrl : onlineUrl,
-      },
-    }));
-  };
-
-  render() {
-    const { isLoadingComplete, network } = this.state;
-    const { skipLoadingScreen } = this.props;
-    if (!isLoadingComplete && !skipLoadingScreen) {
-      return null;
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
     }
-    return (
+  }, [fontsLoaded]);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(() => undefined);
+    }
+  }, [fontsLoaded]);
+
+  const network = useMemo(
+    () => ({
+      pingUrl,
+      toggleConnection: () =>
+        setPingUrl(current =>
+          current === onlineUrl ? offlineUrl : onlineUrl,
+        ),
+    }),
+    [pingUrl],
+  );
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <SafeAreaProvider>
       <DummyNetworkContext.Provider value={network}>
-        <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <View style={styles.container} onLayout={onLayoutRootView}>
+          <StatusBar style="dark" />
           <AppNavigator />
         </View>
       </DummyNetworkContext.Provider>
-    );
-  }
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -28,7 +28,9 @@ const OfflineQueue: FunctionComponent<Props> = ({ queue, title }) => {
 };
 
 const mapStateToProps = ({ network }: AppState) => ({
-  queue: network.actionQueue.map(a => ('type' in a ? a.type : 'Thunk')),
+  queue: network.actionQueue.map((a: AppState['network']['actionQueue'][number]) =>
+    a && typeof a === 'object' && 'type' in a ? String(a.type) : 'Thunk',
+  ),
 });
 
 export default connect(mapStateToProps)(OfflineQueue);

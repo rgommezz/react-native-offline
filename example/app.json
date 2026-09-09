@@ -3,15 +3,10 @@
     "name": "react-native-offline-example",
     "slug": "react-native-offline-example",
     "description": "Example application that showcases all the different modules that react-native-offline has to offer",
-    "privacy": "public",
-    "sdkVersion": "36.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -25,6 +20,16 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }

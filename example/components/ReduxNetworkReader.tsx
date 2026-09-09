@@ -5,9 +5,10 @@ import { MonoText } from './StyledText';
 import { AppState } from '../redux/createStore';
 
 type Props = {
-  isConnected: boolean;
+  isConnected: boolean | null;
 };
 const ReduxNetworkReader: FunctionComponent<Props> = ({ isConnected }) => {
+  const online = isConnected === true;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Connected to Internet:</Text>
@@ -15,10 +16,10 @@ const ReduxNetworkReader: FunctionComponent<Props> = ({ isConnected }) => {
         <MonoText
           style={[
             styles.highlightText,
-            { color: isConnected ? 'green' : 'red' },
+            { color: online ? 'green' : 'red' },
           ]}
         >
-          {isConnected ? 'YES' : 'NO'}
+          {online ? 'YES' : 'NO'}
         </MonoText>
       </View>
     </View>

@@ -1,7 +1,10 @@
-import React, { FunctionComponent } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Text, TextStyle, StyleProp } from 'react-native';
 
-type Props = { style?: StyleProp<TextStyle> };
-export const MonoText: FunctionComponent<Props> = props => (
-  <Text {...props} style={[props.style, { fontFamily: 'space-mono' }]} />
+type Props = PropsWithChildren<{ style?: StyleProp<TextStyle> }>;
+
+export const MonoText: React.FC<Props> = ({ style, children, ...rest }) => (
+  <Text {...rest} style={[style, { fontFamily: 'space-mono' }]}>
+    {children}
+  </Text>
 );
