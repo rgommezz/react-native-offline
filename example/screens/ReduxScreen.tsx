@@ -13,52 +13,46 @@ import ActionButtons from '../components/ActionButtons';
 
 const store = createStore({ queueReleaseThrottle: 1000 });
 
-export default class ReduxScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Redux',
-  };
+export default function ReduxScreen() {
+  return (
+    <Provider store={store}>
+      <DummyNetworkContext.Consumer>
+        {({ pingUrl }) => (
+          <ReduxNetworkProvider pingServerUrl={pingUrl}>
+            <View style={styles.container}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={require('../assets/images/redux.png')}
+                  style={styles.image}
+                />
+              </View>
 
-  render() {
-    return (
-      <Provider store={store}>
-        <DummyNetworkContext.Consumer>
-          {({ pingUrl }) => (
-            <ReduxNetworkProvider pingServerUrl={pingUrl}>
-              <View style={styles.container}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={require('../assets/images/redux.png')}
-                    style={styles.image}
-                  />
-                </View>
-
-                <View style={{ marginHorizontal: 50 }}>
-                  <ConnectionToggler />
-                </View>
-                <View style={styles.firstSection}>
-                  <ReduxNetworkReader />
-                  <Counter />
-                </View>
-                <View style={styles.secondSection}>
-                  <ActionButtons />
-                  <View style={styles.offlineQueue}>
-                    <OfflineQueue title="Offline Queue (FIFO), throttle = 1s" />
-                  </View>
+              <View style={{ marginHorizontal: 50 }}>
+                <ConnectionToggler />
+              </View>
+              <View style={styles.firstSection}>
+                <ReduxNetworkReader />
+                <Counter />
+              </View>
+              <View style={styles.secondSection}>
+                <ActionButtons />
+                <View style={styles.offlineQueue}>
+                  <OfflineQueue title="Offline Queue (FIFO), throttle = 1s" />
                 </View>
               </View>
-            </ReduxNetworkProvider>
-          )}
-        </DummyNetworkContext.Consumer>
-      </Provider>
-    );
-  }
+            </View>
+          </ReduxNetworkProvider>
+        )}
+      </DummyNetworkContext.Consumer>
+    </Provider>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 30,
+    paddingTop: 10,
   },
   imageContainer: {
     alignItems: 'center',

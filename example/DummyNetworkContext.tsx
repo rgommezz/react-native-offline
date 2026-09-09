@@ -9,4 +9,5 @@ const DummyNetworkContext = React.createContext<Context>({
   pingUrl: 'https://google.com',
   toggleConnection: () => {},
 });
+
 export default DummyNetworkContext;
