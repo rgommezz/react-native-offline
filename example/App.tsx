@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
@@ -7,62 +7,54 @@ import DummyNetworkContext from './DummyNetworkContext';
 
 const onlineUrl = 'https://www.google.com/';
 const offlineUrl = 'https://www.weifhweopfhwioehfiwoephfpweoifhewifhpewoif.com';
-interface Props {
-  skipLoadingScreen?: boolean;
+
+interface NetworkState {
+  pingUrl: string;
+  toggleConnection: () => void;
 }
 
-interface State {
-  isLoadingComplete: boolean;
-  network: {
-    pingUrl: string;
-    toggleConnection: () => void;
-  };
-}
-export default class App extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isLoadingComplete: false,
-      network: {
-        pingUrl: onlineUrl,
-        toggleConnection: this.toggleConnection,
-      },
+export default function App() {
+  const [isLoadingComplete, setIsLoadingComplete] = useState(false);
+  const [pingUrl, setPingUrl] = useState(onlineUrl);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        await Font.loadAsync({
+          ...Ionicons.font,
+          'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+        });
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Font loading failed', e);
+      } finally {
+        if (isMounted) setIsLoadingComplete(true);
+      }
+    })();
+    return () => {
+      isMounted = false;
     };
-  }
+  }, []);
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      ...Ionicons.font,
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-    });
-    this.setState({ isLoadingComplete: true });
-  }
-
-  toggleConnection = () => {
-    this.setState(prevState => ({
-      network: {
-        ...prevState.network,
-        pingUrl:
-          prevState.network.pingUrl === onlineUrl ? offlineUrl : onlineUrl,
-      },
-    }));
+  const toggleConnection = () => {
+    setPingUrl(prev => (prev === onlineUrl ? offlineUrl : onlineUrl));
   };
 
-  render() {
-    const { isLoadingComplete, network } = this.state;
-    const { skipLoadingScreen } = this.props;
-    if (!isLoadingComplete && !skipLoadingScreen) {
-      return null;
-    }
-    return (
-      <DummyNetworkContext.Provider value={network}>
-        <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <AppNavigator />
-        </View>
-      </DummyNetworkContext.Provider>
-    );
+  const network: NetworkState = { pingUrl, toggleConnection };
+
+  if (!isLoadingComplete) {
+    return null;
   }
+
+  return (
+    <DummyNetworkContext.Provider value={network}>
+      <View style={styles.container}>
+        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <AppNavigator />
+      </View>
+    </DummyNetworkContext.Provider>
+  );
 }
 
 const styles = StyleSheet.create({
